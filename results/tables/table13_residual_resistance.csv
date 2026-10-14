@@ -1,0 +1,5 @@
+subset,n_pairs,n_failed,failure_rate,ci_low,ci_high,note
+all observed pairs,38435,30459,0.7924808117601145,0.788397375901007,0.7965057862171772,baseline failure rate across the matrix
+receptor gate passed,25256,19518,0.7728064618308521,0.7675973817078221,0.7779325633413978,surface state consistent with the isolation hosts of the phage genus
+"gate passed, lacks lineage-validated defense",22436,17013,0.75829024781601,0.7526442692698854,0.7638477901036531,host carries neither system that survived clonal control
+"gate passed, lacks all 33 tested systems",0,0,,,,host carries none of the systems with enough carriers to test (no pairs meet this condition)

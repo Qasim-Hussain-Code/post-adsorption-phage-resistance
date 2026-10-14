@@ -34,18 +34,17 @@ Outputs:
 from __future__ import annotations
 
 import sys
-import warnings
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import numpy as np
 import pandas as pd
-import statsmodels.api as sm
 from scipy.cluster import hierarchy
 from scipy.spatial.distance import squareform
 
 from papr import config, paths
+from papr.models import fit_logit_cluster
 from papr.stats import benjamini_hochberg
 
 ADJUSTMENTS: dict[str, list[str]] = {
@@ -137,32 +136,12 @@ def design_blocks(pairs: pd.DataFrame, pcoa: pd.DataFrame) -> dict[str, np.ndarr
             "phylogroup": phylo, "pcoa": coords}
 
 
-def _fit_logit(y: np.ndarray, x: np.ndarray, groups: np.ndarray):
-    """Binomial fit with cluster-robust covariance.
-
-    A Newton solve is used rather than the iteratively reweighted least squares
-    path that statsmodels takes for GLM, because the latter calls a
-    singular-value least squares routine on the full n by k weighted design and
-    exhausts the LAPACK workspace at this sample size. Newton forms the k by k
-    Hessian instead, which is small and well conditioned here.
-    """
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        model = sm.Logit(y, x)
-        try:
-            return model.fit(method="newton", maxiter=200, disp=0,
-                             cov_type="cluster", cov_kwds={"groups": groups})
-        except (np.linalg.LinAlgError, MemoryError, ValueError):
-            return model.fit(method="bfgs", maxiter=600, disp=0,
-                             cov_type="cluster", cov_kwds={"groups": groups})
-
-
 def fit_one(y: np.ndarray, exposure: np.ndarray, blocks: dict[str, np.ndarray],
             extras: list[str], groups: np.ndarray) -> dict:
     parts = [exposure.reshape(-1, 1), blocks["const"], blocks["phage"], blocks["lps"]]
     parts += [blocks[k] for k in extras]
     x = np.hstack(parts)
-    res = _fit_logit(y, x, groups)
+    res = fit_logit_cluster(y, x, groups)
     beta = float(res.params[0])
     se = float(res.bse[0])
     p = float(res.pvalues[0])
@@ -180,7 +159,7 @@ def joint_model(y: np.ndarray, pairs: pd.DataFrame, systems: list[str],
     exposures = pairs[systems].to_numpy(dtype=float)
     x = np.hstack([exposures, blocks["const"], blocks["phage"], blocks["lps"],
                    blocks["phylogroup"], blocks["pcoa"]])
-    res = _fit_logit(y, x, groups)
+    res = fit_logit_cluster(y, x, groups)
     k = len(systems)
     beta = np.asarray(res.params[:k], dtype=float)
     se = np.asarray(res.bse[:k], dtype=float)
