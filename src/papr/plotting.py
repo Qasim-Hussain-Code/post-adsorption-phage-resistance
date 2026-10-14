@@ -90,12 +90,19 @@ def apply_style() -> None:
 
 
 def save(fig, outdir, stem: str, dpi: int = 300) -> list:
-    """Write a raster copy for review and a vector copy for typesetting."""
+    """Write a raster copy for review and a vector copy for typesetting.
+
+    The PDF writer stamps a creation date by default, which would make an
+    otherwise identical rerun produce a different file. Suppressing it keeps
+    reruns byte-identical, so a change in a figure always means a change in the
+    data behind it.
+    """
     written = []
     for ext in ("png", "pdf"):
         path = outdir / f"{stem}.{ext}"
+        metadata = {"CreationDate": None} if ext == "pdf" else None
         fig.savefig(path, dpi=dpi, bbox_inches="tight",
-                    facecolor=SURFACE, edgecolor=SURFACE)
+                    facecolor=SURFACE, edgecolor=SURFACE, metadata=metadata)
         written.append(path)
     plt.close(fig)
     return written

@@ -265,7 +265,10 @@ def main() -> int:
     by_genus = gate_performance_by_genus(pairs, "gate_lps")
 
     # Persist
-    pairs.to_csv(paths.PAIRS, index=False, compression="gzip")
+    # mtime=0 keeps the gzip container free of a timestamp, so an unchanged
+    # analysis rewrites a byte-identical file.
+    pairs.to_csv(paths.PAIRS, index=False,
+                 compression={"method": "gzip", "mtime": 0})
     strain_feats.to_csv(paths.STRAIN_FEATURES, index=False)
     phage_feats.to_csv(paths.PHAGE_FEATURES, index=False)
     gates.to_csv(paths.GATE_DEFINITIONS, index=False)
