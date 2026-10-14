@@ -41,7 +41,7 @@ ADF_PHAGE = RAW / "antidefense" / "adf_hits_refseq_phage.tsv"
 ADF_TAXONOMY = RAW / "antidefense" / "phage_taxonomy_refseq.tsv"
 
 # Derived tables written by the pipeline.
-PAIRS = PROCESSED / "pair_level_table.parquet"
+PAIRS = PROCESSED / "pair_level_table.csv.gz"
 STRAIN_FEATURES = PROCESSED / "strain_features.csv"
 PHAGE_FEATURES = PROCESSED / "phage_features.csv"
 GATE_DEFINITIONS = PROCESSED / "receptor_gate_definitions.csv"
