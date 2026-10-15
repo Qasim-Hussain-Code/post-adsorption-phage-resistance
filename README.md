@@ -278,19 +278,53 @@ group in this collection.
 
 ## Figures
 
-| Figure | Content |
-|---|---|
-| `figures/fig1_two_gate_filtering` | Outcome of all 38,435 pairs split into lysis, post-adsorption failure and surface exclusion, overall and by phage genus and host phylogroup |
-| `figures/fig2_global_vs_conditioned_forest` | Paired forest plot of log2 odds ratios, unstratified against receptor-conditioned |
-| `figures/fig3_lineage_controlled_survival` | Effect sizes before and after clonal control, and the attenuation toward the null |
-| `figures/fig4_quantitative_titer_shifts` | Plaque score distributions by defense burden and phage morphotype, and per-system score shifts |
-| `figures/fig5_direct_antidefense_annotation` | Anti-defense families found in the 96 genomes, validation against the RefSeq survey, and rescue interactions measured against imputed |
-| `figures/fig6_robustness_of_surviving_effects` | Each estimate beside what it could have detected, threshold sensitivity, and per-genus consistency |
-| `figures/fig7_consolidated_evidence` | Shapley partition of explained variation, 79 systems shrunk jointly, and the consolidated candidate list |
-| `figures/fig8_inference_and_verdict` | The population structure problem measured, the phylogenetic null before and after surface adjustment, and the final candidate verdict |
-
 Each is written as 300 dpi PNG and vector PDF. Every figure is drawn from the
 tables in `results/tables`, so a figure cannot disagree with a reported number.
+
+### Figure 1. Surface exclusion accounts for a minority of failed infections
+
+![Outcome of all 38,435 strain-phage pairs split into productive lysis, failure
+in a surface-compatible host, and surface exclusion, shown overall and broken
+down by phage genus and host phylogroup](figures/fig1_two_gate_filtering.png)
+
+### Figure 2. Conditioning on surface state widens defense effects
+
+![Paired forest plot of log2 odds ratios for 33 defense systems, comparing the
+unstratified estimate with one stratified on phage identity and LPS outer core
+type](figures/fig2_global_vs_conditioned_forest.png)
+
+### Figure 3. Almost every association is a property of the clonal lineage
+
+![Effect sizes before and after controlling for phylogroup and core-genome
+position, with a scatter showing attenuation toward the null](figures/fig3_lineage_controlled_survival.png)
+
+### Figure 4. Plaque score tracks phage morphotype, not defense burden
+
+![Plaque score distributions by defense burden quartile and by phage
+morphotype, with per-system shifts in mean score](figures/fig4_quantitative_titer_shifts.png)
+
+### Figure 5. Annotating the phages directly leaves the answer unchanged
+
+![Anti-defense families found in the 96 phage genomes, validation against the
+published RefSeq survey, and rescue interactions from measured annotation
+against the genus prior](figures/fig5_direct_antidefense_annotation.png)
+
+### Figure 6. Neither surviving association is robust to every design
+
+![Each system's estimate beside the protective odds ratio its own standard
+error could have detected, sensitivity to the clonal distance threshold, and
+per-genus consistency](figures/fig6_robustness_of_surviving_effects.png)
+
+### Figure 7. Host surface outweighs defense, and no candidate survives every check
+
+![Shapley partition of explained variation, 79 systems shrunk jointly toward
+the pooled mean, and the consolidated candidate list](figures/fig7_consolidated_evidence.png)
+
+### Figure 8. Harder nulls and a candidate list no single test supports
+
+![The population structure problem measured per system, the phylogenetically
+matched null before and after removing host surface type, and the final
+verdict](figures/fig8_inference_and_verdict.png)
 
 ## Reproducing
 
@@ -368,9 +402,3 @@ unchanged.
 
 MIT, see `LICENSE`. The upstream data remains under the license of its
 originating repository and is not redistributed; see `docs/data_provenance.md`.
-
-## Note on tooling
-
-The analysis code in this repository was developed with AI assistance. All
-results were produced by executing the committed scripts against the public
-data, and every number quoted above is reproducible by running the pipeline.
