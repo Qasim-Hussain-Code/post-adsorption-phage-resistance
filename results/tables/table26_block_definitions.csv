@@ -1,0 +1,5 @@
+block,n_terms,description
+phage identity,95,96 phage fixed effects
+host surface,157,"LPS outer core, O-antigen serotype and status, capsule state, 12 outer membrane protein loci, levels below 5 strains pooled"
+defense systems,33,"33 DefenseFinder systems, presence"
+clonal lineage,22,phylogroup plus 8 core-genome principal coordinates

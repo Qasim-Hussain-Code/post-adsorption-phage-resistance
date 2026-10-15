@@ -398,14 +398,22 @@ def main() -> int:
         f"{inc['M3 + defense systems']:.4f}, and phylogroup adds "
         f"{inc['M4 + clonal background']:.4f} on top of those.")
     add("  Which phage is being tested is by far the strongest determinant of "
-        "whether an interaction succeeds. Host surface type and defense "
-        "carriage both contribute, and on this decomposition their "
-        "contributions are of broadly similar magnitude, with neither "
-        "approaching the phage term. The framing that surface incompatibility "
-        "accounts for the overwhelming majority of failures is not supported "
-        "here: a large part of the variation is phage-specific host range that "
-        "is not reducible to the four surface determinants typed in this "
-        "collection.")
+        "whether an interaction succeeds. A large part of the variation is "
+        "phage-specific host range that is not reducible to the host features "
+        "typed in this collection.")
+    add("")
+    add("  The increments above must not be used to rank host surface against "
+        "defense carriage, for two reasons. They depend on the order the "
+        "blocks are entered, because the blocks are correlated. And the "
+        "surface block here holds only the LPS outer core and O-antigen "
+        "status, six terms against thirty-three for defense, which is not a "
+        "fair comparison. Script 11 repeats this decomposition with a surface "
+        "block containing everything the collection types about the cell "
+        "surface and with an exact order-independent Shapley allocation. On "
+        "that comparison host surface accounts for about three times the "
+        "variation that defense does, the reverse of what the numbers above "
+        "suggest. Read script 11, not this table, for the comparison between "
+        "blocks; this table is retained only to show the nested fits.")
     add("  These are descriptive quantities. Pairs sharing a genome are "
         "correlated, so the likelihood ratio statistics are inflated and are "
         "shown only to order the blocks.")
