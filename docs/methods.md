@@ -442,9 +442,28 @@ regression on cluster indicators, which would overfit at 224 clusters for 402
 strains. Neither null dominates, so every reported p-value is the larger of the
 two.
 
-A system that survives is then re-tested with the systems most enriched among
+Both tails are tested, not only the protective one, since an association with
+increased lysis cannot be a defense mechanism and that pattern recurs in this
+collection. Everything below is applied to whichever direction a system
+survives in.
+
+A system that survives is re-tested with the four systems most enriched among
 its carriers added to the covariates, since defense systems travel together on
-islands and a survivor may be carrying the credit for a neighbour.
+islands and a survivor may be carrying the credit for a neighbour. It is then
+refitted with each clonal cluster holding one of its carriers dropped in turn.
+Because losing carriers costs power whatever they are, the most damaging of
+those drops is compared against 40 drops of the same number of strains and the
+same number of carriers chosen at random: a result that collapses only when a
+particular cluster goes is resting on that group of relatives, while one that
+collapses equally under random drops is merely thin.
+
+The clonal null is checked for degeneracy, since a null that reproduced the
+clonal pattern exactly might have no freedom left to move it. Agreement between
+each null trait and the real carriage vector is compared with the agreement
+that the trait's prevalence forces on its own.
+
+Permutation blocks draw from separate generators seeded from the project seed,
+so that adding an analysis does not shift the p-values of the ones beside it.
 
 ## Software
 

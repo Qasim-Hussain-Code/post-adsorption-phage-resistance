@@ -252,6 +252,19 @@ systems; the clonal null carries about half their broad-scale phylogenetic
 signal. Reporting the worse p-value of the two is conservative but it is not a
 proof that no structure remains unmodelled.
 
+## The increased-lysis systems are an association without a mechanism
+
+Three systems clear every check in this study for an association with more
+lysis, which is a direction no defense mechanism explains. They are reported
+because suppressing them would misrepresent the evidence, not because they are
+understood. Nothing here identifies what produces the association: the two
+readings offered, a mobile element carrying a susceptibility factor and
+carriage recording a history of phage exposure, are both consistent with the
+data and neither is tested. A reader should treat these as a question raised by
+the dataset rather than as a claim about what these systems do, and should note
+that MazEF in particular is carried by 338 of 402 strains, so its non-carrier
+group is small.
+
 ## Scope
 
 This is an observational re-analysis of a single collection of 402 Escherichia

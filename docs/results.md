@@ -728,7 +728,7 @@ of the 20 carriers. That is why every other test in this project missed it.
 Several checks support it. Its carriers span 12 clonal clusters, 7 sequence
 types and 5 phylogroups, so the trait is not confined to one lineage. Its 12
 phages are more closely related to each other than a random set of the same
-size (p = 0.022, q = 0.038) while spanning 11 groups, which is the signature a
+size (p = 0.023, q = 0.040) while spanning 11 groups, which is the signature a
 genuine narrow spectrum should leave and not what panel redundancy produces.
 Conditioning on the four systems most enriched among its carriers (SanaTA,
 Lamassu-Mrr, PsyrTA, AbiE) reduces it from 11 groups to 6 without removing it
@@ -742,7 +742,7 @@ result to **p = 0.133**.
 
 Losing six carriers costs power whatever they are, so that drop was repeated 40
 times with strains chosen at random and the same number of carriers removed.
-Those random drops leave a median p of **0.0065**, and only **2 percent** of
+Those random drops leave a median p of **0.0060**, and only **8 percent** of
 them are as bad as dropping the cluster. The fragility is therefore not sample
 size. **Six near-identical strains are carrying the result.**
 
@@ -754,11 +754,56 @@ and nothing in an observational design can say whether the retron is why. The
 alternative, that the lineage is resistant for some other reason it also
 happens to carry, remains open and is not excluded by any test here.
 
-**So the answer to the question the section asked is no, on this evidence.**
-Averaging over the panel was not hiding a robust effect. It was hiding one
-candidate whose support concentrates in a single clonal group, which is the
-same obstacle that limits every other result in this study. Retron_I_C is worth
-a knockout against the 12 phages named in table 49, and it is not a finding.
+**So for protection, the answer to the question this section asked is no, on
+this evidence.** Averaging over the panel was not hiding a robust protective
+effect. It was hiding one candidate whose support concentrates in a single
+clonal group, which is the same obstacle that limits every other result in this
+study. Retron_I_C is worth a knockout against the 12 phages named in table 49,
+and it is not a finding.
+
+For the opposite direction the answer is different, and that comes next.
+
+### The direction that should not exist is the better-supported one
+
+The same machinery was applied to the opposite tail, because a system
+associated with *more* lysis cannot be acting as a defense and that pattern has
+recurred throughout this study. It produces the most uncomfortable result in
+this work.
+
+| system | carriers | phages | groups | p | q |
+| --- | --- | --- | --- | --- | --- |
+| BREX_I | 31 | 16 | 11 | 0.002 | 0.044 |
+| CAS_Class1-Subtype-I-F | 66 | 13 | 9 | 0.003 | 0.044 |
+| MazEF | 338 | 9 | 8 | 0.004 | 0.044 |
+| SanaTA | 64 | 22 | 14 | 0.012 | 0.086 |
+| Gao_Qat | 23 | 13 | 11 | 0.013 | 0.086 |
+
+**Three systems clear both nulls in the increased-lysis direction, against one
+in the protective direction, and unlike that one they survive everything
+else.** Conditioning on the four systems most enriched among their carriers
+leaves BREX_I at 9 groups (p = 0.011), CAS_Class1-Subtype-I-F at 8
+(p = 0.003) and MazEF at 8 (p = 0.001). Dropping each clonal cluster holding a
+carrier in turn, across 19, 31 and 185 refits respectively, the worst case is
+p = 0.038, 0.013 and 0.015: none of them rests on one group of relatives, which
+is exactly the check Retron_I_C failed.
+
+The clonal null is what makes this hard to dismiss. The standing explanation
+for these associations, used earlier in this study, is that such systems mark
+lineages that are easy to lyse for reasons unrelated to defense. A null that
+preserves the clonal distribution of carriage while moving it to other lineages
+is a direct test of that explanation, and these three survive it. So the
+lineage account does not cover them, and no defense mechanism covers them
+either.
+
+Two readings remain open, and this design cannot separate them. The systems may
+travel on mobile elements that also carry something increasing susceptibility,
+which would make the association real and the attribution wrong. Or carriage
+may record a history of phage exposure, where strains that are easy to lyse
+accumulate both infections and the systems that respond to them, which reverses
+the direction of causation rather than the association. Either way, the honest
+summary of this section is that **the association which makes biological sense
+is the weaker of the two in this collection**, and that fact belongs in the
+foreground rather than in a footnote.
 
 Figure 10 shows the cost of averaging across all 33 systems, the surviving
 system across the whole panel, the structure mismatch that forced the second
@@ -811,6 +856,13 @@ both a coordinate-matched and a clonally-matched null. It then fails a leave-
 one-cluster-out check that random drops of the same size pass, which places 6
 of its 20 carriers at the centre of the result. The negative results stand for
 all 33 systems, and they now stand against a stricter null than before.
+
+The same analysis applied to the opposite tail is harder to put aside. Three
+systems, BREX_I, CAS_Class1-Subtype-I-F and MazEF, are associated with more
+lysis on 8 to 11 phage groups, clear both nulls, keep their signal when their
+island neighbours are conditioned on, and survive dropping any single clonal
+cluster of their carriers. The direction that no defense mechanism explains is
+better supported in this collection than the direction that one would.
 
 The defensible output is a ranked candidate list. Eleven systems are nominated
 somewhere in the study; the best, RM_Type_IIG, passes five of seven independent

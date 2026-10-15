@@ -32,8 +32,9 @@ def main() -> int:
     structure = pd.read_csv(paths.TABLES / "table54_trait_structure.csv")
     survivors = set(spec.loc[spec["q_protective"] <= config.FDR_ALPHA, "system"])
 
-    fig = plt.figure(figsize=(14.2, 11.6))
-    gs = fig.add_gridspec(2, 2, height_ratios=[1, 1], hspace=0.32, wspace=0.26)
+    fig = plt.figure(figsize=(14.2, 17.0))
+    gs = fig.add_gridspec(3, 2, height_ratios=[1, 1, 1], hspace=0.34,
+                          wspace=0.26)
 
     # a: the panel average against the effect on the phages a system acts on.
     ax = fig.add_subplot(gs[0, 0])
@@ -184,6 +185,90 @@ def main() -> int:
                    label="does not")],
         frameon=False, fontsize=8.6, loc="upper right")
     P.tidy(ax, xgrid=True, ygrid=True)
+
+    # e: the direction no defense mechanism explains is better supported.
+    ax = fig.add_subplot(gs[2, 0])
+    floor_q = min(spec[["q_protective", "q_increased"]].min().min(), 0.02)
+    qx = spec["q_protective"].clip(lower=floor_q * 0.8)
+    qy = spec["q_increased"].clip(lower=floor_q * 0.8)
+    prot = spec["q_protective"] <= config.FDR_ALPHA
+    incr = spec["q_increased"] <= config.FDR_ALPHA
+    ax.axvline(config.FDR_ALPHA, color=P.INK_PRIMARY, linewidth=1.0,
+               linestyle="--", zorder=4)
+    ax.axhline(config.FDR_ALPHA, color=P.INK_PRIMARY, linewidth=1.0,
+               linestyle="--", zorder=4)
+    ax.scatter(qx[~prot & ~incr], qy[~prot & ~incr], s=38,
+               facecolor=P.INK_MUTED, alpha=0.55, edgecolor=P.SURFACE,
+               linewidth=0.8, zorder=3)
+    ax.scatter(qx[prot], qy[prot], s=120, facecolor=P.BLUE,
+               edgecolor=P.SURFACE, linewidth=1.2, zorder=5,
+               label="protective, clears both nulls")
+    ax.scatter(qx[incr], qy[incr], s=120, facecolor=P.ORANGE,
+               edgecolor=P.SURFACE, linewidth=1.2, zorder=5,
+               label="increased lysis, clears both nulls")
+    # The flagged systems cluster tightly, so labels are fanned out rather
+    # than stacked on one another.
+    flagged = [(r, a, b) for r, a, b in zip(spec.itertuples(index=False), qx, qy)
+               if r.q_protective <= config.FDR_ALPHA
+               or r.q_increased <= config.FDR_ALPHA]
+    flagged.sort(key=lambda t: t[1])
+    rank = 0
+    for r, a, b in flagged:
+        if r.q_protective <= config.FDR_ALPHA:
+            ax.annotate(r.system, xy=(a, b), xytext=(9, 5),
+                        textcoords="offset points", fontsize=8.2, ha="left",
+                        color=P.INK_PRIMARY)
+            continue
+        # The increased-direction systems sit on top of one another at the
+        # bottom of the panel, so their labels fan up and to the left.
+        ax.annotate(r.system, xy=(a, b), xytext=(-26, 16 + 17 * rank),
+                    textcoords="offset points", fontsize=8.2, ha="right",
+                    color=P.INK_PRIMARY,
+                    arrowprops=dict(arrowstyle="-", color=P.INK_MUTED,
+                                    linewidth=0.7))
+        rank += 1
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    ax.set_ylim(top=3.0)
+    ax.set_xlabel("q for protecting against lysis")
+    ax.set_ylabel("q for increasing lysis")
+    ax.set_title(f"e  {int(incr.sum())} systems in the impossible direction, "
+                 f"{int(prot.sum())} in the sensible one", loc="left")
+    ax.legend(frameon=False, fontsize=8.6, loc="lower left")
+    P.tidy(ax, xgrid=True, ygrid=True)
+
+    # f: the check that separates them.
+    ax = fig.add_subplot(gs[2, 1])
+    stab_path = paths.TABLES / "table55_leave_cluster_out.csv"
+    if stab_path.exists():
+        st = pd.read_csv(stab_path)
+        order = (st.groupby(["system", "direction"])["p_value"].max()
+                 .sort_values().reset_index())
+        for i, row in enumerate(order.itertuples(index=False)):
+            part = st[(st.system == row.system)
+                      & (st.direction == row.direction)]
+            colour = P.BLUE if row.direction == "protective" else P.ORANGE
+            jitter = (np.arange(len(part)) % 7 - 3) * 0.022
+            ax.scatter(part["p_value"], np.full(len(part), i) + jitter, s=26,
+                       facecolor=colour, alpha=0.5, edgecolor="none", zorder=3)
+            ax.scatter([part["p_value"].max()], [i], s=130, marker="D",
+                       facecolor=colour, edgecolor=P.SURFACE, linewidth=1.1,
+                       zorder=5)
+        ax.axvline(config.FDR_ALPHA, color=P.INK_PRIMARY, linewidth=1.1,
+                   linestyle="--", zorder=4)
+        ax.set_yticks(range(len(order)))
+        ax.set_yticklabels([f"{r.system}\n({r.direction})"
+                            for r in order.itertuples(index=False)],
+                           fontsize=8.4)
+        ax.set_ylim(-0.6, len(order) - 0.4)
+        ax.set_xscale("log")
+        ax.set_xlabel("p after dropping one clonal cluster of carriers")
+        ax.set_title("f  Only the protective candidate breaks", loc="left")
+        ax.annotate("diamonds mark the worst case.\nEverything right of the "
+                    "line\nfails when one group of\nrelatives is removed.",
+                    xy=(0.97, 0.06), xycoords="axes fraction", fontsize=8.4,
+                    color=P.INK_SECONDARY, ha="right", va="bottom")
+        P.tidy(ax, xgrid=True, ygrid=False)
 
     written = P.save(fig, paths.FIGURES, "fig10_phage_resolved_spectrum")
     for path in written:

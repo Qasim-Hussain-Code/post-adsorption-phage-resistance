@@ -1,2 +1,5 @@
-system,partners,n_groups_unadjusted,n_groups_adjusted,p_coordinate,p_clonal,p_adjusted,best_z_adjusted
-Retron_I_C,"SanaTA,Lamassu-Mrr,PsyrTA,AbiE",11,6,0.002997002997002997,0.002997002997002997,0.002997002997002997,-3.470439771139426
+system,direction,partners,n_groups_unadjusted,n_groups_adjusted,p_coordinate,p_clonal,p_adjusted,best_z_adjusted
+Retron_I_C,protective,"SanaTA,Lamassu-Mrr,PsyrTA,AbiE",11,6,0.002997002997002997,0.002997002997002997,0.002997002997002997,-3.470439771139426
+BREX_I,increased,"CAS_Class1-Subtype-I-E,PD-Lambda-4,RosmerTA,Mok_Hok_Sok",11,9,0.002997002997002997,0.01098901098901099,0.01098901098901099,4.271970987129191
+CAS_Class1-Subtype-I-F,increased,"CBASS_I,Gao_Qat,RM_Type_I,Mokosh_TypeII",9,8,0.002997002997002997,0.001998001998001998,0.002997002997002997,6.325965193275227
+MazEF,increased,"CAS_Class1-Subtype-I-E,PD-T4-3,Shango,Mok_Hok_Sok",8,8,0.000999000999000999,0.000999000999000999,0.000999000999000999,3.9200282227036602

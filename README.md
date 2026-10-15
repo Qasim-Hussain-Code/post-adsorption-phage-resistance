@@ -16,6 +16,14 @@ that the main analysis discarded holds up better in the strictest ones. The
 defensible output of this work is a short candidate list for experiment, not a
 demonstration that any system confers resistance.
 
+That answer is an average over 96 phages, which is a choice and not a neutral
+one. Resolving the panel into its individual phages, against two nulls that
+each destroy a different kind of confounding, yields one protective candidate
+whose support turns out to rest on six near-identical strains, and three
+systems associated with *more* lysis that survive every check applied to them.
+The direction that no defense mechanism explains is the better-supported one in
+this collection.
+
 ## The question and why it needs care
 
 Roughly four fifths of strain-phage pairs in a species-wide screen fail to
@@ -278,17 +286,30 @@ same-cluster strain pairs 0.911 of the time against 0.810 for that null, with
 clonal clusters of the same size and reproduces 0.911 exactly. Reporting the
 worse of the two p-values is the difference between six findings and one.
 
-**One system clears both nulls, then fails a stability check.** Retron_I_C
+**The direction that should not exist is the better-supported one.** Applying
+the same two nulls to the opposite tail, **three systems are associated with
+more lysis** and clear everything: BREX_I (11 phage groups),
+CAS_Class1-Subtype-I-F (9) and MazEF (8), all at q = 0.044, all keeping their
+signal when their island neighbours are conditioned on, and none resting on any
+single clonal cluster of carriers across 19, 31 and 185 refits. The clonal null
+is what makes this awkward, since it directly tests the standing explanation
+that such systems merely mark easy-to-lyse lineages, and they survive it.
+Either they travel with something that increases susceptibility, or carriage
+records a history of phage exposure and the causation runs the other way.
+**The association that makes biological sense is the weaker of the two here.**
+
+**One system clears both nulls in the protective direction, then fails a
+stability check.** Retron_I_C
 reduces lysis by **0.222** on the 12 phages it acts on against **0.016** across
 the whole panel, a fourteen-fold gap that explains why every other test here
 missed it, and retrons act by abortive infection, which is post-adsorption and
 exactly what this project set out to find. But dropping each clonal cluster of
 carriers in turn and refitting, one cluster holding 6 of its 20 carriers takes
 the result to **p = 0.133**, while 40 random drops of the same size leave a
-median p of **0.0065** and only 2 percent do as much damage. Six near-identical
+median p of **0.0060** and only 8 percent do as much damage. Six near-identical
 strains are carrying it. **That makes it the study's best candidate and not a
-finding**, and it leaves the answer to the original question negative:
-averaging was not hiding a robust effect.
+finding**, and it leaves the answer negative for the direction that matters:
+averaging was not hiding a robust protective effect.
 
 ### The candidate list
 
@@ -373,12 +394,15 @@ the pooled mean, and the consolidated candidate list](figures/fig7_consolidated_
 matched null before and after removing host surface type, and the final
 verdict](figures/fig8_inference_and_verdict.png)
 
-### Figure 10. What averaging over a panel of 96 phages costs
+### Figure 10. What averaging over a panel of 96 phages costs, and which direction survives
 
 ![The panel-average effect against the effect on the phages each system acts
-on, the one system clearing both nulls shown across the whole panel with the
-clonal cluster that carries it, the clonal structure the coordinate null fails
-to reproduce, and what each null admits](figures/fig10_phage_resolved_spectrum.png)
+on, the one protective candidate across the whole panel with the clonal cluster
+that carries it, the clonal structure the coordinate null fails to reproduce,
+what each null admits, the three systems clearing both nulls in the
+increased-lysis direction against the one in the protective direction, and the
+leave-one-cluster-out check that separates
+them](figures/fig10_phage_resolved_spectrum.png)
 
 ### Figure 9. Why the accessory genome scan needed its null rebuilt twice
 

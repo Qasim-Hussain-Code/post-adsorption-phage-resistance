@@ -181,7 +181,12 @@ def count_clusters_hit(mask: np.ndarray, labels: np.ndarray) -> np.ndarray:
 
 def main() -> int:
     paths.bootstrap()
+    # Independent streams per block. Sharing one generator makes every
+    # permutation p-value depend on how many draws the analyses before it
+    # happened to take, so adding a check silently moves unrelated results.
     rng = np.random.default_rng(config.RANDOM_SEED)
+    rng_drop = np.random.default_rng(config.RANDOM_SEED + 1)
+    rng_coherence = np.random.default_rng(config.RANDOM_SEED + 2)
 
     pairs = pd.read_csv(paths.PAIRS, low_memory=False)
     feats = pd.read_csv(paths.STRAIN_FEATURES, low_memory=False).set_index("strain")
@@ -243,8 +248,19 @@ def main() -> int:
                        for j in range(min(100, N_NULL_TRAITS))])
         cl = np.array([concordance(clonal_blocks[k][:, j], labels_clonal)
                        for j in range(min(100, N_NULL_TRAITS))])
+        # A null that reproduces the clonal pattern exactly could in
+        # principle have no freedom left to move it, which would make it a
+        # near copy of the real trait and trivial to beat. Agreement with the
+        # real trait, against what prevalence alone forces, says whether that
+        # has happened.
+        prev = float(real[:, k].mean())
+        overlap = float((clonal_blocks[k] == real[:, k][:, None]).mean())
+        forced = prev ** 2 + (1.0 - prev) ** 2
         struct.append(dict(
             system=s, n_carriers=int(real[:, k].sum()),
+            clonal_null_overlap=overlap,
+            overlap_forced_by_prevalence=forced,
+            overlap_excess=overlap - forced,
             observed_concordance=obs_c,
             coordinate_null_concordance=float(co.mean()),
             clonal_null_concordance=float(cl.mean()),
@@ -258,6 +274,10 @@ def main() -> int:
           f"{structure['coordinate_null_concordance'].median():.4f}, clonal "
           f"null {structure['clonal_null_concordance'].median():.4f}; "
           f"{n_exceed} of {len(structure)} systems exceed the coordinate null")
+    print(f"clonal null freedom: agreement with the real trait exceeds what "
+          f"prevalence forces by a median of "
+          f"{structure['overlap_excess'].median():.3f} "
+          f"(max {structure['overlap_excess'].max():.3f})")
 
     # Score every trait against every phage.
     z = np.full((traits.shape[1], len(phages)), np.nan)
@@ -395,35 +415,52 @@ def main() -> int:
     # covariates and the whole test is run again. Nothing here can prove which
     # member of an island is responsible, but a system whose signal vanishes
     # once its neighbours are conditioned on has not earned the attribution.
-    survivors = spec[spec["q_protective"] <= config.FDR_ALPHA]["system"].tolist()
+    # Both directions are followed up, not just the protective one. A system
+    # associated with more lysis cannot be acting as a defense, and that
+    # anomaly recurs throughout this project, so it earns the same scrutiny.
+    DIRECTIONS = (("protective", -1.0), ("increased", 1.0))
+
+    def hits(zrow: np.ndarray, sign: float) -> np.ndarray:
+        """Boolean hit mask in the requested direction."""
+        return (sign * np.where(np.isfinite(zrow), zrow, 0.0)) > Z_THRESHOLD
+
+    survivors_by_direction = {
+        d: spec[spec[f"q_{d}"] <= config.FDR_ALPHA]["system"].tolist()
+        for d, _ in DIRECTIONS}
+    survivors = survivors_by_direction["protective"]
+
     adjusted = []
-    for s in survivors:
-        k = systems.index(s)
-        v = real[:, k]
-        enrich = (real[v == 1].mean(axis=0) - real[v == 0].mean(axis=0))
-        partners = [i for i in np.argsort(-enrich)[:N_ISLAND_PARTNERS + 1]
-                    if i != k][:N_ISLAND_PARTNERS]
-        cov2 = np.hstack([cov, real[:, partners]])
-        block = np.hstack([v[:, None], coord_blocks[k], clonal_blocks[k]])
-        z2 = np.full((block.shape[1], len(usable)), np.nan)
-        for m, j in enumerate(usable):
-            ob = np.isfinite(y_mat[:, j])
-            z2[:, m] = score_z(y_mat[ob, j], cov2[ob], block[ob])
-        got = int(count_clusters_hit((z2[0] < -Z_THRESHOLD)[None, :], labels)[0])
-        ps = {}
-        for name, lo in (("coordinate", 1),
-                         ("clonal", 1 + N_NULL_TRAITS)):
-            nl = count_clusters_hit(
-                z2[lo:lo + N_NULL_TRAITS] < -Z_THRESHOLD, labels)
-            ps[name] = float((1 + (nl >= got).sum()) / (1 + N_NULL_TRAITS))
-        adjusted.append(dict(
-            system=s, partners=",".join(systems[i] for i in partners),
-            n_groups_unadjusted=int(spec.loc[spec.system == s,
-                                             "n_groups_protective"].iloc[0]),
-            n_groups_adjusted=got,
-            p_coordinate=ps["coordinate"], p_clonal=ps["clonal"],
-            p_adjusted=max(ps.values()),
-            best_z_adjusted=float(z2[0].min())))
+    for direction, sign in DIRECTIONS:
+        for s in survivors_by_direction[direction]:
+            k = systems.index(s)
+            v = real[:, k]
+            enrich = (real[v == 1].mean(axis=0) - real[v == 0].mean(axis=0))
+            partners = [i for i in np.argsort(-enrich)[:N_ISLAND_PARTNERS + 1]
+                        if i != k][:N_ISLAND_PARTNERS]
+            cov2 = np.hstack([cov, real[:, partners]])
+            block = np.hstack([v[:, None], coord_blocks[k], clonal_blocks[k]])
+            z2 = np.full((block.shape[1], len(usable)), np.nan)
+            for m, j in enumerate(usable):
+                ob = np.isfinite(y_mat[:, j])
+                z2[:, m] = score_z(y_mat[ob, j], cov2[ob], block[ob])
+            got = int(count_clusters_hit(hits(z2[0], sign)[None, :], labels)[0])
+            ps = {}
+            for name, lo in (("coordinate", 1),
+                             ("clonal", 1 + N_NULL_TRAITS)):
+                arr = z2[lo:lo + N_NULL_TRAITS]
+                nl = count_clusters_hit(
+                    (sign * np.where(np.isfinite(arr), arr, 0.0))
+                    > Z_THRESHOLD, labels)
+                ps[name] = float((1 + (nl >= got).sum()) / (1 + N_NULL_TRAITS))
+            adjusted.append(dict(
+                system=s, direction=direction,
+                partners=",".join(systems[i] for i in partners),
+                n_groups_unadjusted=int(spec.loc[spec.system == s,
+                                                 f"n_groups_{direction}"].iloc[0]),
+                n_groups_adjusted=got,
+                p_coordinate=ps["coordinate"], p_clonal=ps["clonal"],
+                p_adjusted=max(ps.values()),
+                best_z_adjusted=float(z2[0].min() if sign < 0 else z2[0].max())))
     adj = pd.DataFrame(adjusted)
     adj.to_csv(paths.TABLES / "table53_island_adjusted.csv", index=False)
 
@@ -432,7 +469,9 @@ def main() -> int:
     # in turn answers that directly: a result that depends on one cluster
     # collapses when it goes, and one that does not, does not.
     stability = []
-    for s in survivors:
+    stability_jobs = [(s, d, sg) for d, sg in DIRECTIONS
+                      for s in survivors_by_direction[d]]
+    for s, direction, sign in stability_jobs:
         k = systems.index(s)
         v = real[:, k]
         held = pd.unique(labels_clonal[v == 1])
@@ -446,20 +485,19 @@ def main() -> int:
                 if yv.sum() < 5 or yv.sum() > ob.sum() - 5:
                     continue
                 z3[:, m] = score_z(yv, cov[ob], block[ob])
-            fine = np.isfinite(z3[0])
-            got = int(count_clusters_hit(
-                (np.where(fine, z3[0], 0.0) < -Z_THRESHOLD)[None, :], labels)[0])
+            got = int(count_clusters_hit(hits(z3[0], sign)[None, :], labels)[0])
             ps = {}
             for name, lo in (("coordinate", 1), ("clonal", 1 + N_NULL_TRAITS)):
                 arr = z3[lo:lo + N_NULL_TRAITS]
                 nl = count_clusters_hit(
-                    np.where(np.isfinite(arr), arr, 0.0) < -Z_THRESHOLD, labels)
+                    (sign * np.where(np.isfinite(arr), arr, 0.0))
+                    > Z_THRESHOLD, labels)
                 ps[name] = float((1 + (nl >= got).sum()) / (1 + N_NULL_TRAITS))
             stability.append(dict(
-                system=s, dropped_cluster=int(c),
+                system=s, direction=direction, dropped_cluster=int(c),
                 carriers_dropped=int(((labels_clonal == c) & (v == 1)).sum()),
                 carriers_left=int(v[keep_strain].sum()),
-                n_groups_protective=got, p_protective=max(ps.values())))
+                n_groups=got, p_value=max(ps.values())))
     stab = pd.DataFrame(stability)
     stab.to_csv(paths.TABLES / "table55_leave_cluster_out.csv", index=False)
 
@@ -469,12 +507,12 @@ def main() -> int:
     # them, separates them: if random drops of that size hurt just as much,
     # the fragility is sample size rather than the cluster.
     matched = []
-    for s in survivors:
+    for s, direction, sign in stability_jobs:
         k = systems.index(s)
         v = real[:, k]
         block = np.hstack([v[:, None], coord_blocks[k], clonal_blocks[k]])
-        part = stab[stab["system"] == s]
-        worst_row = part.loc[part["p_protective"].idxmax()]
+        part = stab[(stab["system"] == s) & (stab["direction"] == direction)]
+        worst_row = part.loc[part["p_value"].idxmax()]
         in_cluster = labels_clonal == int(worst_row.dropped_cluster)
         n_carr = int((in_cluster & (v == 1)).sum())
         n_non = int((in_cluster & (v == 0)).sum())
@@ -483,8 +521,8 @@ def main() -> int:
         draws = []
         for _ in range(N_MATCHED_DROPS):
             drop = np.concatenate([
-                rng.choice(carr_idx, size=n_carr, replace=False),
-                rng.choice(non_idx, size=n_non, replace=False)])
+                rng_drop.choice(carr_idx, size=n_carr, replace=False),
+                rng_drop.choice(non_idx, size=n_non, replace=False)])
             keep_strain = np.ones(len(strains), dtype=bool)
             keep_strain[drop] = False
             z4 = np.full((block.shape[1], len(usable)), np.nan)
@@ -494,23 +532,23 @@ def main() -> int:
                 if yv.sum() < 5 or yv.sum() > ob.sum() - 5:
                     continue
                 z4[:, m] = score_z(yv, cov[ob], block[ob])
-            got = int(count_clusters_hit(
-                (np.where(np.isfinite(z4[0]), z4[0], 0.0)
-                 < -Z_THRESHOLD)[None, :], labels)[0])
+            got = int(count_clusters_hit(hits(z4[0], sign)[None, :], labels)[0])
             ps = {}
             for name, lo in (("coordinate", 1), ("clonal", 1 + N_NULL_TRAITS)):
                 arr = z4[lo:lo + N_NULL_TRAITS]
                 nl = count_clusters_hit(
-                    np.where(np.isfinite(arr), arr, 0.0) < -Z_THRESHOLD, labels)
+                    (sign * np.where(np.isfinite(arr), arr, 0.0))
+                    > Z_THRESHOLD, labels)
                 ps[name] = float((1 + (nl >= got).sum()) / (1 + N_NULL_TRAITS))
             draws.append(dict(n_groups=got, p=max(ps.values())))
         dd = pd.DataFrame(draws)
         matched.append(dict(
-            system=s, dropped_cluster=int(worst_row.dropped_cluster),
+            system=s, direction=direction,
+            dropped_cluster=int(worst_row.dropped_cluster),
             carriers_dropped=n_carr, strains_dropped=n_carr + n_non,
-            p_dropping_cluster=float(worst_row.p_protective),
+            p_dropping_cluster=float(worst_row.p_value),
             median_p_random_drop=float(dd["p"].median()),
-            frac_random_as_bad=float((dd["p"] >= worst_row.p_protective).mean()),
+            frac_random_as_bad=float((dd["p"] >= worst_row.p_value).mean()),
             median_groups_random_drop=float(dd["n_groups"].median())))
     match = pd.DataFrame(matched)
     match.to_csv(paths.TABLES / "table56_matched_drop.csv", index=False)
@@ -545,7 +583,8 @@ def main() -> int:
         observed = float(sub_d[np.triu_indices(hit.size, k=1)].mean())
         draws = np.empty(N_COHERENCE_DRAWS)
         for b in range(N_COHERENCE_DRAWS):
-            pick = rng.choice(len(phage_names), size=hit.size, replace=False)
+            pick = rng_coherence.choice(len(phage_names), size=hit.size,
+                                        replace=False)
             dd = dist[np.ix_(pick, pick)]
             draws[b] = dd[np.triu_indices(hit.size, k=1)].mean()
         coherence.append(dict(
@@ -605,6 +644,14 @@ def main() -> int:
         "carrying the trait are randomised. Its median concordance is "
         f"{structure['clonal_null_concordance'].median():.4f} against the "
         f"observed {structure['observed_concordance'].median():.4f}.")
+    add(f"  That null keeps its freedom to move the trait. Its traits agree "
+        f"with the real carriage vector by a median of "
+        f"{structure['clonal_null_overlap'].median():.3f}, against the "
+        f"{structure['overlap_forced_by_prevalence'].median():.3f} that "
+        f"prevalence alone forces, an excess of only "
+        f"{structure['overlap_excess'].median():.3f}. A null constrained into "
+        "near-copies of the real trait would be trivial to beat, and this one "
+        "is not.")
     add("  Neither null dominates. The coordinate null matches broad-scale "
         "structure and under-matches clonal structure; the clonal null does "
         "the reverse, carrying about half the broad-scale signal of the real "
@@ -709,9 +756,9 @@ def main() -> int:
         add("")
         add("  DOES THE SURVIVOR KEEP ITS SIGNAL AWAY FROM ITS ISLAND?")
         for r in adj.itertuples(index=False):
-            add(f"    {r.system}: {r.n_groups_unadjusted} phage groups "
-                f"unadjusted, {r.n_groups_adjusted} after conditioning on "
-                f"{r.partners} (p {r.p_adjusted:.4f}).")
+            add(f"    {r.system} ({r.direction}): {r.n_groups_unadjusted} "
+                f"phage groups unadjusted, {r.n_groups_adjusted} after "
+                f"conditioning on {r.partners} (p {r.p_adjusted:.4f}).")
         kept = adj[adj["p_adjusted"] <= config.FDR_ALPHA]
         if kept.empty:
             add("    No survivor keeps its signal once the systems most "
@@ -726,23 +773,26 @@ def main() -> int:
     if not stab.empty:
         add("")
         add("  DOES IT REST ON ONE GROUP OF RELATIVES?")
-        for s in sorted(set(stab["system"])):
-            part = stab[stab["system"] == s]
-            add(f"    {s}: dropping each of the {len(part)} clonal clusters "
+        for s, direction in sorted(set(zip(stab["system"], stab["direction"]))):
+            part = stab[(stab["system"] == s)
+                        & (stab["direction"] == direction)]
+            add(f"    {s} ({direction}): dropping each of the {len(part)} "
+                f"clonal clusters "
                 f"holding a carrier in turn leaves "
-                f"{int(part['n_groups_protective'].min())} to "
-                f"{int(part['n_groups_protective'].max())} phage groups "
-                f"(worst p {part['p_protective'].max():.4f} across the "
+                f"{int(part['n_groups'].min())} to "
+                f"{int(part['n_groups'].max())} phage groups "
+                f"(worst p {part['p_value'].max():.4f} across the "
                 f"{len(part)} refits).")
-            worst = part.loc[part["p_protective"].idxmax()]
-            if part["p_protective"].max() <= config.FDR_ALPHA:
+            worst = part.loc[part["p_value"].idxmax()]
+            if part["p_value"].max() <= config.FDR_ALPHA:
                 add("    No single cluster of relatives carries the result: it "
                     "holds with any one of them removed.")
             else:
                 add(f"    Dropping cluster {int(worst.dropped_cluster)}, which "
                     f"holds {int(worst.carriers_dropped)} of the carriers, "
-                    f"takes it to p {worst.p_protective:.4f}.")
-                mr = match[match["system"] == s]
+                    f"takes it to p {worst.p_value:.4f}.")
+                mr = match[(match["system"] == s)
+                           & (match["direction"] == direction)]
                 if not mr.empty:
                     r0 = mr.iloc[0]
                     add(f"    Losing that many strains costs power whatever "
@@ -774,6 +824,47 @@ def main() -> int:
             f"groups in the panel, smallest p "
             f"{part['p_protective'].min():.4f} "
             f"({part.loc[part['p_protective'].idxmin(), 'system']})")
+    add("")
+
+    add("THE OTHER DIRECTION, WHICH NO DEFENSE MECHANISM EXPLAINS")
+    inc = spec.sort_values("p_increased")
+    add("  A system associated with more lysis cannot be acting as a defense. "
+        "That pattern has recurred throughout this project and it gets the "
+        "same two nulls here, applied to the opposite tail.")
+    add(f"  {'system':24s} {'carr':>5s} {'phage':>6s} {'group':>6s} "
+        f"{'p':>7s} {'q':>7s}")
+    for r in inc.head(10).itertuples(index=False):
+        add(f"  {r.system:24s} {r.n_carriers:5d} {r.n_phages_increased:6d} "
+            f"{r.n_groups_increased:6d} {r.p_increased:7.4f} "
+            f"{r.q_increased:7.4f}")
+    inc_sig = inc[inc["q_increased"] <= config.FDR_ALPHA]
+    prot_sig = spec[spec["q_protective"] <= config.FDR_ALPHA]
+    if len(inc_sig):
+        add(f"  {len(inc_sig)} systems act on more phage groups in the "
+            f"increased-lysis direction than both nulls allow: "
+            f"{', '.join(inc_sig['system'])}.")
+        add(f"  That is more than the {len(prot_sig)} surviving in the "
+            "protective direction, which is worth stating plainly rather than "
+            "burying. The association that makes biological sense is the "
+            "weaker of the two in this collection.")
+        add("  The clonal null matters most here. The standing explanation "
+            "for these anomalies has been that such systems mark lineages "
+            "that are easy to lyse for unrelated reasons, and a null that "
+            "preserves the clonal distribution of carriage while moving it to "
+            "other lineages is a direct test of exactly that. These survive "
+            "it, so the lineage explanation does not account for them on this "
+            "evidence, and no defense mechanism accounts for them either.")
+        add("  Two readings remain. The systems may sit on mobile elements "
+            "that also carry something increasing susceptibility, in which "
+            "case the association is real and the attribution wrong. Or "
+            "carriage may be a marker of a history of phage exposure, where "
+            "strains that are easy to lyse accumulate both infections and the "
+            "systems that respond to them, which would reverse the direction "
+            "of causation rather than the association.")
+    else:
+        add("  No system survives both nulls in that direction either, which "
+            "makes the anomaly reported elsewhere in this project a feature "
+            "of the panel average rather than of any particular phage.")
     add("")
 
     add("IS ANY SPECTRUM MORE CLOSELY RELATED THAN CHANCE?")

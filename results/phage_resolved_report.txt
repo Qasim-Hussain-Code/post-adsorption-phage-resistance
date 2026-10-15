@@ -14,6 +14,7 @@ SCOPE
 TWO NULLS, BECAUSE ONE IS NOT ENOUGH
   A null that matches prevalence and the share of carriage explained by the principal coordinates is not adequate here, and the reason is measurable rather than theoretical. Defense systems sit in islands inherited by near-identical relatives. Taking the fraction of same-cluster strain pairs that agree on carriage, the real systems sit at a median of 0.9111 while coordinate-matched null traits reach 0.8103, and 25 of the 33 systems exceed their own null on that measure. Since lysis is itself clonally structured, a trait that tracks lineages more tightly than the null does will score against it for reasons that have nothing to do with defense.
   The second null fixes exactly that. It takes the number of carriers in each clonal cluster and permutes those counts among clusters of the same size, so prevalence and the entire within-cluster carriage pattern are preserved while the lineages carrying the trait are randomised. Its median concordance is 0.9111 against the observed 0.9111.
+  That null keeps its freedom to move the trait. Its traits agree with the real carriage vector by a median of 0.832, against the 0.801 that prevalence alone forces, an excess of only 0.020. A null constrained into near-copies of the real trait would be trivial to beat, and this one is not.
   Neither null dominates. The coordinate null matches broad-scale structure and under-matches clonal structure; the clonal null does the reverse, carrying about half the broad-scale signal of the real traits. Every p-value reported below is therefore the worse of the two, so a system is credited only where neither null accounts for it.
 
 CALIBRATION OF THE SCORE TEST
@@ -47,13 +48,22 @@ DOES ANY SYSTEM ACT ON MORE PHAGE GROUPS THAN A MATCHED TRAIT?
     Retron_I_C: on its 12 phages, carriers are lysed 0.171 of the time against 0.393 for non-carriers, a difference of -0.222. Across the whole panel the same comparison is 0.192 against 0.208, a difference of -0.016. That gap between the two is what averaging over the panel costs, and it is why every test elsewhere in this project missed it.
 
   DOES THE SURVIVOR KEEP ITS SIGNAL AWAY FROM ITS ISLAND?
-    Retron_I_C: 11 phage groups unadjusted, 6 after conditioning on SanaTA,Lamassu-Mrr,PsyrTA,AbiE (p 0.0030).
-    Retron_I_C keeps its signal with those neighbours in the model. That does not prove the attribution, since an island member not catalogued here could carry it, but the effect is not explained by the neighbours that are.
+    Retron_I_C (protective): 11 phage groups unadjusted, 6 after conditioning on SanaTA,Lamassu-Mrr,PsyrTA,AbiE (p 0.0030).
+    BREX_I (increased): 11 phage groups unadjusted, 9 after conditioning on CAS_Class1-Subtype-I-E,PD-Lambda-4,RosmerTA,Mok_Hok_Sok (p 0.0110).
+    CAS_Class1-Subtype-I-F (increased): 9 phage groups unadjusted, 8 after conditioning on CBASS_I,Gao_Qat,RM_Type_I,Mokosh_TypeII (p 0.0030).
+    MazEF (increased): 8 phage groups unadjusted, 8 after conditioning on CAS_Class1-Subtype-I-E,PD-T4-3,Shango,Mok_Hok_Sok (p 0.0010).
+    Retron_I_C, BREX_I, CAS_Class1-Subtype-I-F, MazEF keeps its signal with those neighbours in the model. That does not prove the attribution, since an island member not catalogued here could carry it, but the effect is not explained by the neighbours that are.
 
   DOES IT REST ON ONE GROUP OF RELATIVES?
-    Retron_I_C: dropping each of the 12 clonal clusters holding a carrier in turn leaves 1 to 12 phage groups (worst p 0.1329 across the 12 refits).
+    BREX_I (increased): dropping each of the 19 clonal clusters holding a carrier in turn leaves 6 to 13 phage groups (worst p 0.0380 across the 19 refits).
+    No single cluster of relatives carries the result: it holds with any one of them removed.
+    CAS_Class1-Subtype-I-F (increased): dropping each of the 31 clonal clusters holding a carrier in turn leaves 8 to 12 phage groups (worst p 0.0130 across the 31 refits).
+    No single cluster of relatives carries the result: it holds with any one of them removed.
+    MazEF (increased): dropping each of the 185 clonal clusters holding a carrier in turn leaves 5 to 8 phage groups (worst p 0.0150 across the 185 refits).
+    No single cluster of relatives carries the result: it holds with any one of them removed.
+    Retron_I_C (protective): dropping each of the 12 clonal clusters holding a carrier in turn leaves 1 to 12 phage groups (worst p 0.1329 across the 12 refits).
     Dropping cluster 164, which holds 6 of the carriers, takes it to p 0.1329.
-    Losing that many strains costs power whatever they are, so the same drop was repeated 40 times with strains chosen at random, keeping the number of carriers removed the same. Those random drops give a median p of 0.0065, and 2 percent of them are at least as bad as dropping the cluster.
+    Losing that many strains costs power whatever they are, so the same drop was repeated 40 times with strains chosen at random, keeping the number of carriers removed the same. Those random drops give a median p of 0.0060, and 8 percent of them are at least as bad as dropping the cluster.
     Random drops of the same size do not hurt nearly as much, so this cluster is carrying the result rather than merely contributing to it. The finding should be read as resting on that group of relatives.
 
   Collapsing threshold sensitivity, smallest p over systems:
@@ -61,15 +71,33 @@ DOES ANY SYSTEM ACT ON MORE PHAGE GROUPS THAN A MATCHED TRAIT?
     distance 0.1   :  54 groups in the panel, smallest p 0.0010 (Retron_I_C)
     distance 0.2   :  31 groups in the panel, smallest p 0.0020 (Retron_I_C)
 
+THE OTHER DIRECTION, WHICH NO DEFENSE MECHANISM EXPLAINS
+  A system associated with more lysis cannot be acting as a defense. That pattern has recurred throughout this project and it gets the same two nulls here, applied to the opposite tail.
+  system                    carr  phage  group       p       q
+  BREX_I                      31     16     11  0.0020  0.0440
+  CAS_Class1-Subtype-I-F      66     13      9  0.0030  0.0440
+  MazEF                      338      9      8  0.0040  0.0440
+  SanaTA                      64     22     14  0.0120  0.0857
+  Gao_Qat                     23     13     11  0.0130  0.0857
+  RloC                        27      6      5  0.0549  0.3022
+  PD-Lambda-4                 24     11      4  0.1149  0.4154
+  Septu                       73     12      8  0.1189  0.4154
+  PsyrTA                     110     12      9  0.1239  0.4154
+  PD-T4-3                     65      9      7  0.1259  0.4154
+  3 systems act on more phage groups in the increased-lysis direction than both nulls allow: BREX_I, CAS_Class1-Subtype-I-F, MazEF.
+  That is more than the 1 surviving in the protective direction, which is worth stating plainly rather than burying. The association that makes biological sense is the weaker of the two in this collection.
+  The clonal null matters most here. The standing explanation for these anomalies has been that such systems mark lineages that are easy to lyse for unrelated reasons, and a null that preserves the clonal distribution of carriage while moving it to other lineages is a direct test of exactly that. These survive it, so the lineage explanation does not account for them on this evidence, and no defense mechanism accounts for them either.
+  Two readings remain. The systems may sit on mobile elements that also carry something increasing susceptibility, in which case the association is real and the attribution wrong. Or carriage may be a marker of a history of phage exposure, where strains that are easy to lyse accumulate both infections and the systems that respond to them, which would reverse the direction of causation rather than the association.
+
 IS ANY SPECTRUM MORE CLOSELY RELATED THAN CHANCE?
   system                    phages  groups   mean d   random       p
-  RM_Type_IV                     8       2   0.0984   2.0760  0.0000
-  CAS_Class1-Subtype-I-F         7       5   1.4694   2.0736  0.0178
-  Shango                         3       3   0.7304   2.0710  0.0217
-  Retron_I_C                    12      11   1.7317   2.0756  0.0220
-  RM_Type_IIG                   18      11   1.8969   2.0764  0.0515
-  AbiE                           3       3   1.7386   2.0794  0.2110
-  Lamassu-Mrr                    6       6   2.3131   2.0738  0.8397
+  RM_Type_IV                     8       2   0.0984   2.0744  0.0000
+  CAS_Class1-Subtype-I-F         7       5   1.4694   2.0754  0.0173
+  Shango                         3       3   0.7304   2.0747  0.0197
+  Retron_I_C                    12      11   1.7317   2.0767  0.0230
+  RM_Type_IIG                   18      11   1.8969   2.0754  0.0540
+  AbiE                           3       3   1.7386   2.0749  0.2106
+  Lamassu-Mrr                    6       6   2.3131   2.0750  0.8364
   4 systems act on a set of phages more closely related than chance: RM_Type_IV, CAS_Class1-Subtype-I-F, Shango, Retron_I_C.
   This has to be read against the 'groups' column rather than 'phages'. A set that is tightly clustered because it is one redundant group of the panel is not evidence of a spectrum: it is the same observation counted several times, and the distance that makes it look coherent is the reason it should not. The test is informative only where the affected phages span several groups and are still closer together than chance would place them.
   Systems whose coherent set spans three or more groups: CAS_Class1-Subtype-I-F, Shango, Retron_I_C. These are the ones worth following up on the phages concerned rather than on average.
