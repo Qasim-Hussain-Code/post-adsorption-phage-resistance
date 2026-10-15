@@ -17,3 +17,6 @@ venv/
 desktop.ini
 Thumbs.db
 .DS_Store
+
+# Model archive scratch space for script 07
+.model_cache/

@@ -49,37 +49,6 @@ from papr import config, paths
 from papr.models import fit_logit_cluster, term_effect
 from papr.stats import benjamini_hochberg, mantel_haenszel, stratified_tables, wilson_interval
 
-# A genus needs a reasonable number of sequenced relatives before a prevalence
-# estimated from them means anything. Two surveyed genomes cannot establish
-# whether a lineage carries an anti-defense family.
-MIN_SURVEY_DEPTH = 10
-
-# Mechanistic pairing between a bacterial defense system and the anti-defense
-# family that counteracts it. Systems with no published counterpart in the
-# AntiDefenseFinder model set are listed as unmatched and are tested against
-# total anti-defense burden instead, which is a weaker proxy.
-DEFENSE_TO_ANTIDEFENSE: dict[str, str] = {
-    "RM_Type_I": "Anti_RM",
-    "RM_Type_II": "Anti_RM",
-    "RM_Type_IIG": "Anti_RM",
-    "RM_Type_III": "Anti_RM",
-    "RM_Type_IV": "Anti_RM",
-    "CAS_Class1-Subtype-I-E": "Anti_CRISPR",
-    "CAS_Class1-Subtype-I-F": "Anti_CRISPR",
-    "CBASS_I": "Anti_CBASS",
-    "BREX_I": "Anti_BREX",
-    "Gabija": "Anti_Gabija",
-    "Hachiman": "Anti_Hachiman",
-    "Retron_I_C": "Anti_Retron",
-    "MazEF": "Anti_TA",
-    "PsyrTA": "Anti_TA",
-    "SanaTA": "Anti_TA",
-    "RosmerTA": "Anti_TA",
-    "AbiE": "Anti_TA",
-    "Mok_Hok_Sok": "Anti_TA",
-}
-
-
 def antidefense_prevalence() -> tuple[pd.DataFrame, pd.DataFrame]:
     """Prevalence of each anti-defense family per phage genus, from RefSeq."""
     tax = pd.read_csv(paths.ADF_TAXONOMY, sep="\t", low_memory=False,
@@ -121,7 +90,7 @@ def genus_family_matrix(per_family: pd.DataFrame, genera: list[str],
     wide = wide.join(overall.set_index("genus")[["n_surveyed", "prevalence_any"]])
     wide["n_surveyed"] = wide["n_surveyed"].fillna(0).astype(int)
     wide["prevalence_any"] = wide["prevalence_any"].fillna(0.0)
-    wide["adequately_surveyed"] = wide["n_surveyed"] >= MIN_SURVEY_DEPTH
+    wide["adequately_surveyed"] = wide["n_surveyed"] >= config.MIN_SURVEY_DEPTH
     return wide
 
 
@@ -135,7 +104,7 @@ def split_for_system(name: str, wide: pd.DataFrame) -> tuple[str, pd.Series, flo
     median split with nothing on one side. Reporting a test built on a
     degenerate split would be worse than reporting no test.
     """
-    family = DEFENSE_TO_ANTIDEFENSE.get(name)
+    family = config.DEFENSE_TO_ANTIDEFENSE.get(name)
     if not family or family not in wide.columns:
         return None
     prev = wide[family]
@@ -370,7 +339,7 @@ def main() -> int:
     add(f"  anti-defense families distinguished          : "
         f"{per_family['family'].nunique()}")
     add(f"  VIRIDIC genera in this collection            : {len(genera)}")
-    add(f"  genera with at least {MIN_SURVEY_DEPTH} surveyed relatives     : "
+    add(f"  genera with at least {config.MIN_SURVEY_DEPTH} surveyed relatives     : "
         f"{int(wide['adequately_surveyed'].sum())} of {len(genera)}")
     excluded = sorted(wide.index[~wide["adequately_surveyed"]])
     add(f"  genera excluded for thin survey coverage     : "
@@ -424,9 +393,9 @@ def main() -> int:
 
         tested_names = set(rescue["system"])
         no_family = sorted(s[3:] for s in systems
-                           if s[3:] not in DEFENSE_TO_ANTIDEFENSE)
+                           if s[3:] not in config.DEFENSE_TO_ANTIDEFENSE)
         degenerate = sorted(s[3:] for s in systems
-                            if s[3:] in DEFENSE_TO_ANTIDEFENSE
+                            if s[3:] in config.DEFENSE_TO_ANTIDEFENSE
                             and s[3:] not in tested_names)
         add("")
         add(f"  Not tested, no published anti-defense counterpart ({len(no_family)}): "

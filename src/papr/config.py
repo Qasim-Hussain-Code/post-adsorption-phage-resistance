@@ -54,5 +54,33 @@ RANDOM_SEED = 20260101
 N_BOOTSTRAP = 2000
 N_PERMUTATIONS = 2000
 
+# Mechanistic pairing between a bacterial defense system and the anti-defense
+# family that counteracts it. Systems absent from this map have no published
+# counterpart in the AntiDefenseFinder model set and are not tested for rescue.
+DEFENSE_TO_ANTIDEFENSE: dict[str, str] = {
+    "RM_Type_I": "Anti_RM",
+    "RM_Type_II": "Anti_RM",
+    "RM_Type_IIG": "Anti_RM",
+    "RM_Type_III": "Anti_RM",
+    "RM_Type_IV": "Anti_RM",
+    "CAS_Class1-Subtype-I-E": "Anti_CRISPR",
+    "CAS_Class1-Subtype-I-F": "Anti_CRISPR",
+    "CBASS_I": "Anti_CBASS",
+    "BREX_I": "Anti_BREX",
+    "Gabija": "Anti_Gabija",
+    "Hachiman": "Anti_Hachiman",
+    "Retron_I_C": "Anti_Retron",
+    "MazEF": "Anti_TA",
+    "PsyrTA": "Anti_TA",
+    "SanaTA": "Anti_TA",
+    "RosmerTA": "Anti_TA",
+    "AbiE": "Anti_TA",
+    "Mok_Hok_Sok": "Anti_TA",
+}
+
+# A phage genus needs this many sequenced relatives before a prevalence
+# estimated from them is used as a lineage-level prior.
+MIN_SURVEY_DEPTH = 10
+
 # Figure output.
 FIGURE_DPI = 300

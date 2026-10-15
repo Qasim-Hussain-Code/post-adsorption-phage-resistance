@@ -40,6 +40,12 @@ PHAGE_TREE = RAW / "phages" / "phage_viridic_tree.nwk"
 ADF_PHAGE = RAW / "antidefense" / "adf_hits_refseq_phage.tsv"
 ADF_TAXONOMY = RAW / "antidefense" / "phage_taxonomy_refseq.tsv"
 
+# Inputs for the direct annotation of the 96 phage genomes (script 07).
+PHAGE_GENOMES = RAW / "phage_genomes"
+ADF_MODELS = RAW / "adf_models"
+ADF_PROFILES = ADF_MODELS / "profiles"
+ADF_DEFINITIONS = ADF_MODELS / "definitions"
+
 # Derived tables written by the pipeline.
 PAIRS = PROCESSED / "pair_level_table.csv.gz"
 STRAIN_FEATURES = PROCESSED / "strain_features.csv"
@@ -47,6 +53,9 @@ PHAGE_FEATURES = PROCESSED / "phage_features.csv"
 GATE_DEFINITIONS = PROCESSED / "receptor_gate_definitions.csv"
 PCOA = PROCESSED / "core_genome_pcoa.csv"
 ADF_GENUS = PROCESSED / "antidefense_genus_prevalence.csv"
+PHAGE_PROTEINS = PROCESSED / "phage_proteins.faa.gz"
+PHAGE_ADF_HITS = PROCESSED / "phage_antidefense_hits.csv"
+PHAGE_ADF_SYSTEMS = PROCESSED / "phage_antidefense_systems.csv"
 
 
 def bootstrap() -> Path:
