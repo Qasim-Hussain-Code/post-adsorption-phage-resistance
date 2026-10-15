@@ -20,3 +20,8 @@ Thumbs.db
 
 # Model archive scratch space for script 07
 .model_cache/
+
+# Regenerable binary caches. The sketch archive is ~57 MB and is rebuilt from
+# data/raw/host_genomes by scripts/19_validate_host_genomes.py; tracking it
+# bloats history for no benefit.
+data/processed/host_genome_sketches.npz
