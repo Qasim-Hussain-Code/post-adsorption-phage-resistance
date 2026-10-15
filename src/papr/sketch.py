@@ -60,6 +60,28 @@ def read_sequences(path: Path) -> list[np.ndarray]:
     return [_CODE[np.frombuffer(s, dtype=np.uint8)] for s in seqs if s]
 
 
+def read_raw_sequences(path: Path) -> list[bytes]:
+    """Read a FASTA, gzipped or not, as raw uppercase sequence bytes.
+
+    Kept separate from `read_sequences`, which returns 2-bit codes for
+    sketching. Converting codes back into a string to feed a gene caller costs
+    seconds per genome; reading the bytes once costs milliseconds.
+    """
+    opener = gzip.open if str(path).endswith(".gz") else open
+    seqs, buf = [], []
+    with opener(path, "rb") as fh:
+        for line in fh:
+            if line.startswith(b">"):
+                if buf:
+                    seqs.append(b"".join(buf).upper())
+                    buf = []
+            else:
+                buf.append(line.strip())
+    if buf:
+        seqs.append(b"".join(buf).upper())
+    return seqs
+
+
 def _canonical_hashes(codes: np.ndarray, k: int = K) -> np.ndarray:
     """Hashes of every valid canonical k-mer in one sequence.
 
