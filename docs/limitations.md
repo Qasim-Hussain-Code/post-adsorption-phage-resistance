@@ -3,6 +3,21 @@
 These are the reasons a reader should hold the conclusions in this repository
 loosely, ordered roughly by how much they matter.
 
+## A claim in an earlier version of this analysis was wrong
+
+The first version of the variance decomposition reported that defense carriage
+contributes more to the variation in lysis than host surface does. That was an
+artefact of two defects: the blocks were entered in one fixed order, and the
+surface block held six terms against thirty-three for defense. With a surface
+block containing everything the collection types about the cell surface and an
+order-independent Shapley allocation, host surface accounts for about three
+times what defense does. The earlier statement is retracted in
+`docs/results.md`, and the table that produced it is retained in script 03 only
+to show the nested fits, with a note directing the reader to script 11.
+
+The lesson generalises beyond this one number: any comparison between blocks of
+unequal size, entered in a chosen order, can be made to favour either block.
+
 ## Receptor compatibility is inferred and the inference is weak
 
 The central methodological problem is that this dataset contains no statement of
@@ -28,6 +43,15 @@ Consequently the two-gate decomposition should be read as one defensible
 estimate under a stated definition, not as a measurement of how often adsorption
 fails. The primary analysis avoids depending on it by stratifying on surface
 state instead.
+
+Script 12 tested whether the weakness lies in the grouping by rebuilding the
+gate from receptor binding protein homology, which is the actual determinant of
+adsorption rather than a taxonomic proxy. It does not help: 1.26 fold enrichment
+against 1.34 for the genus gate. The weakness is therefore in the **anchor**.
+One isolation host per phage establishes that a surface state is permissive and
+can never establish that another is not, so permissive sets remain small however
+the phages are grouped. Fixing this would require adsorption assays rather than
+plaque assays, which no reanalysis of this dataset can supply.
 
 ## Anti-defense content: this limitation has since been closed
 

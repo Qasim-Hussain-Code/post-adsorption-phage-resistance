@@ -236,6 +236,78 @@ none; the within-cluster regression returns none; the Mantel-Haenszel version of
 the within-cluster design returns nine, which is why its p-values are reported
 but not interpreted.
 
+## Partitioning explained variation
+
+Blocks of variables are compared by the exact Shapley value of the McFadden
+pseudo R2: each block's share is the average of the increase it produces when
+added to a model, taken over every ordering of the blocks. With four blocks this
+requires fitting all sixteen subsets. The allocation is order-independent and
+sums to the full-model pseudo R2, which an ordered sequence of increments does
+not. Results are reported alongside each block fitted alone and each block added
+last, which bracket the Shapley figure, and per degree of freedom, because a
+block with more terms can capture more variation by flexibility alone.
+
+The surface block contains the LPS outer core, O-antigen serotype, O-antigen
+status, capsule state and the allele called at twelve outer membrane protein
+loci. Levels of a categorical variable carried by fewer than five strains are
+pooled into one "other" level so that a 94-level serotype does not spend ninety
+degrees of freedom on singletons. Capsule columns, which are missing for the
+isolation-host strains, enter as a presence indicator and a missingness
+indicator rather than causing those rows to be dropped.
+
+## Receptor binding protein grouping
+
+The released receptor binding protein table names each protein by gene
+identifier without a sequence. Those identifiers match the proteins predicted in
+script 07 for 125 of 130 entries, and the matched proteins have a median length
+of 677 residues against 127 for all predicted proteins, with 85 percent above
+400 residues against 12 percent overall. The correspondence is therefore treated
+as established.
+
+Recovered proteins are compared all against all with phmmer. The similarity of
+a pair is its bit score normalised by the self-score of the shorter sequence,
+giving a value near 1 for near-identical proteins. Phages are grouped by single
+linkage at five thresholds from 0.20 to 0.80, each phage taking the group of its
+longest annotated receptor binding protein. Gates are then rebuilt exactly as in
+script 02, pooling isolation hosts within receptor group instead of within
+genus, and compared on the same footing. Grouping uses only phage protein
+sequences and the gate uses only isolation hosts, so the construction remains
+independent of the interaction outcomes.
+
+## Joint estimation across systems
+
+Every system carried by at least five strains is first fitted separately with
+the lineage adjustment of script 04. The resulting log odds ratios are combined
+in a random effects model, with the between-system variance estimated by the
+Paule-Mandel iteration and DerSimonian-Laird reported alongside it. Each
+system's estimate is shrunk toward the pooled mean in proportion to its own
+precision, and the posterior interval is formed from the shrunken variance.
+Estimates with a standard error above 5 on the log odds scale are treated as
+degenerate fits and excluded rather than shrunk.
+
+The between-system variance is reported as a quantity of interest in its own
+right: it measures how much genuine variation in effect exists between defense
+systems once sampling error is removed.
+
+## Combinations
+
+Pairs of systems are fitted with both main effects, their interaction, phage
+identity, host surface type and the clonal background covariates, with standard
+errors clustered on clonal cluster. A pair is tested only when all four carriage
+combinations occur in at least ten strains. Systems are additionally grouped
+into seven mechanistic classes by name prefix, and the number of distinct
+classes a strain carries is compared with the raw system count as a predictor of
+its lysis rate.
+
+## Consolidation
+
+The union of systems nominated in the protective direction by the lineage
+adjusted regression, the within-cluster design, either permutation scheme or the
+shrinkage model is assembled, and the full battery is applied to all of them,
+including rare systems that had not previously been tested. Ranking is by the
+number of independent checks passed rather than by any single p-value, because
+the checks disagree often enough that any one of them alone would mislead.
+
 ## Software
 
 Python 3.13.11 with numpy 2.3.5, pandas 2.3.3, scipy 1.16.3, statsmodels 0.14.6,

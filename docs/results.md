@@ -294,6 +294,126 @@ in two of the stricter designs**, and is arguably the best-supported candidate
 in the whole analysis. It is not a claim, but it is where a targeted experiment
 would start.
 
+## 12. Correcting the variance decomposition
+
+Section 4 compared blocks of variables by adding them to a model in one fixed
+order. That comparison was defective twice over: the increments depend on the
+order, and the surface block held only six terms against thirty-three for
+defense. Script 11 repeats it with a surface block containing everything the
+collection types about the cell surface (LPS outer core, O-antigen serotype and
+status, capsule state, twelve outer membrane protein loci) and allocates the
+shared variation by exact Shapley value over all orderings, which requires
+fitting all sixteen subsets of four blocks.
+
+| Block | Terms | Shapley pseudo R2 | Share | Alone | Added last |
+|---|---|---|---|---|---|
+| phage identity | 95 | 0.1920 | 59.7 percent | 0.1751 | 0.2049 |
+| host surface | 157 | 0.0830 | 25.8 percent | 0.1010 | 0.0685 |
+| defense systems | 33 | 0.0269 | 8.4 percent | 0.0410 | 0.0179 |
+| clonal lineage | 22 | 0.0199 | 6.2 percent | 0.0387 | 0.0055 |
+
+**This reverses the conclusion of section 4.** Host surface accounts for about
+**three times** the variation that all thirty-three defense systems do, and the
+ordering holds whether each block is fitted alone, added last, or allocated by
+Shapley value. It also agrees with the published analysis of the same dataset,
+which reported adsorption-related features as the more informative ones.
+
+One qualification cuts the other way: per term, defense is the more efficient
+block (0.00081 against 0.00053), because surface spends 157 terms to defense's
+33. The fair statement is that host surface explains substantially more of the
+variation in total, using more parameters, and that both are dwarfed by which
+phage is being tested.
+
+## 13. A receptor gate built from the actual receptor
+
+The weakest step in this analysis was always the definition of receptor
+compatibility, which script 02 anchored on isolation hosts pooled by VIRIDIC
+genus. Genus is only a proxy; the receptor binding protein is what contacts the
+host surface. The released table names each phage's receptor binding protein
+without giving a sequence, but those identifiers match the proteins predicted in
+script 07 for 125 of 130 entries, and the matched proteins have a median length
+of 677 residues against 127 for all predicted proteins, which is what tail
+fibers look like.
+
+Grouping the 87 phages with a recovered protein by receptor binding protein
+homology gives 30 to 45 receptor groups depending on the similarity threshold,
+against 19 genera. **It does not improve the gate.** The best receptor-based
+gate reaches 1.26 fold enrichment against 1.34 fold for the genus gate.
+
+That is a useful negative result because it localises the problem. Since the
+receptor binding protein is the right biological object, the limitation is not
+the grouping but the **anchor**: one isolation host per phage can establish that
+a surface state is permissive and can never establish that another is not, so
+the permissive sets stay small and the gate stays blunt however the phages are
+grouped. The receptor-based gate attributes a larger share of failures to the
+surface (60.6 against 35.9 percent) only because it is stricter, admitting 40.9
+percent of pairs against 65.7 percent while separating them less well. That is a
+stringency artefact, not a better measurement.
+
+## 14. All 79 systems estimated jointly
+
+Scripts 03 and 04 tested only the 33 systems carried by at least 20 strains.
+Script 13 fits every system carried by at least five, 79 in all, and combines
+them in a random effects model so that each estimate is shrunk toward the pooled
+mean by an amount set by its own precision.
+
+- Pooled odds ratio across all systems: **0.923** (95 percent CI 0.847 to 1.005)
+- Between-system standard deviation: 0.269 on the log odds scale, I squared 56
+  percent (Cochran Q = 178.9 on 78 df, p = 7e-10)
+- Implied spread: 95 percent of true system effects lie between odds ratios of
+  0.544 and 1.563
+- Median shrinkage weight 0.511; 7 systems significant alone, 9 with a shrunken
+  interval excluding 1
+
+So there is real variation between systems beyond sampling error, but the
+average system has essentially no association with lysis. Extending coverage
+surfaces four candidates the 20-carrier threshold had hidden: **PD-T7-4**,
+**AbiD**, **Lamassu-Cap4_nuclease** and **BstA** (the last associated with more
+lysis, not less). Their median shrinkage weight is 0.382, so most of their
+individual signal is replaced by the pooled mean, which is the correct treatment
+of an estimate from a handful of strains.
+
+## 15. Combinations do not rescue the burden null
+
+Carrying more systems does not help (section 6). That null assumes systems act
+additively, so script 14 tests pairs directly. Of 528 possible pairs, 135 have
+at least ten strains in each of the four carriage combinations and can support
+an interaction term. **None shows a significant interaction** after clonal
+adjustment and FDR correction. Grouping systems into seven mechanistic classes
+does not help either: the correlation between per-strain lysis rate and the
+number of distinct classes carried (rho = +0.056, p = 0.26) is no better than
+for the raw count (rho = +0.053, p = 0.29).
+
+The burden null is therefore not hiding combination effects at the pairwise
+level. Three-way and higher combinations cannot be estimated in a collection of
+402 strains with repertoires this correlated.
+
+## 16. One consolidated candidate list
+
+Four analyses nominate different systems. Script 15 takes the union in the
+protective direction, applies the same battery to all of them including the rare
+ones that had never been through it, and ranks by how many independent checks
+each passes.
+
+| System | Strains | Adjusted OR | Shrunk OR | Within-cluster OR | Clusters | Genera below 1 | E-value | Checks |
+|---|---|---|---|---|---|---|---|---|
+| RM_Type_IIG | 52 | 0.549 | 0.632 | 0.968 | 7 | 15/15 | 2.69 | 3/5 |
+| RM_Type_III | 54 | 0.626 | 0.718 | 0.328 | 12 | 10/18 | 2.31 | 3/5 |
+| Shango | 37 | 0.583 | 0.705 | 0.492 | 9 | 16/17 | 2.51 | 2/5 |
+| Lamassu-Cap4_nuclease | 18 | 0.451 | 0.629 | 0.417 | 5 | 12/13 | 3.34 | 2/5 |
+| Zorya_TypeII | 20 | 0.444 | 0.607 | 0.344 | 2 | 11/13 | 3.40 | 2/5 |
+| AbiD | 14 | 0.270 | 0.575 | 0.349 | 6 | 11/15 | 5.75 | 2/5 |
+| PD-T7-4 | 7 | 0.382 | 0.571 | not estimable | 1 | 8/10 | 3.99 | 1/5 |
+| Retron_I_C | 20 | 0.722 | 0.822 | 0.249 | 4 | 11/16 | 1.94 | 1/5 |
+| RosmerTA | 47 | 1.171 | 1.085 | 0.532 | 11 | 6/17 | 1.52 | 1/5 |
+
+Six systems pass at least two independent checks. **None passes all five**, and
+the two headline survivors of script 04 are not clearly the best entries:
+RM_Type_III matches RM_Type_IIG at three of five while having twelve informative
+clonal clusters to RM_Type_IIG's seven, and AbiD has the highest E-value in the
+table at 5.75 despite only fourteen carriers. Zorya_TypeII has two informative
+clusters, so its within-cluster column is uninformative rather than supportive.
+
 ## Summary
 
 Surface receptor variation is real but does not dominate: it explains about a
@@ -316,3 +436,20 @@ methodological gap, left every counter-defense conclusion intact. The honest
 position is that this dataset supports a short list of candidates worth testing
 experimentally, not a demonstration that any particular system confers
 resistance.
+
+The extended analysis changed one conclusion and sharpened several others. The
+changed one matters: a fair, order-independent partition of explained variation
+shows **host surface accounting for about three times what all thirty-three
+defense systems account for**, reversing what section 4 implied and agreeing
+with the published analysis of this dataset. Section 4's comparison had given
+surface six terms against defense's thirty-three and depended on the order the
+blocks were entered.
+
+Of the sharpened conclusions: a receptor gate built from actual receptor
+binding protein homology is no better than the genus-based one, which localises
+the problem to the single-isolation-host anchor rather than to the grouping;
+extending from 33 to 79 systems leaves a pooled odds ratio of 0.923 and adds
+four weak candidates; and none of 135 testable system pairs interacts, so the
+burden null is not concealing combination effects. The consolidated list of nine
+candidates has no entry passing all five independent checks, and the two systems
+the main analysis singled out are not obviously its strongest members.

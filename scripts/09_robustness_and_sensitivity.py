@@ -49,6 +49,7 @@ from scipy.spatial.distance import squareform
 
 from papr import config, paths
 from papr.models import fit_logit_cluster
+from papr.robust import permutation_effects, within_cluster_effects
 from papr.stats import benjamini_hochberg, mantel_haenszel, stratified_tables
 
 N_PERMUTATIONS = 10_000
@@ -67,141 +68,6 @@ def load():
     pairs = pairs.merge(strain_feats[["strain"] + systems], on="strain", how="left")
     pairs["clonal_cluster"] = pairs["strain"].map(clusters["clonal_cluster"])
     return pairs, strain_feats, systems, pcoa, lineage
-
-
-def within_cluster(pairs: pd.DataFrame, systems: list[str]) -> pd.DataFrame:
-    """Compare carriers with non-carriers inside the same clonal cluster.
-
-    Only clusters that contain the system both present and absent carry any
-    information about it, so the fit is restricted to those and a cluster fixed
-    effect absorbs everything the shared genomic background contributes. What
-    remains is the contrast between near-identical bacteria that differ in the
-    system, which is the closest this observational design comes to holding
-    the genome constant.
-
-    Both estimators are reported. The Mantel-Haenszel column stratifies on
-    phage and cluster but treats strain-phage pairs as independent, so its
-    interval is too narrow for the same reason as in script 03. The regression
-    column adds cluster fixed effects and clusters the standard errors on the
-    same variable, and is the one to read.
-    """
-    y_all = pairs["lytic"].to_numpy(dtype=float)
-    rows = []
-    for col in systems:
-        name = col[3:]
-        per_cluster = pairs.groupby("clonal_cluster")[col].agg(["mean"])
-        discordant = per_cluster[(per_cluster["mean"] > 0) & (per_cluster["mean"] < 1)]
-        keep = set(discordant.index)
-
-        tabs = stratified_tables(pairs, ["phage", "clonal_cluster"], col, "lytic")
-        eff = mantel_haenszel(tabs)
-
-        mask = pairs["clonal_cluster"].isin(keep).to_numpy()
-        n_strains = int(pairs.loc[mask, "strain"].nunique())
-        or_reg = lo_reg = hi_reg = p_reg = np.nan
-        if len(keep) >= 2 and mask.sum() > 0:
-            sub = pairs.loc[mask]
-            exposure = sub[col].to_numpy(dtype=float)
-            if 0 < exposure.sum() < len(exposure):
-                x = np.hstack([
-                    exposure.reshape(-1, 1),
-                    np.ones((int(mask.sum()), 1)),
-                    pd.get_dummies(sub["phage"].astype("string"),
-                                   drop_first=True, dtype=float).to_numpy(),
-                    pd.get_dummies(sub["clonal_cluster"].astype("string"),
-                                   drop_first=True, dtype=float).to_numpy(),
-                ])
-                try:
-                    res = fit_logit_cluster(
-                        y_all[mask], x, sub["clonal_cluster"].to_numpy())
-                    beta, se = float(res.params[0]), float(res.bse[0])
-                    if np.isfinite(beta) and np.isfinite(se) and se > 0:
-                        or_reg = float(np.exp(beta))
-                        lo_reg = float(np.exp(beta - 1.96 * se))
-                        hi_reg = float(np.exp(beta + 1.96 * se))
-                        p_reg = float(res.pvalues[0])
-                except Exception:
-                    pass
-
-        rows.append(dict(
-            system=name,
-            n_discordant_clusters=int(len(discordant)),
-            n_strains_in_discordant=n_strains,
-            mh_odds_ratio=eff.estimate, mh_ci_low=eff.ci_low,
-            mh_ci_high=eff.ci_high, mh_p_value=eff.p_value,
-            n_strata_used=eff.n_strata_used,
-            odds_ratio=or_reg, ci_low=lo_reg, ci_high=hi_reg, p_value=p_reg))
-    out = pd.DataFrame(rows)
-    out["q_value"] = benjamini_hochberg(out["p_value"].to_numpy())
-    out["mh_q_value"] = benjamini_hochberg(out["mh_p_value"].to_numpy())
-    out["significant"] = out["q_value"] <= config.FDR_ALPHA
-    out["mh_significant"] = out["mh_q_value"] <= config.FDR_ALPHA
-    out["log2_or"] = np.log2(out["odds_ratio"])
-    return out
-
-
-def permutation_tests(pairs: pd.DataFrame, strain_feats: pd.DataFrame,
-                      systems: list[str]) -> pd.DataFrame:
-    """Shuffle carrier labels inside a lineage and rebuild the null.
-
-    The statistic is the difference in mean per-strain lysis rate between
-    carriers and non-carriers. Every strain was challenged with the same 96
-    phages, so per-strain lysis rates are directly comparable and no adjustment
-    for phage composition is needed. Permuting inside a phylogroup, and more
-    strictly inside a Sequence Type, keeps the lineage structure intact, so a
-    system that merely marks a lineage cannot produce a low p-value.
-    """
-    rng = np.random.default_rng(config.RANDOM_SEED)
-    per_strain = pairs.groupby("strain")["lytic"].mean()
-    feats = strain_feats.set_index("strain").loc[per_strain.index]
-    y = per_strain.to_numpy()
-
-    rows = []
-    for level_name, key in [("phylogroup", "phylogroup"), ("sequence_type", "sequence_type")]:
-        groups = feats[key].astype("string").fillna("unknown").to_numpy()
-        uniq = np.unique(groups)
-        index_by_group = {g: np.where(groups == g)[0] for g in uniq}
-        for col in systems:
-            name = col[3:]
-            x = feats[col].to_numpy().astype(int)
-            if x.sum() == 0 or x.sum() == len(x):
-                continue
-            observed = y[x == 1].mean() - y[x == 0].mean()
-
-            # Only groups containing both states can contribute variation.
-            usable = [g for g in uniq
-                      if 0 < x[index_by_group[g]].sum() < len(index_by_group[g])]
-            n_usable_strains = int(sum(len(index_by_group[g]) for g in usable))
-            if not usable:
-                rows.append(dict(level=level_name, system=name,
-                                 observed_difference=observed,
-                                 n_usable_groups=0, n_usable_strains=0,
-                                 p_value=np.nan, null_mean=np.nan, null_sd=np.nan))
-                continue
-
-            null = np.empty(N_PERMUTATIONS)
-            xperm = x.copy()
-            for b in range(N_PERMUTATIONS):
-                for g in usable:
-                    idx = index_by_group[g]
-                    xperm[idx] = rng.permutation(x[idx])
-                null[b] = y[xperm == 1].mean() - y[xperm == 0].mean()
-            # Two-sided empirical p-value with the observed value included.
-            p = (np.sum(np.abs(null - null.mean()) >= abs(observed - null.mean())) + 1) \
-                / (N_PERMUTATIONS + 1)
-            rows.append(dict(level=level_name, system=name,
-                             observed_difference=float(observed),
-                             n_usable_groups=len(usable),
-                             n_usable_strains=n_usable_strains,
-                             p_value=float(p), null_mean=float(null.mean()),
-                             null_sd=float(null.std(ddof=1))))
-    out = pd.DataFrame(rows)
-    out["q_value"] = np.nan
-    for level in out["level"].unique():
-        m = out["level"] == level
-        out.loc[m, "q_value"] = benjamini_hochberg(out.loc[m, "p_value"].to_numpy())
-    out["significant"] = out["q_value"] <= config.FDR_ALPHA
-    return out
 
 
 def detectable_effects(lineage: pd.DataFrame) -> pd.DataFrame:
@@ -347,9 +213,12 @@ def main() -> int:
     baseline = float(pairs["lytic"].mean())
 
     print("within-cluster analysis")
-    wc = within_cluster(pairs, systems)
+    wc = within_cluster_effects(pairs, systems)
     print("permutation tests")
-    perm = permutation_tests(pairs, strain_feats, systems)
+    perm = permutation_effects(
+        pairs, strain_feats, systems,
+        [("phylogroup", "phylogroup"), ("sequence_type", "sequence_type")],
+        N_PERMUTATIONS, config.RANDOM_SEED)
     print("detectable effects")
     mde = detectable_effects(lineage)
     print("clonal threshold sweep")

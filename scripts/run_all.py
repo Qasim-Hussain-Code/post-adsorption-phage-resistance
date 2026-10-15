@@ -23,11 +23,18 @@ STEPS = [
     ("08_counterdefense_direct.py", "counter-defense from the direct annotation"),
     ("09_robustness_and_sensitivity.py", "stress the surviving associations"),
     ("10_generate_extended_figures.py", "extended figures"),
+    ("11_variance_partitioning.py", "order-independent partition of explained variation"),
+    ("12_rbp_receptor_gate.py", "receptor gate from binding protein homology"),
+    ("13_hierarchical_shrinkage.py", "all systems estimated jointly"),
+    ("14_defense_combinations.py", "pairwise and class-level combinations"),
+    ("15_consolidated_candidates.py", "one ranked candidate list"),
+    ("16_generate_summary_figure.py", "summary figure"),
 ]
 
 # Steps 07 onward download phage genomes and a model archive and are much
 # slower than the core pipeline, so they can be skipped independently.
-EXTENDED_PREFIXES = ("07_", "08_", "09_", "10_")
+EXTENDED_PREFIXES = ("07_", "08_", "09_", "10_", "11_", "12_", "13_", "14_",
+                     "15_", "16_")
 
 
 def main() -> int:

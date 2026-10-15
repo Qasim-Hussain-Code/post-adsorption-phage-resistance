@@ -101,12 +101,24 @@ LPS outer core, 0.517 adding O-antigen status. This is the direction the masking
 hypothesis predicts, but the magnitude is modest. Surface variation masks these
 associations partially, not dominantly.
 
-**Which phage is being tested matters far more than anything about the host.**
-In a nested logistic decomposition, phage identity alone reaches a McFadden
-pseudo R2 of 0.176. Host surface type adds 0.031, all 33 defense systems
-together add 0.043, and phylogroup adds 0.011. Defense carriage contributes
-slightly more than the surface determinants typed in this collection, and
-neither approaches the phage term.
+**Which phage is being tested matters far more than anything about the host,
+and host surface outweighs defense.** Allocating explained variation by exact
+Shapley value over all orderings of the blocks, with a surface block containing
+everything the collection types about the cell surface:
+
+| Block | Terms | Shapley pseudo R2 | Share |
+|---|---|---|---|
+| phage identity | 95 | 0.1920 | 59.7 percent |
+| host surface | 157 | 0.0830 | 25.8 percent |
+| defense systems | 33 | 0.0269 | 8.4 percent |
+| clonal lineage | 22 | 0.0199 | 6.2 percent |
+
+Host surface accounts for about **three times** what all 33 defense systems do,
+and that ordering holds whether each block is fitted alone, added last, or
+allocated by Shapley value. An earlier version of this analysis reported the
+opposite; that comparison gave surface six terms against defense's thirty-three
+and depended on the order the blocks were entered. Per term the two are closer,
+with defense marginally ahead, since surface spends 157 terms to defense's 33.
 
 **Almost nothing survives clonal control.** Fitted as a regression with
 clustered standard errors, 6 of 33 systems are significant before lineage
@@ -171,6 +183,45 @@ ranges only from 0.43 to 0.70. For most of them the analysis had no power to
 see a moderate effect, and they should not be read as evidence that the system
 does nothing.
 
+**All 79 systems, estimated jointly.** Fitting every system carried by at least
+five strains and shrinking each toward the pooled mean extends coverage from 33
+to 79. The pooled odds ratio is **0.923** (95 percent CI 0.847 to 1.005) with a
+between-system standard deviation of 0.269, so systems genuinely differ from
+one another but the average has essentially no association with lysis. Four
+candidates below the old 20-carrier threshold surface here: PD-T7-4, AbiD,
+Lamassu-Cap4_nuclease and BstA.
+
+**A receptor gate built from the actual receptor is no better.** Receptor
+binding protein sequences were recovered for 87 phages and used to group them by
+homology (30 to 45 groups against 19 genera). The resulting gate reaches 1.26
+fold enrichment against the genus gate's 1.34. Since the binding protein is the
+right biological object, this localises the weakness to the **anchor**, one
+isolation host per phage, which can show a surface state is permissive but never
+that another is not.
+
+**Combinations do not rescue the burden null.** Of 135 system pairs with enough
+strains in all four carriage combinations, **none** shows a significant
+interaction. Counting systems fails to predict lysis, and so does pairing them.
+
+### The candidate list
+
+Nine systems are nominated somewhere in the study. Putting all of them through
+the same battery:
+
+| System | Strains | Adjusted OR | Within-cluster OR | Clusters | Genera below 1 | E-value | Checks |
+|---|---|---|---|---|---|---|---|
+| RM_Type_IIG | 52 | 0.549 | 0.968 | 7 | 15/15 | 2.69 | 3/5 |
+| RM_Type_III | 54 | 0.626 | 0.328 | 12 | 10/18 | 2.31 | 3/5 |
+| Shango | 37 | 0.583 | 0.492 | 9 | 16/17 | 2.51 | 2/5 |
+| Lamassu-Cap4_nuclease | 18 | 0.451 | 0.417 | 5 | 12/13 | 3.34 | 2/5 |
+| Zorya_TypeII | 20 | 0.444 | 0.344 | 2 | 11/13 | 3.40 | 2/5 |
+| AbiD | 14 | 0.270 | 0.349 | 6 | 11/15 | 5.75 | 2/5 |
+
+**No system passes all five checks**, and the two the main analysis singled out
+are not clearly its best entries. RM_Type_III matches RM_Type_IIG while having
+twelve informative clonal clusters to its seven; AbiD has the highest E-value in
+the table on only fourteen carriers.
+
 **Most resistance in this collection remains unexplained.** Among pairs passing
 the surface gate whose host carries neither lineage-validated system, 75.8
 percent of infections still fail, against 79.25 percent across the whole matrix.
@@ -189,6 +240,7 @@ group in this collection.
 | `figures/fig4_quantitative_titer_shifts` | Plaque score distributions by defense burden and phage morphotype, and per-system score shifts |
 | `figures/fig5_direct_antidefense_annotation` | Anti-defense families found in the 96 genomes, validation against the RefSeq survey, and rescue interactions measured against imputed |
 | `figures/fig6_robustness_of_surviving_effects` | Each estimate beside what it could have detected, threshold sensitivity, and per-genus consistency |
+| `figures/fig7_consolidated_evidence` | Shapley partition of explained variation, 79 systems shrunk jointly, and the consolidated candidate list |
 
 Each is written as 300 dpi PNG and vector PDF. Every figure is drawn from the
 tables in `results/tables`, so a figure cannot disagree with a reported number.
@@ -199,7 +251,7 @@ Requires Python 3.13 and the pinned versions in `requirements.txt`.
 
 ```bash
 pip install -r requirements.txt
-python scripts/run_all.py              # everything, about 10 minutes
+python scripts/run_all.py              # everything, about 35 minutes
 python scripts/run_all.py --core-only  # steps 01 to 06 only, about 2 minutes
 ```
 
@@ -207,17 +259,20 @@ Individual stages can be run in order instead; each writes its own report to
 `results/` and its tables to `results/tables/`.
 
 Steps 01 to 06 are the core analysis and take about two minutes, most of it in
-the regression fitting of step 4. Steps 07 to 10 additionally download the 96
+the regression fitting of step 4. Steps 07 to 16 additionally download the 96
 phage genomes (6.9 MB) and the DefenseFinder model release (49 MB, from which
-only the anti-defense profiles are kept and the archive is then deleted), and
-take about eight minutes more. Peak memory stays below 1 GB. The repository plus
-all downloaded data occupies about 51 MB.
+only the anti-defense profiles are kept and the archive is then deleted). They
+take roughly half an hour, dominated by the permutation tests in step 9, the
+sixteen nested fits in step 11 and the 135 pair fits in step 14. Peak memory
+stays below 1 GB. The repository plus all downloaded data occupies about 56 MB.
 
 ## Layout
 
 ```text
 scripts/01 .. 06   core pipeline: fetch, stratify, audit, lineage control, figures
 scripts/07 .. 10   direct phage annotation, counter-defense, robustness, figures
+scripts/11 .. 16   variance partition, receptor gate, shrinkage, combinations,
+                   consolidated candidates, summary figure
 scripts/run_all.py runs them in order, --core-only stops after 06
 src/papr/          shared estimators, paths, configuration, figure style
 data/raw/          downloaded inputs, not tracked; verified against data/raw_manifest.sha256
