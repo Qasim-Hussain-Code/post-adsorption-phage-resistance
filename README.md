@@ -269,7 +269,7 @@ Individual stages can be run in order instead; each writes its own report to
 `results/` and its tables to `results/tables/`.
 
 Steps 01 to 06 are the core analysis and take about two minutes, most of it in
-the regression fitting of step 4. Steps 07 to 16 additionally download the 96
+the regression fitting of step 4. Steps 07 to 17 additionally download the 96
 phage genomes (6.9 MB) and the DefenseFinder model release (49 MB, from which
 only the anti-defense profiles are kept and the archive is then deleted). They
 take 12 to 25 minutes depending on machine load, dominated by the permutation
