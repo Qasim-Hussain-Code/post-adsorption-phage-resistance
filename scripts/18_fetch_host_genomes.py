@@ -50,8 +50,11 @@ EUTILS = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
 GENOME_DIR = paths.RAW / "host_genomes"
 PROVENANCE = paths.PROCESSED / "host_genome_provenance.csv"
 
-# NCBI asks for no more than three requests a second without an API key.
-REQUEST_PAUSE = 0.38
+# NCBI asks for no more than three requests a second without an API key, and
+# throttles hard once a long run has been going for a while. A slower pace and
+# a longer backoff keep a full run from degenerating into repeated timeouts;
+# the script is resumable, so an interrupted run loses nothing.
+REQUEST_PAUSE = 0.5
 
 STATUS_RANK = {"complete genome": 4, "chromosome": 3, "scaffold": 2, "contig": 1}
 
@@ -65,7 +68,7 @@ def fetch(url: str, binary: bool = False, tries: int = 4):
                 return resp.read() if binary else resp.read().decode()
         except Exception as exc:
             last = exc
-            time.sleep(1.5 * (attempt + 1))
+            time.sleep(min(30.0, 2.0 ** (attempt + 1)))
     raise RuntimeError(f"failed after {tries} attempts: {url} ({last})")
 
 
@@ -298,6 +301,11 @@ def main() -> int:
     if len(missing):
         add(f"  {', '.join(missing['strain'].head(40))}"
             + (" ..." if len(missing) > 40 else ""))
+    errors = int(prov["match_type"].astype(str).str.startswith("error").sum())
+    if errors:
+        add(f"  strains that errored, usually NCBI throttling a long run : "
+            f"{errors}. Re-running the script retries only those, since "
+            "completed downloads are skipped.")
     add("  Any analysis built on these genomes covers a subset of the "
         "collection and must say which strains it covers, because the strains "
         "that are deposited are unlikely to be a random sample of those that "
