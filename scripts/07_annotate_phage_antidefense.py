@@ -337,12 +337,18 @@ def main() -> int:
     systems = call_systems(hits, proteins, models, phages)
 
     # Persist the proteome so the annotation can be re-checked without rerunning.
-    with gzip.open(paths.PHAGE_PROTEINS, "wt", encoding="utf-8", compresslevel=9) as fh:
-        for phage in phages:
-            for entry in proteins.get(phage, []):
-                fh.write(f">{entry['protein_id']} {phage} "
-                         f"{entry['begin']}..{entry['end']}:{entry['strand']}\n")
-                fh.write(entry["sequence"] + "\n")
+    # mtime=0 and an explicit file object keep the gzip header free of a
+    # timestamp and a filename, so an unchanged run rewrites an identical file.
+    lines: list[str] = []
+    for phage in phages:
+        for entry in proteins.get(phage, []):
+            lines.append(f">{entry['protein_id']} {phage} "
+                         f"{entry['begin']}..{entry['end']}:{entry['strand']}")
+            lines.append(entry["sequence"])
+    payload = ("\n".join(lines) + "\n").encode("utf-8")
+    with paths.PHAGE_PROTEINS.open("wb") as raw:
+        with gzip.GzipFile(fileobj=raw, mode="wb", compresslevel=9, mtime=0) as gz:
+            gz.write(payload)
     hits.to_csv(paths.PHAGE_ADF_HITS, index=False)
 
     # Wide presence matrix, one row per phage, one column per family.
