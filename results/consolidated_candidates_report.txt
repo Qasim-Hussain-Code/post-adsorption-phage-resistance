@@ -8,30 +8,34 @@ HOW THIS LIST WAS BUILT
     permutation inside phylogroup script 09, design-based null
     permutation inside ST         script 09, stricter design-based null
     shrinkage across systems      script 13, correction for multiplicity
-  Candidates assessed: 9
+    phylogenetically matched null script 21, surface adjusted
+    Bayesian posterior            script 22, P(protective) at least 0.95
+  Candidates assessed: 11
   Several candidates below the 20-carrier threshold had never been through the within-cluster or permutation tests before; they have now.
 
 RANKED CANDIDATES
-  system                    carr  adj OR  shrunk   wc OR  wc n  genera     E  passed
-  RM_Type_IIG                 52   0.549   0.632   0.968     7  15/15   2.69     3/5
-  RM_Type_III                 54   0.626   0.718   0.328    12  10/18   2.31     3/5
-  Shango                      37   0.583   0.705   0.492     9  16/17   2.51     2/5
-  Lamassu-Cap4_nuclease       18   0.451   0.629   0.417     5  12/13   3.34     2/5
-  Zorya_TypeII                20   0.444   0.607   0.344     2  11/13   3.40     2/5
-  AbiD                        14   0.270   0.575   0.349     6  11/15   5.75     2/5
-  PD-T7-4                      7   0.382   0.571     nan     1   8/10   3.99     1/5
-  Retron_I_C                  20   0.722   0.822   0.249     4  11/16   1.94     1/5
-  RosmerTA                    47   1.171   1.085   0.532    11   6/17   1.52     1/5
+  system                    carr  adj OR  shrunk   wc OR  wc n  genera     E  phyR2  P(prot)  passed
+  RM_Type_IIG                 52   0.549   0.632   0.968     7  15/15   2.69  0.090    0.999     5/7
+  Zorya_TypeII                20   0.444   0.607   0.344     2  11/13   3.40  0.183    0.998     4/7
+  RM_Type_III                 54   0.626   0.718   0.328    12  10/18   2.31  0.065    0.981     4/7
+  Shango                      37   0.583   0.705   0.492     9  16/17   2.51  0.012    0.978     3/7
+  Lamassu-Cap4_nuclease       18   0.451   0.629   0.417     5  12/13   3.34    n/a    0.994     3/7
+  AbiD                        14   0.270   0.575   0.349     6  11/15   5.75    n/a    0.995     3/7
+  PD-T7-4                      7   0.382   0.571     n/a     1   8/10   3.99    n/a    0.999     2/7
+  Retron_IV                    8   0.559   0.709     n/a     1  12/13   2.64    n/a    0.968     1/7
+  NLR_like_bNACHT09           10   0.577   0.719   1.828     3  12/14   2.54    n/a    0.964     1/7
+  Retron_I_C                  20   0.722   0.822   0.249     4  11/16   1.94  0.026    0.840     1/7
+  RosmerTA                    47   1.171   1.085   0.532    11   6/17   1.52  0.027    0.292     1/7
 
-  'carr' is carrier strains, 'wc' the within-cluster fit and its number of informative clusters, 'genera' the phage genera in which the odds ratio is below 1, 'E' the E-value for unmeasured confounding.
+  'carr' is carrier strains, 'wc' the within-cluster fit and its number of informative clusters, 'genera' the phage genera in which the odds ratio is below 1, 'E' the E-value for unmeasured confounding, 'phyR2' the share of carriage explained by core-genome position, and 'P(prot)' the Bayesian posterior probability that the system is protective.
 
 READING THE LIST
-  6 systems pass at least two independent checks: RM_Type_IIG, RM_Type_III, Shango, Lamassu-Cap4_nuclease, Zorya_TypeII, AbiD.
-  No system passes all five, and that is the honest headline. The checks are not redundant: each discards most of the data to remove a different source of confounding, so each has little power left, and they disagree. A system passing two of five is a candidate worth an experiment, not a finding.
+  7 systems pass at least two independent checks: RM_Type_IIG, Zorya_TypeII, RM_Type_III, Shango, Lamassu-Cap4_nuclease, AbiD, PD-T7-4.
+  No system passes all seven, and that is the honest headline. The checks are not redundant: each discards most of the data to remove a different source of confounding, so each has little power left, and they disagree. A system passing two of seven is a candidate worth an experiment, not a finding.
 
-  2 candidates have fewer than three informative clonal clusters (Zorya_TypeII, PD-T7-4), so the within-cluster column for them is uninformative rather than negative. Failing a test that cannot be run is not evidence against a system.
+  3 candidates have fewer than three informative clonal clusters (Zorya_TypeII, PD-T7-4, Retron_IV), so the within-cluster column for them is uninformative rather than negative. Failing a test that cannot be run is not evidence against a system.
 
-  3 candidates are carried by fewer than 20 strains (Lamassu-Cap4_nuclease, AbiD, PD-T7-4). They reach this list only through the shrinkage model, their individual estimates are heavily pulled toward the pooled mean, and they should be treated as the weakest entries here despite their rank.
+  5 candidates are carried by fewer than 20 strains (Lamassu-Cap4_nuclease, AbiD, PD-T7-4, Retron_IV, NLR_like_bNACHT09). They reach this list only through the shrinkage model, their individual estimates are heavily pulled toward the pooled mean, and they should be treated as the weakest entries here despite their rank.
 
 WHAT WOULD SETTLE IT
   Nothing in this dataset can. Every analysis here is observational and the confounding between a defense system and the lineage carrying it cannot be broken by stratifying a fixed collection more finely. The decisive experiment is to delete the system in its native host and challenge the isogenic pair with the phages this collection says it resists. The ranking above is a priority order for doing that, and the within-cluster column indicates which systems already have naturally occurring near-isogenic pairs in the collection to start from.

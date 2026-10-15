@@ -62,6 +62,10 @@ def main() -> int:
     strain_feats = pd.read_csv(paths.STRAIN_FEATURES, low_memory=False)
     clusters = pd.read_csv(paths.PROCESSED / "clonal_clusters.csv", index_col=0)
     all_eff = pd.read_csv(paths.TABLES / "table29_all_system_effects.csv")
+    phylo_path = paths.TABLES / "table40_phylogenetic_null_tests.csv"
+    bayes_path = paths.TABLES / "table41_bayesian_pooled_effects.csv"
+    phylo = pd.read_csv(phylo_path).set_index("system") if phylo_path.exists() else None
+    bayes = pd.read_csv(bayes_path).set_index("system") if bayes_path.exists() else None
     lineage = pd.read_csv(paths.TABLES / "table7_lineage_controlled_effects.csv")
     wc_prev = pd.read_csv(paths.TABLES / "table16_within_cluster_effects.csv")
     perm_prev = pd.read_csv(paths.TABLES / "table17_permutation_tests.csv")
@@ -90,6 +94,13 @@ def main() -> int:
     shrunk_sig = all_eff[all_eff["posterior_excludes_null"].fillna(False)
                          & (all_eff["posterior_odds_ratio"] < 1)]
     nominate(shrunk_sig["system"], "shrinkage across all systems")
+    if phylo is not None:
+        sel = phylo[phylo["significant_surface_adjusted"].fillna(False)
+                    & (phylo["observed_difference_surface_adjusted"] < 0)]
+        nominate(sel.index, "phylogenetically matched null")
+    if bayes is not None:
+        sel = bayes[bayes["prob_protective"] >= 0.95]
+        nominate(sel.index, "Bayesian posterior")
 
     candidates = sorted(nominated)
     cols = [f"ds_{c}" for c in candidates if f"ds_{c}" in pairs.columns]
@@ -120,6 +131,8 @@ def main() -> int:
         ps = perm_st.loc[name] if name in perm_st.index else None
         below, total = genus_consistency(pairs, col)
 
+        ph = phylo.loc[name] if (phylo is not None and name in phylo.index) else None
+        by = bayes.loc[name] if (bayes is not None and name in bayes.index) else None
         passes = {
             "lineage_adjusted": bool(
                 name in full_i.index and full_i.loc[name, "significant"]
@@ -132,6 +145,12 @@ def main() -> int:
             "permutation_st": bool(
                 ps is not None and ps["significant"] and ps["observed_difference"] < 0),
             "shrinkage": bool(shrunk_ok and np.isfinite(shrunk) and shrunk < 1),
+            "phylogenetic_null": bool(
+                ph is not None
+                and bool(ph.get("significant_surface_adjusted", False))
+                and float(ph.get("observed_difference_surface_adjusted", 0)) < 0),
+            "bayesian_posterior": bool(
+                by is not None and float(by.get("prob_protective", 0)) >= 0.95),
         }
         rows.append(dict(
             system=name,
@@ -146,6 +165,10 @@ def main() -> int:
             permutation_q_sequence_type=(float(ps["q_value"]) if ps is not None else np.nan),
             genera_below_one=below, genera_estimable=total,
             e_value=e_value(adj_or, baseline),
+            phylogenetic_r2=(float(ph["phylogenetic_r2"]) if ph is not None else np.nan),
+            permissive_core_odds_ratio=(
+                float(ph["permissive_core_odds_ratio"]) if ph is not None else np.nan),
+            prob_protective=(float(by["prob_protective"]) if by is not None else np.nan),
             **{f"pass_{k}": v for k, v in passes.items()},
             checks_passed=int(sum(passes.values())),
             # A within-cluster test needs at least three informative clusters
@@ -176,6 +199,8 @@ def main() -> int:
     add("    permutation inside phylogroup script 09, design-based null")
     add("    permutation inside ST         script 09, stricter design-based null")
     add("    shrinkage across systems      script 13, correction for multiplicity")
+    add("    phylogenetically matched null script 21, surface adjusted")
+    add("    Bayesian posterior            script 22, P(protective) at least 0.95")
     add(f"  Candidates assessed: {len(table)}")
     add("  Several candidates below the 20-carrier threshold had never been "
         "through the within-cluster or permutation tests before; they have now.")
@@ -183,18 +208,28 @@ def main() -> int:
     add("")
     add("RANKED CANDIDATES")
     add(f"  {'system':24s} {'carr':>5s} {'adj OR':>7s} {'shrunk':>7s} "
-        f"{'wc OR':>7s} {'wc n':>5s} {'genera':>7s} {'E':>5s} {'passed':>7s}")
+        f"{'wc OR':>7s} {'wc n':>5s} {'genera':>7s} {'E':>5s} "
+        f"{'phyR2':>6s} {'P(prot)':>8s} {'passed':>7s}")
     for r in table.itertuples(index=False):
         gen = ("   n/a" if not r.genera_estimable
                else f"{r.genera_below_one:3d}/{r.genera_estimable:<3d}")
+        wc_ = ("    n/a" if not np.isfinite(r.within_cluster_odds_ratio)
+               else f"{r.within_cluster_odds_ratio:7.3f}")
+        phy = ("   n/a" if not np.isfinite(r.phylogenetic_r2)
+               else f"{r.phylogenetic_r2:6.3f}")
+        pp_ = ("     n/a" if not np.isfinite(r.prob_protective)
+               else f"{r.prob_protective:8.3f}")
         add(f"  {r.system:24s} {r.n_carrier_strains:5d} "
             f"{r.adjusted_odds_ratio:7.3f} {r.shrunk_odds_ratio:7.3f} "
-            f"{r.within_cluster_odds_ratio:7.3f} {r.within_cluster_clusters:5d} "
-            f"{gen:>7s} {r.e_value:5.2f} {r.checks_passed:5d}/5")
+            f"{wc_:>7s} {r.within_cluster_clusters:5d} "
+            f"{gen:>7s} {r.e_value:5.2f} {phy:>6s} {pp_:>8s} "
+            f"{r.checks_passed:5d}/7")
     add("")
     add("  'carr' is carrier strains, 'wc' the within-cluster fit and its number "
         "of informative clusters, 'genera' the phage genera in which the odds "
-        "ratio is below 1, 'E' the E-value for unmeasured confounding.")
+        "ratio is below 1, 'E' the E-value for unmeasured confounding, 'phyR2' "
+        "the share of carriage explained by core-genome position, and 'P(prot)' "
+        "the Bayesian posterior probability that the system is protective.")
 
     best = table[table["checks_passed"] >= 2]
     add("")
@@ -202,10 +237,10 @@ def main() -> int:
     if len(best):
         add(f"  {len(best)} systems pass at least two independent checks: "
             f"{', '.join(best['system'])}.")
-    add("  No system passes all five, and that is the honest headline. The "
+    add(f"  No system passes all seven, and that is the honest headline. The "
         "checks are not redundant: each discards most of the data to remove a "
         "different source of confounding, so each has little power left, and "
-        "they disagree. A system passing two of five is a candidate worth an "
+        "they disagree. A system passing two of seven is a candidate worth an "
         "experiment, not a finding.")
 
     thin = table[table["within_cluster_clusters"] < 3]
