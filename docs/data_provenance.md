@@ -137,10 +137,11 @@ The run recorded here covers all 402 names and resolves 287 of them.
 | `data/raw/host_genomes/<strain>.fna.gz` | NCBI Assembly, per strain | about 414 MB for 287 genomes |
 | `data/raw/lifestyle_profiles/*.hmm` | Pfam via InterPro, 7 lysogeny families | small |
 
-With these, the repository and all downloaded data occupy roughly 400 MB
-against the 3.5 GB budget: 237 MB of bacterial genomes, 65 MB of git history
-and 58 MB of k-mer sketches, which are regenerable from the genomes and are
-therefore not tracked.
+With these, the repository and all downloaded data occupy roughly 630 MB
+against the 3.5 GB budget: 414 MB of bacterial genomes, 101 MB of k-mer
+sketches, which are regenerable from the genomes and therefore not tracked, and
+66 MB of git history. The genomes and sketches can both be deleted once script
+20 has run; every table and figure is derived from them, not dependent on them.
 
 ## Integrity checking
 

@@ -315,10 +315,11 @@ tests in step 9, the sixteen nested fits in step 11 and the 135 pair fits in
 step 14. Peak memory
 stays below 1 GB.
 
-The repository plus all downloaded data occupies about 400 MB: 237 MB of
-bacterial genomes, 65 MB of git history, 58 MB of k-mer sketches (regenerable
-from the genomes and therefore untracked) and the rest the public input tables.
-Run with `--skip-genomes` it stays near 60 MB.
+The repository plus all downloaded data occupies about 630 MB: 414 MB of
+bacterial genomes, 101 MB of derived k-mer sketches (regenerable and
+untracked), 66 MB of git history and the rest the public input tables. Run with
+`--skip-genomes` it stays near 110 MB, and the genomes can be deleted after
+step 20 without affecting any other result.
 
 ## Layout
 
