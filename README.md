@@ -312,7 +312,12 @@ only the anti-defense profiles are kept and the archive is then deleted). They
 take 12 to 25 minutes depending on machine load, dominated by the permutation
 tests in step 9, the sixteen nested fits in step 11 and the 135 pair fits in
 step 14. Peak memory
-stays below 1 GB. The repository plus all downloaded data occupies about 56 MB.
+stays below 1 GB.
+
+The repository plus all downloaded data occupies about 400 MB: 237 MB of
+bacterial genomes, 65 MB of git history, 58 MB of k-mer sketches (regenerable
+from the genomes and therefore untracked) and the rest the public input tables.
+Run with `--skip-genomes` it stays near 60 MB.
 
 ## Layout
 
