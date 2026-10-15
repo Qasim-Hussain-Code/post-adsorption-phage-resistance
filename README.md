@@ -203,6 +203,16 @@ that another is not.
 strains in all four carriage combinations, **none** shows a significant
 interaction. Counting systems fails to predict lysis, and so does pairing them.
 
+**Lysogeny is a real but marginal explanation for failure.** A temperate phage
+entering lysogeny leaves no plaque, which a spot test cannot distinguish from
+resistance. Searching the phage proteomes against Pfam lysogeny profiles finds a
+tyrosine integrase in just **2 of 96 phages**, one Lambdavirus and one
+Wanchaivirus, and those two are exactly the ones that plaque on under 1 percent
+of strains (against 21.2 percent for the rest). The direction fits lysogeny; the
+magnitude does not. They account for 2.6 percent of all failures, and removing
+them shifts the overall failure rate from 79.25 to 78.83 percent and the median
+defense odds ratio by 0.002 in log2.
+
 ### The candidate list
 
 Nine systems are nominated somewhere in the study. Putting all of them through
@@ -271,8 +281,8 @@ stays below 1 GB. The repository plus all downloaded data occupies about 56 MB.
 ```text
 scripts/01 .. 06   core pipeline: fetch, stratify, audit, lineage control, figures
 scripts/07 .. 10   direct phage annotation, counter-defense, robustness, figures
-scripts/11 .. 16   variance partition, receptor gate, shrinkage, combinations,
-                   consolidated candidates, summary figure
+scripts/11 .. 17   variance partition, receptor gate, shrinkage, combinations,
+                   consolidated candidates, summary figure, phage lifestyle
 scripts/run_all.py runs them in order, --core-only stops after 06
 src/papr/          shared estimators, paths, configuration, figure style
 data/raw/          downloaded inputs, not tracked; verified against data/raw_manifest.sha256

@@ -262,6 +262,21 @@ def main() -> int:
             "new claims.")
 
     add("")
+    add("WHAT THE SHRUNKEN INTERVALS DO NOT ACCOUNT FOR")
+    add("  The intervals above are empirical Bayes: the pooled mean and the "
+        "between-system variance are estimated from the same data and then "
+        "treated as known when each system's interval is formed. That makes "
+        "them narrower than they should be, and the effect is largest for the "
+        "rare systems whose intervals depend most on the pooled quantities. A "
+        "fully Bayesian treatment carrying uncertainty in mu and tau squared "
+        "would widen them, most likely removing the weakest of the nine "
+        "systems whose intervals currently exclude 1.")
+    add(f"  As a rough guide to the size of that omission, the standard error "
+        f"of the pooled mean alone is {mu_se:.4f} against a median posterior "
+        f"standard deviation of {float(np.median(post_sd)):.4f}, so it is not "
+        "negligible.")
+
+    add("")
     add("READING THIS ALONGSIDE THE EARLIER RESULTS")
     add("  Shrinkage is a different question from the robustness tests in "
         "script 09, and it is weaker. It corrects estimates for the fact that "

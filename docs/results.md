@@ -414,6 +414,36 @@ clonal clusters to RM_Type_IIG's seven, and AbiD has the highest E-value in the
 table at 5.75 despite only fourteen carriers. Zorya_TypeII has two informative
 clusters, so its within-cluster column is uninformative rather than supportive.
 
+## 17. Is some of the failure lysogeny rather than resistance
+
+Every analysis so far has treated a failure to plaque as host resistance. A
+temperate phage entering lysogeny also leaves no plaque, and the two are
+indistinguishable in a spot test. Script 17 classifies the 96 phages by
+searching their predicted proteins against Pfam lysogeny profiles at the
+profiles' gathering cutoffs.
+
+Only the tyrosine integrase is used to classify. Six phages carry a serine
+recombinase, but the same fold serves as a DNA invertase that switches tail
+fiber genes in strictly virulent phages, so it is recorded and not used; 28
+carry a repressor-like helix-turn-helix, which is common in virulent phages too.
+
+**Two of 96 phages carry a tyrosine integrase**, one Lambdavirus and one
+Wanchaivirus. They are exactly the two genera whose near-total failure to
+plaque prompted the question: they form plaques on 0.9 percent of strains
+against 21.2 percent for the rest (Mann-Whitney on per-phage rates p = 0.017).
+
+So the direction supports the idea and the magnitude refutes it. Those two
+phages account for 793 of 30,459 failures, 2.6 percent. Counting every one of
+them as a silent lysogenisation rather than a resistance event moves the overall
+failure rate only from 79.25 to 78.83 percent. The Guelin collection was
+selected for lytic activity, so temperate phages are rare by construction.
+
+Dropping them changes nothing else: the median absolute shift in log2 odds ratio
+across the 33 defense systems is 0.002, the largest is 0.015 (Hachiman), and one
+system of 33 changes direction.
+No conclusion in this analysis rests on interactions with phages that were never
+going to form a plaque.
+
 ## Summary
 
 Surface receptor variation is real but does not dominate: it explains about a

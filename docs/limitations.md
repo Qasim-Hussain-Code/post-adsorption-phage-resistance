@@ -90,6 +90,17 @@ coordinates. Grouping phages by receptor binding protein similarity, which would
 give a sharper receptor proxy than genus membership, was therefore not possible
 without re-annotating the genomes.
 
+## The shrunken intervals are narrower than they should be
+
+The joint estimation in script 13 is empirical Bayes: the pooled mean and the
+between-system variance are estimated from the same data and then treated as
+known when each system's posterior interval is formed. Those intervals are
+therefore anticonservative, most of all for the rare systems that depend most on
+the pooled quantities. A fully Bayesian treatment would widen them and would
+probably remove the weakest of the nine systems whose intervals currently
+exclude an odds ratio of 1. The standard error of the pooled mean alone is not
+negligible against the median posterior standard deviation.
+
 ## Statistical caveats
 
 - The Mantel-Haenszel intervals reported in step 3 treat strain-phage pairs as
@@ -148,6 +159,17 @@ effects. Reporting those systems as showing no association is accurate but
 easily misread: for most of them the analysis simply had no power to see a
 moderate effect, and they should not be cited as evidence that the system does
 nothing.
+
+## Lysogeny is only partly ruled out
+
+Script 17 shows that temperate phages cannot explain much of the unexplained
+failure in this collection, because only two of ninety-six carry a tyrosine
+integrase. That argument rests on a genomic marker, not on an assay. Carrying an
+integrase shows a phage can integrate, not that it did so in any particular
+well, and the absence of one does not mean a phage always lyses: poor adsorption
+kinetics, abortive infection without plaque formation, or a host growth
+condition all produce the same empty spot. The check bounds how much lysogeny
+could contribute; it does not measure it.
 
 ## Scope
 

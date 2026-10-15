@@ -29,12 +29,13 @@ STEPS = [
     ("14_defense_combinations.py", "pairwise and class-level combinations"),
     ("15_consolidated_candidates.py", "one ranked candidate list"),
     ("16_generate_summary_figure.py", "summary figure"),
+    ("17_phage_lifestyle.py", "temperate against virulent phages"),
 ]
 
 # Steps 07 onward download phage genomes and a model archive and are much
 # slower than the core pipeline, so they can be skipped independently.
 EXTENDED_PREFIXES = ("07_", "08_", "09_", "10_", "11_", "12_", "13_", "14_",
-                     "15_", "16_")
+                     "15_", "16_", "17_")
 
 
 def main() -> int:

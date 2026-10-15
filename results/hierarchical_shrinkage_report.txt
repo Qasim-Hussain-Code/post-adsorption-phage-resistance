@@ -48,6 +48,10 @@ WHAT SHRINKAGE DOES TO THE INDIVIDUAL ESTIMATES
   Of the 46 systems below the 20-carrier threshold used earlier, 4 have a shrunken interval excluding 1 (AbiD, BstA, Lamassu-Cap4_nuclease, PD-T7-4).
   Their median shrinkage weight is 0.382, so most of their individual signal is replaced by the pooled mean. That is the correct treatment of an estimate from a handful of strains, and it is why extending coverage to these systems does not generate new claims.
 
+WHAT THE SHRUNKEN INTERVALS DO NOT ACCOUNT FOR
+  The intervals above are empirical Bayes: the pooled mean and the between-system variance are estimated from the same data and then treated as known when each system's interval is formed. That makes them narrower than they should be, and the effect is largest for the rare systems whose intervals depend most on the pooled quantities. A fully Bayesian treatment carrying uncertainty in mu and tau squared would widen them, most likely removing the weakest of the nine systems whose intervals currently exclude 1.
+  As a rough guide to the size of that omission, the standard error of the pooled mean alone is 0.0435 against a median posterior standard deviation of 0.1882, so it is not negligible.
+
 READING THIS ALONGSIDE THE EARLIER RESULTS
   Shrinkage is a different question from the robustness tests in script 09, and it is weaker. It corrects estimates for the fact that many systems were examined; it does nothing about confounding by clonal background, which is what actually removed most of the associations. A system can survive shrinkage and still be a lineage artefact.
   The practical conclusion is unchanged. Across all 79 systems the pooled association with lysis is an odds ratio of 0.923, close to no association, and the systems that stand out individually are the same ones script 09 showed do not survive the stricter designs.
