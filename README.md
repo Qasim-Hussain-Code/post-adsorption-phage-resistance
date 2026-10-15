@@ -350,6 +350,13 @@ the pooled mean, and the consolidated candidate list](figures/fig7_consolidated_
 matched null before and after removing host surface type, and the final
 verdict](figures/fig8_inference_and_verdict.png)
 
+### Figure 9. Why the accessory genome scan needed its null rebuilt twice
+
+![Four nulls against the uniform diagonal, their behaviour in the tail that
+FDR control depends on, the heavier tails among loci the fixed bins dropped,
+and the collapsed neighbourhood that disqualifies every locus the full scan
+flags](figures/fig9_association_calibration.png)
+
 ## Reproducing
 
 Requires Python 3.13 and the pinned versions in `requirements.txt`.

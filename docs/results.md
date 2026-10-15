@@ -613,6 +613,10 @@ against an expected one percent, so the procedure is conservative in exactly
 the tail that FDR control depends on. Under it, three loci reach significance,
 and all three are associated with resistance rather than susceptibility.
 
+Figure 9 shows the whole argument: the four nulls against the uniform
+diagonal, what each does in the tail, where the heavy tails sit, and the
+diagnostic that disqualifies the three flagged loci.
+
 **Those three are artifacts, and the diagnostics say so.** Each is lineage
 confined at a phylogenetic R2 of at least 0.91. Each sits in a neighbourhood
 whose spread has collapsed to 11 to 13 percent of the spread across all loci,
