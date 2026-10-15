@@ -12,8 +12,12 @@ CALIBRATION
   outcome            null           loci  median p  frac p<=0.05  frac p<=0.01  significant
   lysis_rate         simulated     10351     0.276        0.2371        0.1305         1061
   lysis_rate         empirical      3144     0.500        0.0115        0.0019            0
+  lysis_rate         adaptive      10351     0.542        0.0816        0.0511          338
+  lysis_rate         adaptive_fitted_tail   10351     0.563        0.0609        0.0010            3
   surface_adjusted   simulated     10351     0.256        0.2205        0.0863          336
   surface_adjusted   empirical      3144     0.500        0.0388        0.0111            2
+  surface_adjusted   adaptive      10351     0.529        0.0882        0.0560          427
+  surface_adjusted   adaptive_fitted_tail   10351     0.552        0.0616        0.0023            3
 
   The empirical null is only defined for 3144 of the 10351 loci. A locus whose prevalence and phylogenetic signal place it in a bin holding too few others, or in one where near-identical clade markers collapse the spread to nothing, has no usable null and is left untested. The 7207 loci in that position are not null results: they were not tested.
 
@@ -28,6 +32,21 @@ HITS, EMPIRICAL NULL ONLY
        10       10   0.049  +0.1915    4.73  9.63e-01    6.97e-03
        15       10   0.044  +0.1697    4.22  9.63e-01    3.84e-02
   'kmers' is how many k-mers share the pattern, a rough proxy for locus length: at one k-mer in 20, a pattern of 20 k-mers corresponds to roughly a kilobase.
+
+EXTENDING THE TEST TO EVERY LOCUS
+  The binned empirical null above is well calibrated but only defined for 3144 of the 10351 loci. The adaptive null tests all of them by matching each locus to its 400 nearest neighbours in the same two covariates instead of to a fixed cell, and the fitted-tail version reads the result against the tail actually present in that neighbourhood.
+  That distinction matters more than it sounds. Read against a normal reference the adaptive null is badly anti-conservative, because the loci the fixed bins excluded are not normal: the fitted degrees of freedom are near 50, which is effectively normal, among loci the binned null could handle, and drop to a median near 8 among the rest. Those are loci at extreme prevalence or extreme lineage confinement, where the statistic is a difference of means over a handful of strains. The fixed bin threshold was therefore doing something defensible by accident: it was selecting the loci where a normal reference holds.
+  With the tail fitted, the whole set of 10351 loci is testable and 3 loci reach q <= 0.05.
+
+    kmers  strains   phyR2   effect        z    df   scale   clump          q
+        6       86   0.922  -0.0788   -22.75    50   0.115   0.623   5.08e-24
+        5       87   0.905  -0.0762   -19.38    25   0.133   0.565   4.92e-13
+       12       87   0.906  -0.0729   -19.63    50   0.129   0.580   1.94e-21
+  'scale' is the local spread as a fraction of the spread across all loci, and 'clump' is the fraction of the neighbourhood lying within a tenth of the global spread of the local centre.
+
+  These are not reported as resistance determinants, and the two diagnostic columns are why. Every one is lineage confined, at a phylogenetic R2 of at least 0.91, and each sits in a neighbourhood whose spread has collapsed to between 11 and 13 percent of the spread across all loci, with 56 percent or more of the neighbourhood piled within a tenth of the global spread of its centre. That cell of covariate space is dominated by one clade's markers, which are near-identical to each other, so a locus marking a different clade of similar size sits many apparent sigma from a centre estimated almost entirely from that clump. The large z measures the gap between two clades, not an association with resistance.
+  Their near-identical carrier counts and phylogenetic signal also suggest they are one clade-specific region split across several patterns rather than independent findings.
+  This is the blind spot stated below, reached from the other direction: a locus confined to one lineage cannot be separated from the lineage by any observational design, and extending coverage to every locus does not change that. What the extension does establish is that no locus outside that blind spot is associated with resistance, which the binned null could only assert for 3144 loci.
 
 WHAT THIS DESIGN CAN AND CANNOT SEE
   It can see a locus present in a reasonable number of strains whose presence tracks resistance beyond what its phylogenetic distribution predicts. That is the standard target of a bacterial association study and it is tested here without a catalogue.

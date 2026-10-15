@@ -392,7 +392,21 @@ statistic across loci, which cannot nearly all be causal, is taken as the null
 and summarised by its median and scaled median absolute deviation so that a few
 true associations cannot inflate it. A bin whose spread collapses, which happens
 where near-identical clade markers dominate, carries no usable null and is
-skipped. The simulated null of script 21 is computed alongside and reported, not
+skipped.
+
+Fixed bins leave most loci untested, so the same null is also computed on an
+adaptive neighbourhood: each locus is matched to its 400 nearest neighbours in
+the two covariates, ranked to quantiles so that neither dominates the metric.
+The reference distribution is not assumed normal, which the data reject for the
+loci fixed bins exclude. Instead the 98th percentile of the standardised
+statistic within the neighbourhood is matched to the corresponding Student-t
+quantile over a grid of degrees of freedom from 2 to 50, and the locus is read
+against the t distribution so obtained. Two diagnostics accompany every locus:
+the local spread as a fraction of the spread across all loci, and the fraction
+of the neighbourhood lying within a tenth of the global spread of the local
+centre. A locus flagged in a neighbourhood that is collapsed and clumped on
+those measures is reported with its diagnostics and not interpreted, since such
+a neighbourhood estimates a null from one set of near-identical clade markers. The simulated null of script 21 is computed alongside and reported, not
 interpreted: it is about five times too liberal here, because traits built from
 eight principal coordinates are less clade-confined than real accessory loci.
 

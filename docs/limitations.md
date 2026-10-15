@@ -213,11 +213,14 @@ Script 25 found no accessory locus associated with resistance, and that
 statement needs its boundaries attached. The null deliberately removes
 lineage-confined signal, so a locus carried by exactly one clade is invisible by
 construction, and in Escherichia a great deal of accessory content is exactly
-that. For the same reason the empirical null is only defined for 3,144 of the
-10,351 loci: the rest sit in bins holding too few comparable loci, or in bins
-where clade markers collapse the spread, and those 7,207 were left untested
-rather than found null. The scan covers 254 of 402 strains, tests presence
-rather than sequence so
+that. The point is not academic: the only three loci the full scan flags are
+lineage-confined at a phylogenetic R2 above 0.91, and they are reported as
+artifacts of a collapsed local null rather than as findings, because a cell of
+covariate space dominated by one set of near-identical clade markers gives a
+centre and a spread that say nothing about a locus marking a different clade. A
+reader who wants those three treated as candidates should understand that they
+rest on a contrast between two lineages, not on resistance. The scan covers 254
+of 402 strains, tests presence rather than sequence so
 point mutations are invisible, and uses each strain's average across 96 phages
 as the outcome, which dilutes anything acting on one phage lineage. It also
 samples one k-mer in twenty, so a locus shorter than about a hundred bases could

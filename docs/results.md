@@ -589,15 +589,44 @@ causal is itself the null, estimated by median and scaled median absolute
 deviation. It calibrates correctly and slightly conservatively (median p 0.500,
 1.1 and 3.9 percent below 0.05 for the two outcomes).
 
-That correctness comes at a cost which has to be stated plainly. The empirical
-null is only defined for **3,144 of the 10,351 loci**. A locus whose prevalence
-and phylogenetic signal place it in a bin holding too few other loci, or in one
-where near-identical clade markers collapse the spread to nothing, has no
-usable null. The remaining 7,207 loci were not tested, rather than tested and
-found null, and no statement below covers them.
+That correctness comes at a cost. A fixed grid of 24 prevalence bins by 10
+signal bins, each needing 400 loci to estimate a centre and a spread, leaves
+the null defined for only **3,144 of the 10,351 loci**. The other 7,207 fall in
+cells too sparse to use.
 
-**Within that testable set the result is a clean negative.** **No locus among
-the 3,144 is associated with resistance.** Two are associated with the
+Matching each locus to its 400 nearest neighbours in the same two covariates,
+rather than to a fixed cell, gives every locus a neighbourhood. Read against a
+normal reference that adaptive null is badly anti-conservative: 8.2 and 8.8
+percent of loci below 0.05, and around five percent below 0.01 where one
+percent is expected. The reason turns out to be informative. Fitting the tail
+actually present in each neighbourhood puts the degrees of freedom near 50,
+effectively normal, among the loci the fixed bins kept, and at a median near 8
+among the 7,207 they dropped. Those excluded loci sit at extreme prevalence or
+extreme lineage confinement, where the statistic is a difference of means over
+a handful of strains and is sharply non-normal. **The bin threshold was doing
+something defensible by accident: it was selecting the loci where a normal
+reference holds.**
+
+Reading each locus against its own fitted tail tests all **10,351** and
+restores calibration where it matters, with 0.1 and 0.2 percent below 0.01
+against an expected one percent, so the procedure is conservative in exactly
+the tail that FDR control depends on. Under it, three loci reach significance,
+and all three are associated with resistance rather than susceptibility.
+
+**Those three are artifacts, and the diagnostics say so.** Each is lineage
+confined at a phylogenetic R2 of at least 0.91. Each sits in a neighbourhood
+whose spread has collapsed to 11 to 13 percent of the spread across all loci,
+with 56 percent or more of its 400 neighbours piled within a tenth of the
+global spread of the centre. That cell of covariate space is dominated by one
+clade marker set whose members are near-identical to each other, so a locus
+marking a different clade of similar size sits 20 apparent sigma from a centre
+estimated almost entirely from the clump. The large statistic measures the gap
+between two clades. Their near-identical carrier counts (86, 87, 87) and
+phylogenetic signal also suggest they are one clade-specific region split
+across three patterns rather than three findings.
+
+**The result is a clean negative across all 10,351 loci.** **No locus outside
+the lineage-confined blind spot is associated with resistance.** Two are associated with the
 opposite, being lysed more often, each present in 10 strains and neither
 lineage-confined.
 
@@ -616,8 +645,9 @@ finding in section 18 that recombinase content and defense content covary.
 
 **What the scan cannot see** is as important as what it found. It cannot see a
 locus confined to one lineage, because the null removes exactly that signal and
-no observational design can separate a lineage-confined cause from the lineage;
-this is also why only 3,144 of the 10,351 loci could be given a null at all.
+no observational design can separate a lineage-confined cause from the lineage.
+That is not a threshold that can be tuned away: the three loci the full scan
+does flag are exactly such cases, and they are reported as artifacts.
 It cannot see point mutations, since this is a presence test. It covers 254 of
 402 strains, so an effect confined to a handful is invisible. And the outcome
 is a strain's average across 96 phages, which dilutes anything acting on a
@@ -658,8 +688,8 @@ at all. The second is an internal check that passed: the phages found integrated
 in host chromosomes are exactly the two independently classified temperate from
 their own proteomes.
 
-An unbiased scan of the testable part of the accessory genome found nothing
-associated with resistance either, which bounds the search beyond the catalogue: whatever
+An unbiased scan of all 10,351 accessory loci found nothing associated with
+resistance either, which bounds the search beyond the catalogue: whatever
 accounts for the unexplained failures, it is not a single widely distributed
 accessory locus that this design could see.
 

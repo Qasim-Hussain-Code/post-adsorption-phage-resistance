@@ -246,18 +246,26 @@ confirms that **no system of 33** shows heterogeneity across thresholds.
 **The whole accessory genome, searched without a catalogue.** With 254
 validated genomes, script 25 tests every variable k-mer rather than a
 pre-defined feature list: 616,300 variable k-mers collapsing into **10,351
-loci**, of which **3,144** sit in bins where a null can be estimated at all.
-**No locus among those is associated with resistance.** Two are associated with
+loci**, every one of them tested. **No locus outside the lineage-confined blind
+spot is associated with resistance.** Two are associated with
 being lysed more often, and the carriers of one share **SanaTA and Septu**,
 two systems that have shown that same impossible direction throughout. A scan
 using no catalogue landed on the same strains the catalogued analysis kept
 flagging, so the anomaly is not an artifact of annotation.
 
-Getting there required fixing two failures, both documented: sampling k-mers at
-one in fifty left 83 percent of patterns backed by a single k-mer, and the
+Getting there required fixing three failures, all documented: sampling k-mers
+at one in fifty left 83 percent of patterns backed by a single k-mer; the
 phylogenetically matched null was five times too liberal here because eight
-principal coordinates cannot describe a clade-confined accessory locus. An
-empirical null calibrates correctly.
+principal coordinates cannot describe a clade-confined accessory locus; and the
+binned empirical null that replaced it was well calibrated but defined for only
+3,144 loci. Matching each locus to its nearest neighbours and reading it
+against the tail actually present there covers all 10,351. That last fix
+explained the earlier restriction rather than merely lifting it: the loci the
+fixed bins dropped are sharply non-normal (fitted degrees of freedom around 8,
+against 50 for the loci they kept), so the bin threshold had been selecting the
+loci where a normal reference holds. The three loci the full scan does flag are
+lineage-confined clade markers whose neighbourhood spread has collapsed, and
+the report says so with the numbers rather than presenting them as findings.
 
 ### The candidate list
 
