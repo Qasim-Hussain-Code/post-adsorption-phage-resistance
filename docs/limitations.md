@@ -171,6 +171,21 @@ kinetics, abortive infection without plaque formation, or a host growth
 condition all produce the same empty spot. The check bounds how much lysogeny
 could contribute; it does not measure it.
 
+## The host genomes cover a third of the collection, non-randomly
+
+Scripts 18 to 20 rest on 135 genomes validated out of 162 retrieved, which is
+34 percent of the 402 strains. Strains deposited in public archives are not a
+random sample: reference and pathogenic isolates are deposited more often than
+unremarkable commensals. Coverage is also truncated by NCBI throttling rather
+than by anything about the strains, which at least makes that part of the
+missingness unrelated to biology.
+
+Identity was validated against the released core-genome distance matrix rather
+than assumed from the name match, and 27 genomes were dropped, among them ED1a
+and BL21, whose names are shared by several distinct isolates. That check
+cannot catch a wrong genome whose true strain happens to sit in the same part
+of the tree.
+
 ## Scope
 
 This is an observational re-analysis of a single collection of 402 Escherichia

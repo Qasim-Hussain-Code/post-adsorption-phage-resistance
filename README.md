@@ -213,24 +213,59 @@ magnitude does not. They account for 2.6 percent of all failures, and removing
 them shifts the overall failure rate from 79.25 to 78.83 percent and the median
 defense odds ratio by 0.002 in log2.
 
+**Resident prophages: this collection cannot test them.** The host genomes are
+not in the released data, so 162 were resolved against NCBI individually and
+validated against the released core-genome distance matrix; 135 passed. Across
+12,958 analysable pairs, exactly **8** have a host carrying a prophage closely
+related to the challenging phage, involving 5 strains and only 2 phages. All 8
+are non-lytic, but those phages plaque on 0.74 percent of strains, so **0.06**
+lysis events were expected under the null. The regression cannot be fitted. The
+limitation is the panel: it was assembled for lytic activity, so only 2 of 96
+phages are temperate. One check does hold: the two phages found integrated in
+host chromosomes are exactly the two independently classified temperate from
+their own proteomes.
+
+**A phylogenetically matched null, and what it exposes.** Simulating null traits
+with each system's own phylogenetic confinement measures the population
+structure problem directly: median inflation 1.09, but **2.31 for
+CAS_Class1-Subtype-I-E**, whose carriage is 59 percent explained by core-genome
+position and which drops from p = 0.001 to p = 0.079. Conditioning on ancestry
+alone is not enough, though. Host surface type confounds separately, and
+RM_Type_IIG turns out to be strongly depleted in permissive outer cores
+(OR 0.33, p = 0.0004): its carriers are drawn from strains that are harder to
+lyse whatever they carry. Removing surface type attenuates its effect by 31
+percent; it remains significant.
+
+**Proper posteriors and the whole score.** Full Bayesian pooling replaces the
+empirical Bayes shortcut; tau's posterior (0.205 to 0.371) contains the earlier
+point estimate and no conclusion changes. Using all four plaque-score
+thresholds adds no power, because they reuse the same observations, but
+confirms that **no system of 33** shows heterogeneity across thresholds.
+
 ### The candidate list
 
 Nine systems are nominated somewhere in the study. Putting all of them through
 the same battery:
 
-| System | Strains | Adjusted OR | Within-cluster OR | Clusters | Genera below 1 | E-value | Checks |
-|---|---|---|---|---|---|---|---|
-| RM_Type_IIG | 52 | 0.549 | 0.968 | 7 | 15/15 | 2.69 | 3/5 |
-| RM_Type_III | 54 | 0.626 | 0.328 | 12 | 10/18 | 2.31 | 3/5 |
-| Shango | 37 | 0.583 | 0.492 | 9 | 16/17 | 2.51 | 2/5 |
-| Lamassu-Cap4_nuclease | 18 | 0.451 | 0.417 | 5 | 12/13 | 3.34 | 2/5 |
-| Zorya_TypeII | 20 | 0.444 | 0.344 | 2 | 11/13 | 3.40 | 2/5 |
-| AbiD | 14 | 0.270 | 0.349 | 6 | 11/15 | 5.75 | 2/5 |
+Eleven systems are nominated somewhere in the study. All are put through the
+same seven checks: lineage-adjusted regression, within clonal cluster, two
+permutation schemes, shrinkage, a surface-adjusted phylogenetic null, and the
+Bayesian posterior.
 
-**No system passes all five checks**, and the two the main analysis singled out
-are not clearly its best entries. RM_Type_III matches RM_Type_IIG while having
-twelve informative clonal clusters to its seven; AbiD has the highest E-value in
-the table on only fourteen carriers.
+| System | Strains | Adjusted OR | Within-cluster OR | Clusters | Genera below 1 | E-value | P(protective) | Checks |
+|---|---|---|---|---|---|---|---|---|
+| RM_Type_IIG | 52 | 0.549 | 0.968 | 7 | 15/15 | 2.69 | 0.999 | 5/7 |
+| Zorya_TypeII | 20 | 0.444 | 0.344 | 2 | 11/13 | 3.40 | 0.998 | 4/7 |
+| RM_Type_III | 54 | 0.626 | 0.328 | 12 | 10/18 | 2.31 | 0.981 | 4/7 |
+| Shango | 37 | 0.583 | 0.492 | 9 | 16/17 | 2.51 | 0.978 | 3/7 |
+| Lamassu-Cap4_nuclease | 18 | 0.451 | 0.417 | 5 | 12/13 | 3.34 | 0.994 | 3/7 |
+| AbiD | 14 | 0.270 | 0.349 | 6 | 11/15 | 5.75 | 0.995 | 3/7 |
+
+**No system passes all seven.** RM_Type_IIG leads at five but still fails the
+one test that holds the entire genomic background fixed, where it had moderate
+power. RM_Type_III passes four with twelve informative clonal clusters to
+RM_Type_IIG's seven. AbiD has the highest E-value in the study on only fourteen
+carriers.
 
 **Most resistance in this collection remains unexplained.** Among pairs passing
 the surface gate whose host carries neither lineage-validated system, 75.8
@@ -251,6 +286,7 @@ group in this collection.
 | `figures/fig5_direct_antidefense_annotation` | Anti-defense families found in the 96 genomes, validation against the RefSeq survey, and rescue interactions measured against imputed |
 | `figures/fig6_robustness_of_surviving_effects` | Each estimate beside what it could have detected, threshold sensitivity, and per-genus consistency |
 | `figures/fig7_consolidated_evidence` | Shapley partition of explained variation, 79 systems shrunk jointly, and the consolidated candidate list |
+| `figures/fig8_inference_and_verdict` | The population structure problem measured, the phylogenetic null before and after surface adjustment, and the final candidate verdict |
 
 Each is written as 300 dpi PNG and vector PDF. Every figure is drawn from the
 tables in `results/tables`, so a figure cannot disagree with a reported number.
@@ -261,7 +297,8 @@ Requires Python 3.13 and the pinned versions in `requirements.txt`.
 
 ```bash
 pip install -r requirements.txt
-python scripts/run_all.py              # everything, 12 to 25 minutes
+python scripts/run_all.py                 # everything
+python scripts/run_all.py --skip-genomes  # omit the NCBI downloads (steps 18 to 20)
 python scripts/run_all.py --core-only  # steps 01 to 06 only, about 2 minutes
 ```
 
@@ -284,6 +321,8 @@ scripts/01 .. 06   core pipeline: fetch, stratify, audit, lineage control, figur
 scripts/07 .. 10   direct phage annotation, counter-defense, robustness, figures
 scripts/11 .. 17   variance partition, receptor gate, shrinkage, combinations,
                    consolidated candidates, summary figure, phage lifestyle
+scripts/18 .. 20   host genome retrieval, identity validation, prophages
+scripts/21 .. 24   phylogenetic null, Bayesian pooling, ordinal score, figure
 scripts/run_all.py runs them in order, --core-only stops after 06
 src/papr/          shared estimators, paths, configuration, figure style
 data/raw/          downloaded inputs, not tracked; verified against data/raw_manifest.sha256

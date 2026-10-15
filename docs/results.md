@@ -444,42 +444,147 @@ system of 33 changes direction.
 No conclusion in this analysis rests on interactions with phages that were never
 going to form a plaque.
 
+## 18. Resident prophages: the question this collection cannot answer
+
+Superinfection exclusion has been listed as untested throughout, because the
+bacterial genomes were missing. They are not in the primary repository, the
+companion Zenodo record holds plaque images, and no project accession could be
+located. Scripts 18 and 19 therefore resolved strain names against NCBI
+individually and validated every download.
+
+**Validation.** 162 genomes were obtained and sketched. Identity was decided by
+whether the strain the released core-genome matrix calls nearest is also nearest
+by whole-genome k-mer distance; with 162 genomes, landing in the top ten by
+chance has probability 6.2 percent. **83 genomes have the released nearest
+neighbour as their single nearest k-mer neighbour**, 113 within the top three,
+and 135 within the top ten. Those 135 are carried forward, 34 percent of the
+collection. Twenty-seven were dropped, among them ED1a and BL21, whose names are
+shared by multiple distinct isolates.
+
+A note on method: a distance-profile correlation was tried first as the identity
+gate and abandoned. Among the 83 genomes whose nearest neighbour matches
+exactly, that correlation still ranges from below zero to 0.95, because most
+pairs of Escherichia strains sit in a narrow band of core-genome distance and
+the rank correlation is dominated by noise among near-equidistant strains. It is
+reported as a diagnostic only.
+
+**Result.** Across 12,958 analysable strain-phage pairs, exactly **8** have a
+host carrying at least 20 percent of the challenging phage's k-mers. They
+involve 5 strains and just **2 phages: 411_P1 and 411_P2**. All 8 are non-lytic.
+
+That looks like superinfection exclusion and is not evidence of it. Those two
+phages plaque on 0.74 percent of strains overall, so the number of lysis events
+expected among 8 carriers under the null is **0.06**. Observing zero is exactly
+what no effect predicts. The regression cannot be fitted at all: with eight
+exposed pairs and no events the likelihood has no interior maximum.
+
+The limitation is the collection, not the method. The Guelin panel was assembled
+for lytic activity, so only 2 of 96 phages are temperate, and those two barely
+plaque. Superinfection exclusion needs a temperate phage that also forms
+plaques, and this panel contains almost none.
+
+**An internal check that does hold.** The two phages found integrated in host
+chromosomes are exactly the two that script 17 classified temperate from their
+own proteomes carrying a tyrosine integrase. Two analyses sharing no input
+beyond the phage genomes, one searching bacterial chromosomes for phage
+sequence and one searching phage proteins for integration machinery, pick out
+the same pair.
+
+**One substantive by-product.** Strains richer in site-specific recombinases
+carry more defense systems (Spearman +0.310, p = 0.00025). Defense systems
+travel on mobile elements, so defense carriage is partly a marker of how much
+mobile DNA a strain has acquired, which is one more thing a defense system can
+stand in for.
+
+## 19. A harder null, and what it does to the headline
+
+Script 09 permuted carriage inside a phylogroup or a Sequence Type, which
+requires choosing a grouping level and applies the same one to every system.
+Script 21 removes the choice: for each system it measures how much of carriage
+is explained by core-genome position, then simulates null traits with exactly
+that phylogenetic confinement and exactly that prevalence.
+
+**The size of the population structure problem, measured.** Median inflation of
+the null standard deviation is 1.09, but it reaches **2.31 for
+CAS_Class1-Subtype-I-E**, whose carriage is 59 percent explained by core-genome
+position. That system goes from p = 0.001 against an unstructured null to
+p = 0.079 against a matched one: a textbook lineage artifact, and the same
+system script 04 lost on adjustment.
+
+**The matched null alone is not enough.** Five systems survive it, and four
+point the biologically impossible direction. Conditioning on ancestry does not
+remove them because they are not lineage-confined. Host surface type is the
+missing variable: it explains 15.3 percent of per-strain lysis rate and is only
+partly collinear with ancestry. Gao_Qat (87 percent of carriers on a permissive
+outer core, OR 4.77) and Septu (OR 2.16) are carried disproportionately by
+strains that are easy to lyse whatever they carry.
+
+Re-running the same null on surface-residualised lysis drops the impossible
+survivors from 4 to 2.
+
+**What this does to RM_Type_IIG.** It is strongly *depleted* in permissive outer
+cores (OR 0.33, p = 0.0004): 37 percent of its carriers against 60 percent of
+strains overall. Its carriers are drawn from strains intrinsically harder to
+lyse. Removing surface type attenuates its effect by 31 percent, but it remains
+significant (q = 0.0088). Adjusting for surface also brings **Zorya_TypeII**
+across the threshold, which surface composition had been masking.
+
+## 20. Proper posteriors, and the whole score
+
+**Full Bayesian pooling** (script 22) replaces the empirical Bayes shortcut.
+With a half-Cauchy prior on the between-system spread and the pooled mean
+integrated out analytically on a 2000-point grid, tau has posterior median
+0.281 (95 percent interval 0.205 to 0.371), comfortably containing the
+empirical Bayes point estimate of 0.269. The same 9 systems exclude no effect,
+so the shortcut was anticonservative in principle but harmless here. The gain is
+an interpretable quantity: PD-T7-4 and RM_Type_IIG each have posterior
+probability 0.999 of being protective.
+
+**The ordinal score** (script 23) adds no power and was not expected to: the
+four nested thresholds reuse the same observations, so combining them as
+independent studies would be double counting, and that combination is reported
+as an effect size only. What it adds is a consistency check the binary analysis
+cannot perform. **No system of 33 shows heterogeneity across thresholds.** The
+associations are not artifacts of where the lysed/not-lysed boundary was drawn.
+
 ## Summary
 
 Surface receptor variation is real but does not dominate: it explains about a
-third of failed infections on the best available non-circular definition and
-contributes less to the variance in lysis than defense carriage does.
-Conditioning on it modestly widens defense associations. Almost all of those
-associations are nonetheless properties of the bacterial lineage: two of
-thirty-three survive control for clonal background, and the biologically
-impossible associations disappear entirely, which is the strongest evidence that
-the control is doing its job. Three quarters of interactions still fail after
-accounting for everything measured here.
+third of failed infections on the best available non-circular definition and,
+on a fair order-independent partition, about three times the variation that all
+thirty-three defense systems account for. Conditioning on it modestly widens
+defense associations. Almost all of those associations are nonetheless
+properties of the bacterial lineage: two of thirty-three survive control for
+clonal background, and the biologically impossible associations disappear
+entirely, which is the strongest evidence that the control is doing its job.
+Three quarters of interactions still fail after accounting for everything
+measured here.
 
-Stress-testing qualifies the headline rather than overturning it. The count of
-two is stable across every clonal threshold, and both systems are protective in
-direction across nearly every phage genus, but neither survives all four
-stricter designs: RM_Type_IIG loses its effect among near-identical genomes
-where the test had reasonable power, and Zorya_TypeII is simply untestable
-there. Annotating the phage genomes directly, which was the largest outstanding
-methodological gap, left every counter-defense conclusion intact. The honest
-position is that this dataset supports a short list of candidates worth testing
-experimentally, not a demonstration that any particular system confers
-resistance.
+Every attempt to strengthen the case for a specific system has instead
+qualified it. Annotating the phage genomes directly left the counter-defense
+conclusion unchanged. Rebuilding the receptor gate from actual receptor binding
+protein homology did not improve it, which localises that weakness to the
+single-isolation-host anchor rather than to the grouping. Extending from 33
+systems to 79 left a pooled odds ratio of 0.923. None of 135 testable system
+pairs interacts. A phylogenetically matched null removes CRISPR-Cas subtype I-E,
+the most lineage-confined system in the collection, and shows that conditioning
+on ancestry alone is not enough because host surface composition confounds
+separately. Replacing empirical Bayes with full Bayesian inference changed no
+conclusion. Using the whole plaque score rather than a binary outcome added no
+power but confirmed that no association depends on where the threshold was
+drawn.
 
-The extended analysis changed one conclusion and sharpened several others. The
-changed one matters: a fair, order-independent partition of explained variation
-shows **host surface accounting for about three times what all thirty-three
-defense systems account for**, reversing what section 4 implied and agreeing
-with the published analysis of this dataset. Section 4's comparison had given
-surface six terms against defense's thirty-three and depended on the order the
-blocks were entered.
+Two things were established rather than qualified. The first is negative and
+about design: resident prophages closely related to a collection phage exist in
+only 5 of 135 strains and involve only the 2 temperate phages, which plaque on
+0.74 percent of strains, so this collection cannot test superinfection exclusion
+at all. The second is an internal check that passed: the phages found integrated
+in host chromosomes are exactly the two independently classified temperate from
+their own proteomes.
 
-Of the sharpened conclusions: a receptor gate built from actual receptor
-binding protein homology is no better than the genus-based one, which localises
-the problem to the single-isolation-host anchor rather than to the grouping;
-extending from 33 to 79 systems leaves a pooled odds ratio of 0.923 and adds
-four weak candidates; and none of 135 testable system pairs interacts, so the
-burden null is not concealing combination effects. The consolidated list of nine
-candidates has no entry passing all five independent checks, and the two systems
-the main analysis singled out are not obviously its strongest members.
+The defensible output is a ranked candidate list. Eleven systems are nominated
+somewhere in the study; the best, RM_Type_IIG, passes five of seven independent
+checks and still fails the one that holds the entire genomic background fixed.
+RM_Type_III passes four with twelve informative clonal clusters to RM_Type_IIG's
+seven. No system passes all seven. That list is a priority order for knockout
+experiments, not a set of findings.

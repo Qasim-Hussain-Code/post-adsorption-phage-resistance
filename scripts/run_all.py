@@ -30,12 +30,25 @@ STEPS = [
     ("15_consolidated_candidates.py", "one ranked candidate list"),
     ("16_generate_summary_figure.py", "summary figure"),
     ("17_phage_lifestyle.py", "temperate against virulent phages"),
+    ("18_fetch_host_genomes.py", "resolve and download host genomes"),
+    ("19_validate_host_genomes.py", "check each genome is the strain claimed"),
+    ("20_prophage_analysis.py", "resident prophages and superinfection exclusion"),
+    ("21_phylogenetic_null.py", "null traits matched on phylogeny and surface"),
+    ("22_full_bayesian_pooling.py", "posterior intervals without the shortcut"),
+    ("23_ordinal_thresholds.py", "the whole plaque score, not just lysis"),
+    ("24_generate_inference_figure.py", "inference figure"),
 ]
 
 # Steps 07 onward download phage genomes and a model archive and are much
 # slower than the core pipeline, so they can be skipped independently.
 EXTENDED_PREFIXES = ("07_", "08_", "09_", "10_", "11_", "12_", "13_", "14_",
-                     "15_", "16_", "17_")
+                     "15_", "16_", "17_", "18_", "19_", "20_", "21_", "22_",
+                     "23_", "24_")
+
+# Steps 18 to 20 download several hundred bacterial genomes from NCBI, which
+# throttles long runs. They are separable so that a network problem cannot
+# stop the rest, and step 18 is resumable: completed downloads are skipped.
+GENOME_PREFIXES = ("18_", "19_", "20_")
 
 
 def main() -> int:
@@ -44,6 +57,8 @@ def main() -> int:
                     help="assume the raw inputs are already present and verified")
     ap.add_argument("--core-only", action="store_true",
                     help="run only steps 01 to 06, skipping the phage annotation")
+    ap.add_argument("--skip-genomes", action="store_true",
+                    help="skip steps 18 to 20, which download host genomes")
     args = ap.parse_args()
 
     here = Path(__file__).resolve().parent
@@ -53,6 +68,9 @@ def main() -> int:
             print(f"[skip] {script}")
             continue
         if args.core_only and script.startswith(EXTENDED_PREFIXES):
+            print(f"[skip] {script}  ({description})")
+            continue
+        if args.skip_genomes and script.startswith(GENOME_PREFIXES):
             print(f"[skip] {script}  ({description})")
             continue
         print(f"\n[run ] {script}  ({description})")

@@ -110,6 +110,36 @@ observed values and writes the reconciliation to
    `n`, the last marking a reading that could not be made. It is treated as
    missing rather than as a negative.
 
+## Bacterial genomes, retrieved individually
+
+The 370 Picard genomes are not in the primary repository, which ships only
+BLAST databases for the 33 isolation hosts. The companion Zenodo record
+(10.5281/zenodo.10202713) contains a 9.9 GB archive of plaque assay images and
+no sequence. No ENA or BioProject accession for the collection could be located
+from the paper, the preprint or a search of ENA and NCBI.
+
+Script 18 therefore resolves strain names against NCBI Assembly one at a time,
+requiring the candidate to be Escherichia and to carry the strain name in its
+own strain field. Each downloaded genome, its accession, assembly status and
+SHA-256 digest are recorded in `data/processed/host_genome_provenance.csv`,
+which is tracked; the genomes themselves live under `data/raw/host_genomes/`
+and are not redistributed.
+
+Coverage is partial and the reasons are worth separating. Some strains are
+simply not deposited, mostly the internally numbered isolates. Others are
+deposited under names shared with unrelated isolates and are rejected by the
+validation in script 19. And a full pass is throttled by NCBI, which is why the
+run recorded here stops short of all 402 names; the script is resumable and
+re-running retries only what failed.
+
+| Local path | Source | Size |
+|---|---|---|
+| `data/raw/host_genomes/<strain>.fna.gz` | NCBI Assembly, per strain | about 237 MB for 166 genomes |
+| `data/raw/lifestyle_profiles/*.hmm` | Pfam via InterPro, 7 lysogeny families | small |
+
+With these, the repository and all downloaded data occupy roughly 300 MB
+against the 3.5 GB budget.
+
 ## Integrity checking
 
 `python scripts/01_fetch_and_validate_data.py` is idempotent. On first run it

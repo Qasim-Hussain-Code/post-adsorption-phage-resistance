@@ -308,6 +308,74 @@ including rare systems that had not previously been tested. Ranking is by the
 number of independent checks passed rather than by any single p-value, because
 the checks disagree often enough that any one of them alone would mislead.
 
+## Host genome retrieval and identity validation
+
+The bacterial genomes are not part of the released data. Strain names were
+resolved individually against NCBI, requiring the candidate to be Escherichia
+and to carry the strain name in the assembly's own strain field rather than
+anywhere in the record, preferring RefSeq and more complete assemblies.
+
+Identity is then verified rather than assumed. Every genome is sketched with a
+FracMinHash sketch (k = 21, one hash kept in a hundred, implemented directly
+with a SplitMix64 finaliser over canonical 2-bit encoded k-mers) and all
+pairwise Mash distances computed. A genome is accepted when its length is
+plausible for Escherichia and when the strain the released core-genome matrix
+calls nearest also falls within the ten nearest by k-mer distance, which has
+probability 6.2 percent by chance among 162 genomes.
+
+A distance-profile rank correlation was tried first as the gate and rejected:
+among genomes whose nearest neighbour matches exactly, it still ranges from
+below zero to 0.95, because most pairs of Escherichia strains sit in a narrow
+band of core-genome distance. It is reported as a diagnostic.
+
+## Prophage detection
+
+Two measures. The specific one is the fraction of each phage's k-mers present
+in each host genome, from the same sketches. Exact k-mer containment detects
+prophages closely related to a collection phage and falls away quickly with
+divergence, which is the right behaviour for superinfection exclusion because
+repressor-mediated immunity requires close relatedness. It varies within a
+strain across phages, so the contrast is identified with the host's genetic
+background held fixed.
+
+The general one counts tyrosine recombinase domains, with genes called by
+Prodigal trained on each genome rather than in metagenomic mode, which is both
+appropriate for whole genomes and sixteen times faster. That count is an index
+of mobile element content and not a prophage count: the same profiles match
+XerC, XerD and integron recombinases.
+
+## Phylogenetically matched nulls
+
+For each system, the share of carriage variance explained by the eight
+core-genome principal coordinates is measured, then null traits are simulated
+with that same share and the same prevalence: a random direction through the
+coordinates supplies the structured part, white noise the rest, mixed to the
+measured ratio and thresholded at the observed carrier count. The observed
+association is compared with 10,000 such traits.
+
+The test conditions on ancestry and on nothing else, which is not sufficient:
+host surface type explains 15.3 percent of per-strain lysis rate and is only
+partly collinear with ancestry. The same null is therefore also run on lysis
+rates with LPS outer core and O-antigen status regressed out.
+
+## Full Bayesian pooling
+
+The between-system standard deviation is given a half-Cauchy prior of scale
+0.5 and the pooled mean a flat prior. The pooled mean is integrated out
+analytically at each value of tau, leaving a one-dimensional integral evaluated
+on a 2000-point grid; each system's posterior is a mixture over that grid, so
+uncertainty in both the pooled mean and tau is carried into every interval. No
+Markov chain is used and nothing is approximated by sampling.
+
+## Ordinal thresholds
+
+Each system is fitted at all four plaque-score thresholds with identical
+covariates and clustered standard errors. The thresholds are nested and reuse
+the same observations, so no combination of them is treated as a test; a
+weighted average is reported as an effect size and the per-threshold estimates
+carry the honest intervals. Reporting them separately also tests the
+proportional odds assumption that a single ordinal model would impose.
+
 ## Software
 
 Python 3.13.11 with numpy 2.3.5, pandas 2.3.3, scipy 1.16.3, statsmodels 0.14.6,
