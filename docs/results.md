@@ -452,14 +452,19 @@ companion Zenodo record holds plaque images, and no project accession could be
 located. Scripts 18 and 19 therefore resolved strain names against NCBI
 individually and validated every download.
 
-**Validation.** 162 genomes were obtained and sketched. Identity was decided by
-whether the strain the released core-genome matrix calls nearest is also nearest
-by whole-genome k-mer distance; with 162 genomes, landing in the top ten by
-chance has probability 6.2 percent. **83 genomes have the released nearest
-neighbour as their single nearest k-mer neighbour**, 113 within the top three,
-and 135 within the top ten. Those 135 are carried forward, 34 percent of the
-collection. Twenty-seven were dropped, among them ED1a and BL21, whose names are
-shared by multiple distinct isolates.
+**Validation.** 287 genomes were obtained, 71 percent of the collection, every
+one matched on the assembly's own strain field. Identity was decided by whether
+the strain the released core-genome matrix calls nearest is also nearest by
+whole-genome k-mer distance; with 287 genomes, landing in the top ten by chance
+has probability 3.5 percent. **151 genomes have the released nearest neighbour
+as their single nearest k-mer neighbour**, 217 within the top three, and 254
+within the top ten. Those 254 are carried forward, **63 percent of the
+collection**; 33 were dropped.
+
+The test is relative to the genomes present, and that matters. ED1a and BL21
+both failed on an earlier, smaller set of 162 and both pass at rank 1 here,
+because their true nearest relatives had not yet been retrieved. A genome is
+only as checkable as its neighbourhood is complete.
 
 A note on method: a distance-profile correlation was tried first as the identity
 gate and abandoned. Among the 83 genomes whose nearest neighbour matches
@@ -468,15 +473,20 @@ pairs of Escherichia strains sit in a narrow band of core-genome distance and
 the rank correlation is dominated by noise among near-equidistant strains. It is
 reported as a diagnostic only.
 
-**Result.** Across 12,958 analysable strain-phage pairs, exactly **8** have a
-host carrying at least 20 percent of the challenging phage's k-mers. They
+**Result.** Across **24,382** analysable strain-phage pairs, exactly **8** have
+a host carrying at least 20 percent of the challenging phage's k-mers. They
 involve 5 strains and just **2 phages: 411_P1 and 411_P2**. All 8 are non-lytic.
 
+That count did not move when coverage was nearly doubled. An earlier pass over
+135 validated genomes found the same 8 pairs, the same 5 strains and the same 2
+phages; adding 119 more genomes added none. The rarity is a property of the
+collection, not of how much of it was screened.
+
 That looks like superinfection exclusion and is not evidence of it. Those two
-phages plaque on 0.74 percent of strains overall, so the number of lysis events
-expected among 8 carriers under the null is **0.06**. Observing zero is exactly
-what no effect predicts. The regression cannot be fitted at all: with eight
-exposed pairs and no events the likelihood has no interior maximum.
+phages plaque on 0.98 percent of strains overall, so the number of lysis events
+expected among 8 carriers under the null is **0.08**. Observing zero is exactly
+what no effect predicts. The regression is barely estimable and says so: odds
+ratio 0.130 with a 95 percent interval from 0.009 to 1.844 (p = 0.13).
 
 The limitation is the collection, not the method. The Guelin panel was assembled
 for lytic activity, so only 2 of 96 phages are temperate, and those two barely
@@ -491,7 +501,7 @@ sequence and one searching phage proteins for integration machinery, pick out
 the same pair.
 
 **One substantive by-product.** Strains richer in site-specific recombinases
-carry more defense systems (Spearman +0.310, p = 0.00025). Defense systems
+carry more defense systems (Spearman +0.266, p = 1.7e-05, n = 254). Defense systems
 travel on mobile elements, so defense carriage is partly a marker of how much
 mobile DNA a strain has acquired, which is one more thing a defense system can
 stand in for.
@@ -576,8 +586,8 @@ drawn.
 
 Two things were established rather than qualified. The first is negative and
 about design: resident prophages closely related to a collection phage exist in
-only 5 of 135 strains and involve only the 2 temperate phages, which plaque on
-0.74 percent of strains, so this collection cannot test superinfection exclusion
+only 5 of 254 strains and involve only the 2 temperate phages, which plaque on
+0.98 percent of strains, so this collection cannot test superinfection exclusion
 at all. The second is an internal check that passed: the phages found integrated
 in host chromosomes are exactly the two independently classified temperate from
 their own proteomes.

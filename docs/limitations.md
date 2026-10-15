@@ -73,23 +73,46 @@ Hachiman cannot be tested for rescue in this collection at all. Their absence is
 a real feature of these phage lineages, but it leaves the rescue model untested
 for several of the systems most discussed in the literature.
 
-## Resident prophages were not annotated
+## Resident prophages: tested, and untestable here
 
-Superinfection exclusion by a resident prophage is a well-documented route to
-post-adsorption resistance and is a plausible contributor to the 75.8 percent
-residual failure rate. Identifying prophages would require running a prophage
-caller over 402 bacterial genomes, which are not part of the released data used
-here and which exceed the storage budget this analysis was held to. This is a
-gap in the analysis, not a question the data answer negatively.
+An earlier version listed this as the largest open gap, on the grounds that the
+bacterial genomes were unavailable. They were retrieved (script 18), validated
+against the released core-genome distance matrix (script 19) and screened for
+prophages related to each challenging phage (script 20). The gap is closed in
+the sense that the measurement was made; it is not closed in the sense of
+producing an answer.
 
-## Receptor binding protein sequences were not compared
+Across 24,382 analysable pairs covering 254 strains, only 8 have a host
+carrying a prophage closely related to the challenging phage, and they involve
+just 2 of the 96 phages. Those two plaque on 0.98 percent of strains, so 0.08
+lysis events are expected among the carriers under the null and 0 are observed.
+That is uninformative rather than negative, and nearly doubling genome coverage
+added no further pairs.
 
-The release names the receptor binding protein of each phage but does not give
-its sequence, and the phage genome files carry nucleotides without gene
-coordinates. Grouping phages by receptor binding protein similarity, which would
-give a sharper receptor proxy than genus membership, was therefore not possible
-without re-annotating the genomes.
+The obstacle is the panel. Superinfection exclusion requires a temperate phage
+that nonetheless forms plaques, and the Guelin collection was assembled for
+lytic activity: 2 of 96 phages carry an integrase and both barely plaque.
+Testing the mechanism needs a collection built for that question.
 
+Two narrower limits remain. Exact k-mer containment detects prophages closely
+related to a collection phage and misses diverged ones, which is the right
+behaviour for repressor-mediated immunity but means this is not a measure of
+prophage content in general. And the recombinase counts reported alongside are
+an index of mobile element content, not a prophage count: the same profiles
+match XerC, XerD and integron recombinases, and the median of 28 per genome is
+far above the number of prophages an Escherichia genome actually carries.
+
+## Receptor binding proteins: compared, and it did not help
+
+Also superseded. The released table names each phage's receptor binding protein
+without a sequence, but those identifiers match the proteins predicted in
+script 07 for 125 of 130 entries, and the matched proteins have a median length
+of 677 residues against 127 for all predicted proteins. Script 12 recovered
+them and rebuilt the receptor gate from receptor binding protein homology.
+
+It is no better than the genus-based gate: 1.26 fold lysis enrichment against
+1.34. Since the binding protein is the right biological object, the weakness
+lies in the anchor rather than the grouping, and no reanalysis fixes that.
 ## The shrunken intervals are narrower than they should be
 
 The joint estimation in script 13 is empirical Bayes: the pooled mean and the
@@ -171,20 +194,18 @@ kinetics, abortive infection without plaque formation, or a host growth
 condition all produce the same empty spot. The check bounds how much lysogeny
 could contribute; it does not measure it.
 
-## The host genomes cover a third of the collection, non-randomly
+## The host genomes cover two thirds of the collection, non-randomly
 
-Scripts 18 to 20 rest on 135 genomes validated out of 162 retrieved, which is
-34 percent of the 402 strains. Strains deposited in public archives are not a
+Scripts 18 to 20 rest on 254 genomes validated out of 287 retrieved, which is
+63 percent of the 402 strains. Strains deposited in public archives are not a
 random sample: reference and pathogenic isolates are deposited more often than
-unremarkable commensals. Coverage is also truncated by NCBI throttling rather
-than by anything about the strains, which at least makes that part of the
-missingness unrelated to biology.
-
-Identity was validated against the released core-genome distance matrix rather
-than assumed from the name match, and 27 genomes were dropped, among them ED1a
-and BL21, whose names are shared by several distinct isolates. That check
+unremarkable commensals. Identity was validated against the released core-genome distance matrix rather
+than assumed from the name match, and 33 genomes were dropped. That check
 cannot catch a wrong genome whose true strain happens to sit in the same part
-of the tree.
+of the tree, and it is relative to the genomes retrieved: ED1a and BL21 both
+failed on a smaller set of 162 and both pass at rank 1 on the full 287, because
+their nearest relatives had not been retrieved yet. A genome is only as
+checkable as its neighbourhood is complete.
 
 ## Scope
 

@@ -199,12 +199,18 @@ def main() -> int:
     cont = cont[phage_cols]
     print(f"containment matrix: {cont.shape[0]} strains x {cont.shape[1]} phages")
 
-    if MARKERS.exists():
-        markers = pd.read_csv(MARKERS)
-    else:
-        print("counting integrase markers")
-        markers = count_integrases(strains)
+    # The marker cache is keyed by strain, so a later run with more genomes
+    # must extend it rather than reuse it wholesale.
+    markers = pd.read_csv(MARKERS) if MARKERS.exists() else pd.DataFrame(
+        columns=["strain", "n_integrase", "n_proteins"])
+    todo = [s for s in strains if s not in set(markers["strain"].astype(str))]
+    if todo:
+        print(f"counting recombinase markers for {len(todo)} genomes")
+        fresh = count_integrases(todo)
+        markers = (pd.concat([markers, fresh], ignore_index=True)
+                   .drop_duplicates("strain", keep="last"))
         markers.to_csv(MARKERS, index=False)
+    markers = markers[markers["strain"].isin(strains)]
 
     long = cont.stack().rename("containment").reset_index()
     long.columns = ["strain", "phage", "containment"]

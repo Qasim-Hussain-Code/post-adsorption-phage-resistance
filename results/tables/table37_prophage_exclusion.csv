@@ -1,3 +1,3 @@
 exposure,n_pairs,n_exposed,odds_ratio,ci_low,ci_high,log2_or,coefficient,std_error,p_value,note
-related prophage present (containment >= 0.2),12958,8,,,,,,,,"not estimable, complete separation"
-"containment, per 10 percent",12958,431,,,,,,,,"not estimable, complete separation"
+related prophage present (containment >= 0.2),24382,8,0.12951643232237817,0.009094391400096373,1.8444891476013894,-2.948792944264749,-2.043947515372171,1.355178504977603,0.13149064252882492,
+"containment, per 10 percent",24382,846,1.3460186765097835,0.7635466133106534,2.372829956847731,0.42869842801740704,0.29715110669074635,0.28925112792627183,0.30427365180887367,

@@ -214,12 +214,13 @@ them shifts the overall failure rate from 79.25 to 78.83 percent and the median
 defense odds ratio by 0.002 in log2.
 
 **Resident prophages: this collection cannot test them.** The host genomes are
-not in the released data, so 162 were resolved against NCBI individually and
-validated against the released core-genome distance matrix; 135 passed. Across
-12,958 analysable pairs, exactly **8** have a host carrying a prophage closely
-related to the challenging phage, involving 5 strains and only 2 phages. All 8
-are non-lytic, but those phages plaque on 0.74 percent of strains, so **0.06**
-lysis events were expected under the null. The regression cannot be fitted. The
+not in the released data, so 287 were resolved against NCBI individually and
+validated against the released core-genome distance matrix; **254 passed, 63
+percent of the collection**. Across 24,382 analysable pairs, exactly **8** have
+a host carrying a prophage closely related to the challenging phage, involving 5
+strains and only 2 phages, and nearly doubling coverage added none. All 8 are
+non-lytic, but those phages plaque on 0.98 percent of strains, so **0.08** lysis
+events were expected under the null (odds ratio 0.13, interval 0.01 to 1.84). The
 limitation is the panel: it was assembled for lytic activity, so only 2 of 96
 phages are temperate. One check does hold: the two phages found integrated in
 host chromosomes are exactly the two independently classified temperate from

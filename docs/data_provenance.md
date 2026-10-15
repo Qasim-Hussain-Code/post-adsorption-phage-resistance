@@ -128,13 +128,13 @@ and are not redistributed.
 Coverage is partial and the reasons are worth separating. Some strains are
 simply not deposited, mostly the internally numbered isolates. Others are
 deposited under names shared with unrelated isolates and are rejected by the
-validation in script 19. And a full pass is throttled by NCBI, which is why the
-run recorded here stops short of all 402 names; the script is resumable and
-re-running retries only what failed.
+validation in script 19. NCBI also throttles long runs, which slows a full pass
+considerably; the script is resumable and re-running retries only what failed.
+The run recorded here covers all 402 names and resolves 287 of them.
 
 | Local path | Source | Size |
 |---|---|---|
-| `data/raw/host_genomes/<strain>.fna.gz` | NCBI Assembly, per strain | about 237 MB for 166 genomes |
+| `data/raw/host_genomes/<strain>.fna.gz` | NCBI Assembly, per strain | about 414 MB for 287 genomes |
 | `data/raw/lifestyle_profiles/*.hmm` | Pfam via InterPro, 7 lysogeny families | small |
 
 With these, the repository and all downloaded data occupy roughly 400 MB
