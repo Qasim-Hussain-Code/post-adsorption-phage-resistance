@@ -1,0 +1,2 @@
+n_systems_annotated,n_systems_fitted,n_systems_usable,pooled_log_or,pooled_odds_ratio,pooled_se,pooled_ci_low,pooled_ci_high,tau2_paule_mandel,tau2_dersimonian_laird,tau,cochran_q,q_df,q_p_value,i_squared,median_shrinkage,n_significant_raw,n_posterior_excludes_null
+137,79,79,-0.08060050566358964,0.9225621762002993,0.04352098409731303,0.8471295584186052,1.0047116884273026,0.07239863489455221,0.074149337704306,0.26906994424229586,178.85383142751493,78,6.825108892203561e-10,0.5638896892649935,0.5106215967521672,7,9
