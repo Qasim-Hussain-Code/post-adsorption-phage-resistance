@@ -36,6 +36,7 @@ Outputs:
     results/tables/table51_spectrum_coherence.csv
     results/tables/table52_phage_cluster_sweep.csv
     results/tables/table53_island_adjusted.csv
+    results/tables/table54_trait_structure.csv
     results/phage_resolved_report.txt
 """
 
@@ -132,6 +133,25 @@ def patristic_distances(path: Path, names: list[str]) -> np.ndarray:
     return d
 
 
+def concordance(v: np.ndarray, groups: np.ndarray) -> float:
+    """Fraction of same-group strain pairs that agree on carriage.
+
+    A regression of carriage on cluster indicators would overfit badly here,
+    since there are 224 clusters for 402 strains and a random trait reaches an
+    R2 near 0.56 on that count alone. Pair agreement has no such artifact.
+    """
+    agree = total = 0.0
+    for u in pd.unique(groups):
+        m = groups == u
+        n = int(m.sum())
+        if n < 2:
+            continue
+        k = float(v[m].sum())
+        agree += k * (k - 1) / 2 + (n - k) * (n - k - 1) / 2
+        total += n * (n - 1) / 2
+    return agree / total if total else float("nan")
+
+
 def phage_clusters(dist: np.ndarray, threshold: float) -> np.ndarray:
     """Single-linkage groups of near-identical phages, as integer labels."""
     from scipy.cluster.hierarchy import fcluster, linkage
@@ -207,6 +227,31 @@ def main() -> int:
     print(f"traits scored per phage: {traits.shape[1]} "
           f"({len(systems)} real, {len(systems) * N_NULL_TRAITS} coordinate "
           f"null, {len(systems) * N_NULL_TRAITS} clonal null)")
+
+    # Measure the mismatch that motivates the second null rather than
+    # asserting it: how clonally coherent are real systems against each null?
+    struct = []
+    for k, s in enumerate(systems):
+        obs_c = concordance(real[:, k], labels_clonal)
+        co = np.array([concordance(coord_blocks[k][:, j], labels_clonal)
+                       for j in range(min(100, N_NULL_TRAITS))])
+        cl = np.array([concordance(clonal_blocks[k][:, j], labels_clonal)
+                       for j in range(min(100, N_NULL_TRAITS))])
+        struct.append(dict(
+            system=s, n_carriers=int(real[:, k].sum()),
+            observed_concordance=obs_c,
+            coordinate_null_concordance=float(co.mean()),
+            clonal_null_concordance=float(cl.mean()),
+            p_exceeds_coordinate_null=float((1 + (co >= obs_c).sum())
+                                            / (1 + co.size))))
+    structure = pd.DataFrame(struct)
+    structure.to_csv(paths.TABLES / "table54_trait_structure.csv", index=False)
+    n_exceed = int((structure["p_exceeds_coordinate_null"] <= 0.05).sum())
+    print(f"clonal concordance: observed median "
+          f"{structure['observed_concordance'].median():.4f}, coordinate null "
+          f"{structure['coordinate_null_concordance'].median():.4f}, clonal "
+          f"null {structure['clonal_null_concordance'].median():.4f}; "
+          f"{n_exceed} of {len(structure)} systems exceed the coordinate null")
 
     # Score every trait against every phage.
     z = np.full((traits.shape[1], len(phages)), np.nan)
@@ -304,6 +349,27 @@ def main() -> int:
                 (1 + (null_more >= c_more).sum()) / (1 + N_NULL_TRAITS))
             rec[f"p_best_{name}"] = float(
                 (1 + (nul.min(axis=1) <= obs.min()).sum()) / (1 + N_NULL_TRAITS))
+        # What averaging over the panel costs: the effect on the phages the
+        # system acts on, beside the effect over the whole panel.
+        on = {phage_names[i] for i in np.flatnonzero(obs_prot[0])}
+        carr = set(feats.index[feats[f"ds_{s}"] == 1])
+        in_panel = pairs["strain"].isin(carr)
+        rec["panel_lysis_carriers"] = float(pairs.loc[in_panel, "lytic"].mean())
+        rec["panel_lysis_others"] = float(pairs.loc[~in_panel, "lytic"].mean())
+        rec["panel_difference"] = (rec["panel_lysis_carriers"]
+                                   - rec["panel_lysis_others"])
+        if on:
+            sel = pairs[pairs["phage"].isin(on)]
+            m = sel["strain"].isin(carr)
+            rec["spectrum_lysis_carriers"] = float(sel.loc[m, "lytic"].mean())
+            rec["spectrum_lysis_others"] = float(sel.loc[~m, "lytic"].mean())
+            rec["spectrum_difference"] = (rec["spectrum_lysis_carriers"]
+                                          - rec["spectrum_lysis_others"])
+        else:
+            rec["spectrum_lysis_carriers"] = np.nan
+            rec["spectrum_lysis_others"] = np.nan
+            rec["spectrum_difference"] = np.nan
+
         # A system is credited only where neither null explains it.
         rec["p_protective"] = max(rec["p_protective_coordinate"],
                                   rec["p_protective_clonal"])
@@ -427,20 +493,24 @@ def main() -> int:
     add("TWO NULLS, BECAUSE ONE IS NOT ENOUGH")
     add("  A null that matches prevalence and the share of carriage explained "
         "by the principal coordinates is not adequate here, and the reason is "
-        "measurable. Defense systems sit in islands inherited by near-"
-        "identical relatives. Taking the fraction of same-cluster strain "
-        "pairs that agree on carriage, the real systems sit at a median of "
-        "0.911 while coordinate-matched null traits reach 0.811, and 24 of "
-        "the 33 systems exceed their own null on that measure. Since lysis is "
-        "itself clonally structured, a trait that tracks lineages more "
-        "tightly than the null does will score against it for reasons that "
-        "have nothing to do with defense.")
+        "measurable rather than theoretical. Defense systems sit in islands "
+        "inherited by near-identical relatives. Taking the fraction of "
+        "same-cluster strain pairs that agree on carriage, the real systems "
+        f"sit at a median of "
+        f"{structure['observed_concordance'].median():.4f} while "
+        f"coordinate-matched null traits reach "
+        f"{structure['coordinate_null_concordance'].median():.4f}, and "
+        f"{n_exceed} of the {len(structure)} systems exceed their own null on "
+        "that measure. Since lysis is itself clonally structured, a trait "
+        "that tracks lineages more tightly than the null does will score "
+        "against it for reasons that have nothing to do with defense.")
     add("  The second null fixes exactly that. It takes the number of "
         "carriers in each clonal cluster and permutes those counts among "
         "clusters of the same size, so prevalence and the entire "
         "within-cluster carriage pattern are preserved while the lineages "
-        "carrying the trait are randomised. It reproduces the observed clonal "
-        "concordance exactly, to four decimal places.")
+        "carrying the trait are randomised. Its median concordance is "
+        f"{structure['clonal_null_concordance'].median():.4f} against the "
+        f"observed {structure['observed_concordance'].median():.4f}.")
     add("  Neither null dominates. The coordinate null matches broad-scale "
         "structure and under-matches clonal structure; the clonal null does "
         "the reverse, carrying about half the broad-scale signal of the real "

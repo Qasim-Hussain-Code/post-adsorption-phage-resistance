@@ -230,6 +230,25 @@ The two loci it did flag are associated with increased lysis, rest on ten
 carrier strains each, and carry no recognised domain. They are observations for
 follow-up, not mechanisms.
 
+## The one phage-resolved finding is narrow in every sense
+
+Retron_I_C survives both nulls on 12 phages of 94, and the qualifications
+belong next to it. It rests on 20 carriers, the smallest number this study
+admits for any system, so the effect is estimated from a small group however
+consistent it looks across those phages. Conditioning on the four catalogued
+systems most enriched among its carriers halves the signal without removing
+it, which bounds but does not eliminate the possibility that the responsible
+gene is an uncatalogued neighbour on the same island. The test asks whether
+carriage predicts less lysis beyond core-genome position, which is an
+association and not a demonstration of mechanism: no phage was challenged
+against an isogenic knockout anywhere in this work.
+
+The two nulls are also imperfect in opposite directions, which is why both are
+used. The coordinate null does not reproduce the clonal coherence of real
+systems; the clonal null carries about half their broad-scale phylogenetic
+signal. Reporting the worse p-value of the two is conservative but it is not a
+proof that no structure remains unmodelled.
+
 ## Scope
 
 This is an observational re-analysis of a single collection of 402 Escherichia

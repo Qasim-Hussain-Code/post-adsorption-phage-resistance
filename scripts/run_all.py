@@ -41,13 +41,14 @@ STEPS = [
     ("26_identify_gwas_loci.py", "identify what the flagged loci are"),
     ("27_generate_calibration_figure.py", "association calibration figure"),
     ("28_phage_resolved_effects.py", "resolve the panel into its phages"),
+    ("29_generate_spectrum_figure.py", "phage spectrum figure"),
 ]
 
 # Steps 07 onward download phage genomes and a model archive and are much
 # slower than the core pipeline, so they can be skipped independently.
 EXTENDED_PREFIXES = ("07_", "08_", "09_", "10_", "11_", "12_", "13_", "14_",
                      "15_", "16_", "17_", "18_", "19_", "20_", "21_", "22_",
-                     "23_", "24_", "25_", "26_", "27_", "28_")
+                     "23_", "24_", "25_", "26_", "27_", "28_", "29_")
 
 # Steps 18 to 20 download several hundred bacterial genomes from NCBI, which
 # throttles long runs. They are separable so that a network problem cannot

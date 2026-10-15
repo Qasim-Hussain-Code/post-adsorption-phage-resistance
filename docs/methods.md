@@ -415,6 +415,37 @@ pattern's k-mer hash, a window of three kilobases either side is extracted, gene
 are called and searched against the anti-defense and lysogeny profiles, and the
 carriers are checked for catalogued defense systems that non-carriers lack.
 
+## Phage-resolved effects
+
+Each defense system is tested against each phage separately, as a Rao score
+test for adding the system to a logistic model of lysis fitted for that phage
+with an intercept and eight core-genome principal coordinates. The covariate
+model is fitted once per phage and every candidate trait is then scored against
+it in closed form, which is what makes a simulation-based null affordable
+across thousands of traits.
+
+Phages are collapsed into groups by single linkage on patristic distance from
+the VIRIDIC tree at a threshold of 0.1, and the unit counted is the group
+rather than the phage, because near-identical phages are not independent tests.
+The headline count is reported at 0.05, 0.1 and 0.2 so that it does not rest on
+one cut.
+
+Two nulls are generated per system, each with 1000 traits. The first matches
+prevalence and the share of carriage variance explained by the principal
+coordinates. The second permutes the number of carriers in each clonal cluster
+among clusters of the same size, which preserves prevalence and the whole
+within-cluster carriage pattern while randomising which lineages carry the
+trait. The second exists because the first does not reproduce the clonal
+coherence of real defense systems, measured as the fraction of same-cluster
+strain pairs agreeing on carriage; that measure is used rather than a
+regression on cluster indicators, which would overfit at 224 clusters for 402
+strains. Neither null dominates, so every reported p-value is the larger of the
+two.
+
+A system that survives is then re-tested with the systems most enriched among
+its carriers added to the covariates, since defense systems travel together on
+islands and a survivor may be carrying the credit for a neighbour.
+
 ## Software
 
 Python 3.13.11 with numpy 2.3.5, pandas 2.3.3, scipy 1.16.3, statsmodels 0.14.6,

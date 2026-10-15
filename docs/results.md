@@ -657,6 +657,97 @@ It cannot see point mutations, since this is a presence test. It covers 254 of
 is a strain's average across 96 phages, which dilutes anything acting on a
 single phage lineage.
 
+## 22. Resolving the panel: was the negative result an artifact of averaging?
+
+Every association tested up to this point is an average over the whole phage
+panel. Defense systems are characteristically narrow in spectrum, and a system
+that blocked five phages of ninety-six would be diluted by that average into
+something none of the tests above could detect. That is a specific and
+plausible way the central negative result could have been wrong, and it is
+answerable rather than something to be assumed either way.
+
+Script 28 tests each of the 33 systems against each phage separately, as a
+score test for adding the system to a logistic model of lysis fitted per phage
+with core-genome coordinates as covariates. The score form is what makes a
+proper null affordable: the covariate model is fitted once per phage, and
+thousands of candidate traits are then scored against it in closed form.
+
+**Two corrections had to be made before the output meant anything, and both
+changed the answer.**
+
+The first is that near-identical phages are not independent tests. The panel
+contains pairs at zero distance, and at a patristic distance of 0.1 its 94
+usable members collapse to 54 groups. A system associated with one member of
+such a group is associated with the rest for free, so counting phages lets one
+lineage look like a broad spectrum. Distinct groups are counted instead, which
+is the treatment already given to clonal strains and to identical k-mer
+presence patterns.
+
+The second is that the phylogenetically matched null of section 18 is not
+adequate here, and the gap is measurable rather than theoretical. Defense
+systems sit in islands inherited by near-identical relatives. Taking the
+fraction of same-cluster strain pairs that agree on carriage, the real systems
+sit at a median of **0.911** while coordinate-matched null traits reach
+**0.810**, and **25 of the 33** systems exceed their own null on that measure.
+Since lysis is itself clonally structured, a trait that tracks lineages more
+tightly than its null will score against that null for reasons that have
+nothing to do with defense.
+
+So a second null was built. It takes the number of carriers in each clonal
+cluster and permutes those counts among clusters of the same size, preserving
+prevalence and the entire within-cluster carriage pattern while randomising
+which lineages carry the trait. It reproduces the observed clonal concordance
+exactly, at 0.911. Neither null dominates: the coordinate null matches
+broad-scale structure and under-matches clonal structure, the clonal null does
+the reverse. Every p-value reported is therefore the worse of the two, so a
+system is credited only where neither null accounts for it.
+
+That matters, because it is the difference between six findings and one.
+Against the coordinate null alone, eight systems clear p = 0.05 and six would
+have been reported. Against both, one survives the correction for 33 systems.
+CAS_Class1-Subtype-I-F is the clearest casualty: it goes from p = 0.003 to
+p = 0.386, because its carriage is perfectly determined by clonal cluster
+(concordance 1.000) and a clonally matched null therefore does just as well.
+
+**The answer to the question is yes, for one system of 33.**
+
+**Retron_I_C** acts on 12 phages spanning 11 distinct phage groups, where both
+nulls reach a median of zero (p = 0.001, q = 0.033). The size of what averaging
+cost is the point:
+
+| comparison | carriers | non-carriers | difference |
+| --- | --- | --- | --- |
+| across the whole panel | 0.192 | 0.208 | **-0.016** |
+| on the 12 phages it acts on | 0.171 | 0.393 | **-0.222** |
+
+The panel average is fourteen times smaller than the effect on the phages the
+system actually acts on, and three of those phages show no lysis at all in any
+of the 20 carriers. That is why every other test in this project missed it.
+
+Three further checks support it rather than undermining it. Its carriers span
+12 clonal clusters, 7 sequence types and 5 phylogroups, so this is not one
+lineage. Its 12 phages are more closely related to each other than a random set
+of the same size (p = 0.023, q = 0.040) while spanning 11 groups, which is the
+signature a genuine narrow spectrum should leave and not what panel redundancy
+would produce. And conditioning on the four systems most enriched among its
+carriers (SanaTA, Lamassu-Mrr, PsyrTA, AbiE) reduces it from 11 groups to 6 but
+does not remove it (p = 0.003).
+
+Retrons are an abortive-infection mechanism, which is to say they act after
+adsorption. A post-adsorption system is what this project set out to find, so
+the result is coherent with the design rather than orthogonal to it.
+
+**What it does not establish.** The estimate rests on 20 carriers, the minimum
+this study admits. Conditioning on catalogued neighbours does not exclude an
+uncatalogued gene travelling on the same island. And the reasoning is
+observational throughout: nothing here shows the retron causes the resistance,
+only that the association survives two nulls that were each built to destroy
+it.
+
+Figure 10 shows the cost of averaging across all 33 systems, the surviving
+system across the whole panel, the structure mismatch that forced the second
+null, and what each null admits.
+
 ## Summary
 
 Surface receptor variation is real but does not dominate: it explains about a
@@ -696,6 +787,13 @@ An unbiased scan of all 10,351 accessory loci found nothing associated with
 resistance either, which bounds the search beyond the catalogue: whatever
 accounts for the unexplained failures, it is not a single widely distributed
 accessory locus that this design could see.
+
+Resolving the panel into its individual phages changes one part of that
+picture. Averaging over 96 phages was hiding a real effect for one system of
+33: Retron_I_C reduces lysis by 0.222 on the 12 phages it acts on against
+0.016 across the panel, and survives both a coordinate-matched and a
+clonally-matched null. The negative results stand for the other 32, and they
+now stand against a stricter null than before.
 
 The defensible output is a ranked candidate list. Eleven systems are nominated
 somewhere in the study; the best, RM_Type_IIG, passes five of seven independent

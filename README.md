@@ -267,6 +267,26 @@ loci where a normal reference holds. The three loci the full scan does flag are
 lineage-confined clade markers whose neighbourhood spread has collapsed, and
 the report says so with the numbers rather than presenting them as findings.
 
+**The panel resolved into its phages.** Every association above is an average
+over 96 phages, and defense systems are narrow in spectrum, so script 28 tests
+each system against each phage separately. Two corrections decide the answer:
+near-identical phages are collapsed into 54 groups, since a system associated
+with one member gets the rest for free, and a second null is built because the
+matched null of section 18 is not clonal enough (real systems agree across
+same-cluster strain pairs 0.911 of the time against 0.810 for that null, with
+25 of 33 systems exceeding it). The second null permutes carrier counts among
+clonal clusters of the same size and reproduces 0.911 exactly. Reporting the
+worse of the two p-values is the difference between six findings and one.
+
+**One system survives: Retron_I_C.** It reduces lysis by **0.222** on the 12
+phages it acts on, against **0.016** across the whole panel, a fourteen-fold
+gap that explains why every other test here missed it. Its carriers span 12
+clonal clusters and 5 phylogroups, its phages are more closely related than
+chance, and conditioning on its four most co-occurring systems halves but does
+not remove it. Retrons act by abortive infection, which is post-adsorption, so
+the finding is coherent with what this project set out to look for. It rests on
+20 carriers and remains observational.
+
 ### The candidate list
 
 Nine systems are nominated somewhere in the study. Putting all of them through
@@ -349,6 +369,13 @@ the pooled mean, and the consolidated candidate list](figures/fig7_consolidated_
 ![The population structure problem measured per system, the phylogenetically
 matched null before and after removing host surface type, and the final
 verdict](figures/fig8_inference_and_verdict.png)
+
+### Figure 10. What averaging over a panel of 96 phages costs
+
+![The panel-average effect against the effect on the phages each system acts
+on, the surviving system across the whole panel, the clonal structure the
+coordinate null fails to reproduce, and what each null
+admits](figures/fig10_phage_resolved_spectrum.png)
 
 ### Figure 9. Why the accessory genome scan needed its null rebuilt twice
 
