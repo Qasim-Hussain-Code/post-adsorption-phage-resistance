@@ -194,6 +194,21 @@ def main() -> int:
         add(f"    carriers : {r.carriers}")
         add("")
 
+    # Does any flagged locus co-occur with a system that has shown the
+    # biologically impossible direction elsewhere in this analysis?
+    anomalous = set()
+    cand_path = paths.TABLES / "table7_lineage_controlled_effects.csv"
+    if cand_path.exists():
+        lin = pd.read_csv(cand_path)
+        base = lin[lin["adjustment"] == "base"]
+        anomalous = set(base.loc[base["significant"] & (base["odds_ratio"] > 1),
+                                 "system"])
+    ladder_path = paths.TABLES / "table3_defense_conditioning_ladder.csv"
+    if ladder_path.exists():
+        lad = pd.read_csv(ladder_path)
+        l3 = lad[lad["level"] == "L3_phage_lps"]
+        anomalous |= set(l3.loc[l3["significant"] & (l3["estimate"] > 1), "system"])
+
     located = table[table["located"]] if "located" in table else table
     add("INTERPRETATION")
     if len(located) and (located["effect_surface_adjusted"] > 0).all():
@@ -206,6 +221,34 @@ def main() -> int:
             "unrelated to the locus, and with carriers numbering around ten "
             "strains the estimate rests on a small group. These are "
             "observations to follow up, not mechanisms.")
+    overlaps = []
+    for r in located.itertuples(index=False):
+        shared = {x for x in str(r.catalogued_defense_shared).split(",") if x
+                  and x != "none"}
+        hit = shared & anomalous
+        if hit:
+            overlaps.append((int(r.pattern), sorted(hit)))
+    if overlaps:
+        add("")
+        add("  One result deserves to be drawn out. This scan used no "
+            "catalogue: it tested every variable k-mer in 254 genomes without "
+            "reference to any annotation. Yet the strains carrying "
+            + ", ".join(f"pattern {pid}" for pid, _ in overlaps)
+            + " also share "
+            + ", ".join(sorted({x for _, xs in overlaps for x in xs}))
+            + ", which are among the systems that have shown an association "
+            "with increased lysis throughout this analysis and that no defense "
+            "mechanism can explain.")
+        add("  Two readings fit. The locus and those systems may sit on the "
+            "same mobile element, so that carrying one means carrying the "
+            "other and neither causes anything. Or the element marks a group "
+            "of strains that are easy to lyse for some other reason. Either "
+            "way the convergence is informative about the anomaly: it is not a "
+            "quirk of how defense systems were catalogued, because a scan that "
+            "ignored the catalogue entirely landed on the same strains.")
+        add("  It also suggests where to look. The element is present in about "
+            "ten strains, is not lineage-confined, and is a few hundred bases "
+            "of shared sequence in a window whose genes are listed above.")
     add("  The accompanying protein sequences are written to "
         "data/processed/gwas_locus_sequences.faa so that a reader can take "
         "them further than the profile set used here allows. The profiles "

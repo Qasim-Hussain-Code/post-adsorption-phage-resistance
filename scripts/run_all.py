@@ -37,18 +37,20 @@ STEPS = [
     ("22_full_bayesian_pooling.py", "posterior intervals without the shortcut"),
     ("23_ordinal_thresholds.py", "the whole plaque score, not just lysis"),
     ("24_generate_inference_figure.py", "inference figure"),
+    ("25_accessory_genome_gwas.py", "search the whole accessory genome"),
+    ("26_identify_gwas_loci.py", "identify what the flagged loci are"),
 ]
 
 # Steps 07 onward download phage genomes and a model archive and are much
 # slower than the core pipeline, so they can be skipped independently.
 EXTENDED_PREFIXES = ("07_", "08_", "09_", "10_", "11_", "12_", "13_", "14_",
                      "15_", "16_", "17_", "18_", "19_", "20_", "21_", "22_",
-                     "23_", "24_")
+                     "23_", "24_", "25_", "26_")
 
 # Steps 18 to 20 download several hundred bacterial genomes from NCBI, which
 # throttles long runs. They are separable so that a network problem cannot
 # stop the rest, and step 18 is resumable: completed downloads are skipped.
-GENOME_PREFIXES = ("18_", "19_", "20_")
+GENOME_PREFIXES = ("18_", "19_", "20_", "25_", "26_")
 
 
 def main() -> int:

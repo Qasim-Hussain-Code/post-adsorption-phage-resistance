@@ -243,6 +243,21 @@ point estimate and no conclusion changes. Using all four plaque-score
 thresholds adds no power, because they reuse the same observations, but
 confirms that **no system of 33** shows heterogeneity across thresholds.
 
+**The whole accessory genome, searched without a catalogue.** With 254
+validated genomes, script 25 tests every variable k-mer rather than a
+pre-defined feature list: 616,300 variable k-mers collapsing into **10,351
+loci**. **No locus is associated with resistance.** Two are associated with
+being lysed more often, and the carriers of one share **SanaTA and Septu**,
+two systems that have shown that same impossible direction throughout. A scan
+using no catalogue landed on the same strains the catalogued analysis kept
+flagging, so the anomaly is not an artifact of annotation.
+
+Getting there required fixing two failures, both documented: sampling k-mers at
+one in fifty left 83 percent of patterns backed by a single k-mer, and the
+phylogenetically matched null was five times too liberal here because eight
+principal coordinates cannot describe a clade-confined accessory locus. An
+empirical null calibrates correctly.
+
 ### The candidate list
 
 Nine systems are nominated somewhere in the study. Putting all of them through

@@ -376,6 +376,31 @@ weighted average is reported as an effect size and the per-threshold estimates
 carry the honest intervals. Reporting them separately also tests the
 proportional odds assumption that a single ordinal model would impose.
 
+## Accessory genome association
+
+Every variable k-mer in the validated genomes is tested, with no catalogue.
+K-mers are sampled at one in twenty with the same FracMinHash scheme used
+elsewhere, and those carried by fewer than ten or more than all-but-ten strains
+are dropped as uninformative. K-mers occurring in exactly the same strains are
+collapsed into one presence pattern, which is both what makes the problem
+tractable and the right treatment of linkage; patterns backed by fewer than
+five k-mers are discarded as too short to be loci.
+
+Significance is assessed against an empirical null rather than a simulated one.
+Within bins of carrier count and phylogenetic signal, the spread of the test
+statistic across loci, which cannot nearly all be causal, is taken as the null
+and summarised by its median and scaled median absolute deviation so that a few
+true associations cannot inflate it. A bin whose spread collapses, which happens
+where near-identical clade markers dominate, carries no usable null and is
+skipped. The simulated null of script 21 is computed alongside and reported, not
+interpreted: it is about five times too liberal here, because traits built from
+eight principal coordinates are less clade-confined than real accessory loci.
+
+Flagged patterns are then relocated in a carrier genome by rescanning it for the
+pattern's k-mer hash, a window of three kilobases either side is extracted, genes
+are called and searched against the anti-defense and lysogeny profiles, and the
+carriers are checked for catalogued defense systems that non-carriers lack.
+
 ## Software
 
 Python 3.13.11 with numpy 2.3.5, pandas 2.3.3, scipy 1.16.3, statsmodels 0.14.6,

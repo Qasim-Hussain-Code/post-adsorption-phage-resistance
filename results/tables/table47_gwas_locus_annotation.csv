@@ -1,0 +1,3 @@
+pattern,n_kmers,n_carriers,carrier_used,located,effect_surface_adjusted,q_surface_adjusted,phylogenetic_r2,n_genes_in_window,protein_lengths,domain_hits,catalogued_defense_shared,carriers
+6612,10,10,ECOR-51,True,0.1915007201048378,0.0069674595830978,0.0491179588457479,9,"41,104,58,60,118,207,100,105,178",none,"SanaTA,Septu","ECOR-51,ECOR-55,ECOR-64,IAI67,IAI78,IAI79,IAI80,IAI81,NILS30,NILS32"
+6228,15,10,AL505,True,0.1697295655778309,0.0383866259396653,0.0441540743066501,7,"125,179,160,209,102,134,273",none,none,"AL505,ECOR-62,ECOR-63,IAI36,IAI38,IAI39,NILS30,NILS54,NILS66,NILS67"

@@ -557,6 +557,64 @@ as an effect size only. What it adds is a consistency check the binary analysis
 cannot perform. **No system of 33 shows heterogeneity across thresholds.** The
 associations are not artifacts of where the lysed/not-lysed boundary was drawn.
 
+## 21. Searching the whole accessory genome
+
+Every association in this study has been chosen from a catalogue. With 254
+validated genomes the restriction can be lifted: script 25 tests every variable
+k-mer in the collection against resistance, named or not.
+
+From 63.2 million sampled k-mer observations, 616,300 are variable across
+strains. Collapsing k-mers that occur in exactly the same strains, and keeping
+only patterns backed by at least five k-mers, leaves **10,351 loci** to test.
+
+**Two methodological failures are worth recording, because both were fixed.**
+
+The first was sampling density. At one k-mer in fifty, 83 percent of presence
+patterns were backed by a single k-mer: k-mers from the same gene landed in
+slightly different sets of strains, so the collapsing step that is supposed to
+turn a locus into one test did almost nothing. At one in twenty the median
+pattern is backed by seven k-mers and the tests are loci rather than noise.
+
+The second was the null. The phylogenetically matched null of script 21 fails
+badly here: median p of 0.276 and 23.7 percent of loci below 0.05, about five
+times the expected rate. The reason is specific. Simulated traits are built
+from eight principal coordinates, and a real accessory locus confined to one
+clade has sharper phylogenetic structure than eight axes can describe, so the
+matched null is too weak. That null was adequate for 33 defense systems, whose
+distributions are far less clade-restricted than a typical accessory k-mer.
+
+The replacement is an empirical null: within each prevalence and phylogenetic
+signal bin, the spread of statistics among loci that cannot nearly all be
+causal is itself the null, estimated by median and scaled median absolute
+deviation. It calibrates correctly and slightly conservatively (median p 0.500,
+1.2 and 3.9 percent below 0.05 for the two outcomes).
+
+**The result is a clean negative.** **No locus in the accessory genome of these
+254 strains is associated with resistance.** Two are associated with the
+opposite, being lysed more often, each present in 10 strains and neither
+lineage-confined.
+
+Script 26 then asks what they are. Neither carries an anti-defense or lysogeny
+domain. But the carriers of one of them share **SanaTA and Septu**, two of the
+systems that have shown an association with increased lysis throughout this
+analysis and that no defense mechanism can explain.
+
+That convergence is the most informative thing in this section. A scan that
+used no catalogue at all landed on the same strains that the catalogued
+analysis kept flagging as anomalous. The anomaly is therefore not an artifact
+of how defense systems were annotated. The likeliest reading is that a mobile
+element carries both the locus and those systems and marks a group of strains
+that are easy to lyse for some other reason, which is consistent with the
+finding in section 18 that recombinase content and defense content covary.
+
+**What the scan cannot see** is as important as what it found. It cannot see a
+locus confined to one lineage, because the null removes exactly that signal and
+no observational design can separate a lineage-confined cause from the lineage.
+It cannot see point mutations, since this is a presence test. It covers 254 of
+402 strains, so an effect confined to a handful is invisible. And the outcome
+is a strain's average across 96 phages, which dilutes anything acting on a
+single phage lineage.
+
 ## Summary
 
 Surface receptor variation is real but does not dominate: it explains about a
@@ -591,6 +649,11 @@ only 5 of 254 strains and involve only the 2 temperate phages, which plaque on
 at all. The second is an internal check that passed: the phages found integrated
 in host chromosomes are exactly the two independently classified temperate from
 their own proteomes.
+
+An unbiased scan of the accessory genome found nothing associated with
+resistance either, which bounds the search beyond the catalogue: whatever
+accounts for the unexplained failures, it is not a single widely distributed
+accessory locus that this design could see.
 
 The defensible output is a ranked candidate list. Eleven systems are nominated
 somewhere in the study; the best, RM_Type_IIG, passes five of seven independent

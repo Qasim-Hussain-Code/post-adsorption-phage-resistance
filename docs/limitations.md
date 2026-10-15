@@ -207,6 +207,22 @@ failed on a smaller set of 162 and both pass at rank 1 on the full 287, because
 their nearest relatives had not been retrieved yet. A genome is only as
 checkable as its neighbourhood is complete.
 
+## The accessory genome scan has a specific blind spot
+
+Script 25 found no accessory locus associated with resistance, and that
+statement needs its boundaries attached. The null deliberately removes
+lineage-confined signal, so a locus carried by exactly one clade is invisible by
+construction, and in Escherichia a great deal of accessory content is exactly
+that. The scan covers 254 of 402 strains, tests presence rather than sequence so
+point mutations are invisible, and uses each strain's average across 96 phages
+as the outcome, which dilutes anything acting on one phage lineage. It also
+samples one k-mer in twenty, so a locus shorter than about a hundred bases could
+fall through.
+
+The two loci it did flag are associated with increased lysis, rest on ten
+carrier strains each, and carry no recognised domain. They are observations for
+follow-up, not mechanisms.
+
 ## Scope
 
 This is an observational re-analysis of a single collection of 402 Escherichia
