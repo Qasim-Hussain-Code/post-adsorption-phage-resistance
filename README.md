@@ -278,14 +278,17 @@ same-cluster strain pairs 0.911 of the time against 0.810 for that null, with
 clonal clusters of the same size and reproduces 0.911 exactly. Reporting the
 worse of the two p-values is the difference between six findings and one.
 
-**One system survives: Retron_I_C.** It reduces lysis by **0.222** on the 12
-phages it acts on, against **0.016** across the whole panel, a fourteen-fold
-gap that explains why every other test here missed it. Its carriers span 12
-clonal clusters and 5 phylogroups, its phages are more closely related than
-chance, and conditioning on its four most co-occurring systems halves but does
-not remove it. Retrons act by abortive infection, which is post-adsorption, so
-the finding is coherent with what this project set out to look for. It rests on
-20 carriers and remains observational.
+**One system clears both nulls, then fails a stability check.** Retron_I_C
+reduces lysis by **0.222** on the 12 phages it acts on against **0.016** across
+the whole panel, a fourteen-fold gap that explains why every other test here
+missed it, and retrons act by abortive infection, which is post-adsorption and
+exactly what this project set out to find. But dropping each clonal cluster of
+carriers in turn and refitting, one cluster holding 6 of its 20 carriers takes
+the result to **p = 0.133**, while 40 random drops of the same size leave a
+median p of **0.0065** and only 2 percent do as much damage. Six near-identical
+strains are carrying it. **That makes it the study's best candidate and not a
+finding**, and it leaves the answer to the original question negative:
+averaging was not hiding a robust effect.
 
 ### The candidate list
 
@@ -373,9 +376,9 @@ verdict](figures/fig8_inference_and_verdict.png)
 ### Figure 10. What averaging over a panel of 96 phages costs
 
 ![The panel-average effect against the effect on the phages each system acts
-on, the surviving system across the whole panel, the clonal structure the
-coordinate null fails to reproduce, and what each null
-admits](figures/fig10_phage_resolved_spectrum.png)
+on, the one system clearing both nulls shown across the whole panel with the
+clonal cluster that carries it, the clonal structure the coordinate null fails
+to reproduce, and what each null admits](figures/fig10_phage_resolved_spectrum.png)
 
 ### Figure 9. Why the accessory genome scan needed its null rebuilt twice
 

@@ -232,16 +232,19 @@ follow-up, not mechanisms.
 
 ## The one phage-resolved finding is narrow in every sense
 
-Retron_I_C survives both nulls on 12 phages of 94, and the qualifications
-belong next to it. It rests on 20 carriers, the smallest number this study
-admits for any system, so the effect is estimated from a small group however
-consistent it looks across those phages. Conditioning on the four catalogued
-systems most enriched among its carriers halves the signal without removing
-it, which bounds but does not eliminate the possibility that the responsible
-gene is an uncatalogued neighbour on the same island. The test asks whether
-carriage predicts less lysis beyond core-genome position, which is an
-association and not a demonstration of mechanism: no phage was challenged
-against an isogenic knockout anywhere in this work.
+Retron_I_C clears both nulls on 12 phages of 94, and then does not survive
+removing one clonal cluster of its carriers. Dropping the cluster that holds 6
+of its 20 carriers takes it from p = 0.001 to p = 0.133, where 40 random drops
+removing the same number of carriers leave a median p of 0.0065 and only 2
+percent do as much damage. The result therefore rests on six near-identical
+strains, and the explanation that this lineage is hard to lyse for some reason
+other than the retron is not excluded by anything in this study. Conditioning
+on the four catalogued systems most enriched among its carriers halves the
+signal without removing it, which bounds but does not eliminate the possibility
+that the responsible gene is an uncatalogued neighbour on the same island. The
+test asks whether carriage predicts less lysis beyond core-genome position,
+which is an association and not a demonstration of mechanism: no phage was
+challenged against an isogenic knockout anywhere in this work.
 
 The two nulls are also imperfect in opposite directions, which is why both are
 used. The coordinate null does not reproduce the clonal coherence of real

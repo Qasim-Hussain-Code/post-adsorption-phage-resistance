@@ -709,7 +709,8 @@ CAS_Class1-Subtype-I-F is the clearest casualty: it goes from p = 0.003 to
 p = 0.386, because its carriage is perfectly determined by clonal cluster
 (concordance 1.000) and a clonally matched null therefore does just as well.
 
-**The answer to the question is yes, for one system of 33.**
+**One system of 33 clears both nulls, and then fails a stability check that
+matters.**
 
 **Retron_I_C** acts on 12 phages spanning 11 distinct phage groups, where both
 nulls reach a median of zero (p = 0.001, q = 0.033). The size of what averaging
@@ -724,25 +725,40 @@ The panel average is fourteen times smaller than the effect on the phages the
 system actually acts on, and three of those phages show no lysis at all in any
 of the 20 carriers. That is why every other test in this project missed it.
 
-Three further checks support it rather than undermining it. Its carriers span
-12 clonal clusters, 7 sequence types and 5 phylogroups, so this is not one
-lineage. Its 12 phages are more closely related to each other than a random set
-of the same size (p = 0.023, q = 0.040) while spanning 11 groups, which is the
-signature a genuine narrow spectrum should leave and not what panel redundancy
-would produce. And conditioning on the four systems most enriched among its
-carriers (SanaTA, Lamassu-Mrr, PsyrTA, AbiE) reduces it from 11 groups to 6 but
-does not remove it (p = 0.003).
+Several checks support it. Its carriers span 12 clonal clusters, 7 sequence
+types and 5 phylogroups, so the trait is not confined to one lineage. Its 12
+phages are more closely related to each other than a random set of the same
+size (p = 0.022, q = 0.038) while spanning 11 groups, which is the signature a
+genuine narrow spectrum should leave and not what panel redundancy produces.
+Conditioning on the four systems most enriched among its carriers (SanaTA,
+Lamassu-Mrr, PsyrTA, AbiE) reduces it from 11 groups to 6 without removing it
+(p = 0.003). And retrons are an abortive-infection mechanism, which acts after
+adsorption, so a retron is the kind of system this project set out to find.
 
-Retrons are an abortive-infection mechanism, which is to say they act after
-adsorption. A post-adsorption system is what this project set out to find, so
-the result is coherent with the design rather than orthogonal to it.
+**Then the check that decides it.** Dropping each of the 12 clonal clusters
+holding a carrier in turn, and refitting, leaves anywhere from 1 to 12 phage
+groups. Dropping one of them, a cluster holding 6 of the 20 carriers, takes the
+result to **p = 0.133**.
 
-**What it does not establish.** The estimate rests on 20 carriers, the minimum
-this study admits. Conditioning on catalogued neighbours does not exclude an
-uncatalogued gene travelling on the same island. And the reasoning is
-observational throughout: nothing here shows the retron causes the resistance,
-only that the association survives two nulls that were each built to destroy
-it.
+Losing six carriers costs power whatever they are, so that drop was repeated 40
+times with strains chosen at random and the same number of carriers removed.
+Those random drops leave a median p of **0.0065**, and only **2 percent** of
+them are as bad as dropping the cluster. The fragility is therefore not sample
+size. **Six near-identical strains are carrying the result.**
+
+That reading is the same one this project has reached repeatedly by other
+routes. The clonal null asks whether a trait with this clonal shape, placed on
+other lineages, would do as well, and it would not. But the reason it would not
+is that this particular group of relatives is hard for those 12 phages to lyse,
+and nothing in an observational design can say whether the retron is why. The
+alternative, that the lineage is resistant for some other reason it also
+happens to carry, remains open and is not excluded by any test here.
+
+**So the answer to the question the section asked is no, on this evidence.**
+Averaging over the panel was not hiding a robust effect. It was hiding one
+candidate whose support concentrates in a single clonal group, which is the
+same obstacle that limits every other result in this study. Retron_I_C is worth
+a knockout against the 12 phages named in table 49, and it is not a finding.
 
 Figure 10 shows the cost of averaging across all 33 systems, the surviving
 system across the whole panel, the structure mismatch that forced the second
@@ -788,12 +804,13 @@ resistance either, which bounds the search beyond the catalogue: whatever
 accounts for the unexplained failures, it is not a single widely distributed
 accessory locus that this design could see.
 
-Resolving the panel into its individual phages changes one part of that
-picture. Averaging over 96 phages was hiding a real effect for one system of
-33: Retron_I_C reduces lysis by 0.222 on the 12 phages it acts on against
-0.016 across the panel, and survives both a coordinate-matched and a
-clonally-matched null. The negative results stand for the other 32, and they
-now stand against a stricter null than before.
+Resolving the panel into its individual phages does not overturn that, though
+it produced the study's best single candidate. Retron_I_C reduces lysis by
+0.222 on the 12 phages it acts on against 0.016 across the panel, and clears
+both a coordinate-matched and a clonally-matched null. It then fails a leave-
+one-cluster-out check that random drops of the same size pass, which places 6
+of its 20 carriers at the centre of the result. The negative results stand for
+all 33 systems, and they now stand against a stricter null than before.
 
 The defensible output is a ranked candidate list. Eleven systems are nominated
 somewhere in the study; the best, RM_Type_IIG, passes five of seven independent
@@ -801,3 +818,13 @@ checks and still fails the one that holds the entire genomic background fixed.
 RM_Type_III passes four with twelve informative clonal clusters to RM_Type_IIG's
 seven. No system passes all seven. That list is a priority order for knockout
 experiments, not a set of findings.
+
+Retron_I_C sits outside that ranking rather than inside it, because the seven
+checks are all built on the panel average and section 22 is the one analysis
+that is not. It is nominated on a different basis, an effect on 12 phages where
+its panel average is nearly zero, and it carries its own defect: six of its
+twenty carriers are a single clonal group without which the result does not
+hold. That makes it a twelfth candidate and not a twelfth finding. A knockout
+programme built from this work should take the top of the ranked list and
+Retron_I_C against the phages named in section 22, which are different
+experiments answering different questions.

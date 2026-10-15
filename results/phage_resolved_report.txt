@@ -50,6 +50,12 @@ DOES ANY SYSTEM ACT ON MORE PHAGE GROUPS THAN A MATCHED TRAIT?
     Retron_I_C: 11 phage groups unadjusted, 6 after conditioning on SanaTA,Lamassu-Mrr,PsyrTA,AbiE (p 0.0030).
     Retron_I_C keeps its signal with those neighbours in the model. That does not prove the attribution, since an island member not catalogued here could carry it, but the effect is not explained by the neighbours that are.
 
+  DOES IT REST ON ONE GROUP OF RELATIVES?
+    Retron_I_C: dropping each of the 12 clonal clusters holding a carrier in turn leaves 1 to 12 phage groups (worst p 0.1329 across the 12 refits).
+    Dropping cluster 164, which holds 6 of the carriers, takes it to p 0.1329.
+    Losing that many strains costs power whatever they are, so the same drop was repeated 40 times with strains chosen at random, keeping the number of carriers removed the same. Those random drops give a median p of 0.0065, and 2 percent of them are at least as bad as dropping the cluster.
+    Random drops of the same size do not hurt nearly as much, so this cluster is carrying the result rather than merely contributing to it. The finding should be read as resting on that group of relatives.
+
   Collapsing threshold sensitivity, smallest p over systems:
     distance 0.05  :  70 groups in the panel, smallest p 0.0040 (Retron_I_C)
     distance 0.1   :  54 groups in the panel, smallest p 0.0010 (Retron_I_C)
@@ -57,13 +63,13 @@ DOES ANY SYSTEM ACT ON MORE PHAGE GROUPS THAN A MATCHED TRAIT?
 
 IS ANY SPECTRUM MORE CLOSELY RELATED THAN CHANCE?
   system                    phages  groups   mean d   random       p
-  RM_Type_IV                     8       2   0.0984   2.0717  0.0000
-  CAS_Class1-Subtype-I-F         7       5   1.4694   2.0782  0.0178
-  Shango                         3       3   0.7304   2.0739  0.0201
-  Retron_I_C                    12      11   1.7317   2.0748  0.0228
-  RM_Type_IIG                   18      11   1.8969   2.0763  0.0535
-  AbiE                           3       3   1.7386   2.0795  0.2106
-  Lamassu-Mrr                    6       6   2.3131   2.0763  0.8355
+  RM_Type_IV                     8       2   0.0984   2.0760  0.0000
+  CAS_Class1-Subtype-I-F         7       5   1.4694   2.0736  0.0178
+  Shango                         3       3   0.7304   2.0710  0.0217
+  Retron_I_C                    12      11   1.7317   2.0756  0.0220
+  RM_Type_IIG                   18      11   1.8969   2.0764  0.0515
+  AbiE                           3       3   1.7386   2.0794  0.2110
+  Lamassu-Mrr                    6       6   2.3131   2.0738  0.8397
   4 systems act on a set of phages more closely related than chance: RM_Type_IV, CAS_Class1-Subtype-I-F, Shango, Retron_I_C.
   This has to be read against the 'groups' column rather than 'phages'. A set that is tightly clustered because it is one redundant group of the panel is not evidence of a spectrum: it is the same observation counted several times, and the distance that makes it look coherent is the reason it should not. The test is informative only where the affected phages span several groups and are still closer together than chance would place them.
   Systems whose coherent set spans three or more groups: CAS_Class1-Subtype-I-F, Shango, Retron_I_C. These are the ones worth following up on the phages concerned rather than on average.

@@ -46,10 +46,10 @@ def main() -> int:
             linestyle="--", zorder=2)
     ax.scatter(other["panel_difference"], other["spectrum_difference"], s=38,
                facecolor=P.INK_MUTED, alpha=0.55, edgecolor=P.SURFACE,
-               linewidth=0.8, zorder=3, label="system not surviving both nulls")
+               linewidth=0.8, zorder=3, label="does not clear both nulls")
     ax.scatter(won["panel_difference"], won["spectrum_difference"], s=120,
                facecolor=P.STATUS_CRITICAL, edgecolor=P.SURFACE, linewidth=1.2,
-               zorder=5, label="survives both nulls")
+               zorder=5, label="clears both nulls")
     for r in won.itertuples(index=False):
         ax.annotate(r.system, xy=(r.panel_difference, r.spectrum_difference),
                     xytext=(14, 6), textcoords="offset points", fontsize=9,
@@ -89,6 +89,24 @@ def main() -> int:
     ax.set_xlabel(f"the {vals.size} phages, ordered by effect")
     ax.set_ylabel("score against lysis (negative is protective)")
     ax.set_title(f"b  {name} across the panel", loc="left")
+    # The stability check belongs beside the result, not in a later section.
+    drop = paths.TABLES / "table56_matched_drop.csv"
+    if drop.exists():
+        md = pd.read_csv(drop)
+        md = md[md["system"] == name]
+        if not md.empty:
+            r0 = md.iloc[0]
+            n_carr = int(spec.loc[spec.system == name, "n_carriers"].iloc[0])
+            ax.text(0.04, 0.97,
+                    f"but one clonal cluster holds "
+                    f"{int(r0.carriers_dropped)} of the {n_carr} carriers,\n"
+                    f"and removing it takes this to "
+                    f"p = {r0.p_dropping_cluster:.3f},\nwhere random drops of "
+                    f"the same size leave a median\nof "
+                    f"p = {r0.median_p_random_drop:.4f}. Those "
+                    f"{int(r0.carriers_dropped)} strains carry it.",
+                    transform=ax.transAxes, ha="left", va="top",
+                    fontsize=8.4, color=P.STATUS_CRITICAL)
     P.tidy(ax, xgrid=False, ygrid=True)
 
     # c: why one null was not enough.
@@ -160,7 +178,7 @@ def main() -> int:
     ax.legend(handles=[
         plt.Line2D([], [], marker="o", linestyle="none", markersize=9,
                    markerfacecolor=P.STATUS_CRITICAL, markeredgecolor=P.SURFACE,
-                   label=f"survives both nulls and the correction"),
+                   label="clears both nulls and the correction"),
         plt.Line2D([], [], marker="o", linestyle="none", markersize=7,
                    markerfacecolor=P.INK_MUTED, markeredgecolor=P.SURFACE,
                    label="does not")],

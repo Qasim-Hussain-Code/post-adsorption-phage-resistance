@@ -37,6 +37,8 @@ Outputs:
     results/tables/table52_phage_cluster_sweep.csv
     results/tables/table53_island_adjusted.csv
     results/tables/table54_trait_structure.csv
+    results/tables/table55_leave_cluster_out.csv
+    results/tables/table56_matched_drop.csv
     results/phage_resolved_report.txt
 """
 
@@ -90,6 +92,10 @@ N_COHERENCE_DRAWS = 20000
 # Co-occurring systems conditioned on when checking whether a surviving system
 # is carrying the credit for a neighbour on the same defense island.
 N_ISLAND_PARTNERS = 4
+
+# Random strain drops used to separate the cost of losing a cluster of
+# relatives from the cost of losing that many strains at all.
+N_MATCHED_DROPS = 40
 
 
 def score_z(y: np.ndarray, cov: np.ndarray, traits: np.ndarray) -> np.ndarray:
@@ -421,6 +427,94 @@ def main() -> int:
     adj = pd.DataFrame(adjusted)
     adj.to_csv(paths.TABLES / "table53_island_adjusted.csv", index=False)
 
+    # A survivor resting on 20 carriers could be resting on one group of
+    # relatives among them. Dropping each clonal cluster that holds a carrier
+    # in turn answers that directly: a result that depends on one cluster
+    # collapses when it goes, and one that does not, does not.
+    stability = []
+    for s in survivors:
+        k = systems.index(s)
+        v = real[:, k]
+        held = pd.unique(labels_clonal[v == 1])
+        block = np.hstack([v[:, None], coord_blocks[k], clonal_blocks[k]])
+        for c in held:
+            keep_strain = labels_clonal != c
+            z3 = np.full((block.shape[1], len(usable)), np.nan)
+            for m, j in enumerate(usable):
+                ob = np.isfinite(y_mat[:, j]) & keep_strain
+                yv = y_mat[ob, j]
+                if yv.sum() < 5 or yv.sum() > ob.sum() - 5:
+                    continue
+                z3[:, m] = score_z(yv, cov[ob], block[ob])
+            fine = np.isfinite(z3[0])
+            got = int(count_clusters_hit(
+                (np.where(fine, z3[0], 0.0) < -Z_THRESHOLD)[None, :], labels)[0])
+            ps = {}
+            for name, lo in (("coordinate", 1), ("clonal", 1 + N_NULL_TRAITS)):
+                arr = z3[lo:lo + N_NULL_TRAITS]
+                nl = count_clusters_hit(
+                    np.where(np.isfinite(arr), arr, 0.0) < -Z_THRESHOLD, labels)
+                ps[name] = float((1 + (nl >= got).sum()) / (1 + N_NULL_TRAITS))
+            stability.append(dict(
+                system=s, dropped_cluster=int(c),
+                carriers_dropped=int(((labels_clonal == c) & (v == 1)).sum()),
+                carriers_left=int(v[keep_strain].sum()),
+                n_groups_protective=got, p_protective=max(ps.values())))
+    stab = pd.DataFrame(stability)
+    stab.to_csv(paths.TABLES / "table55_leave_cluster_out.csv", index=False)
+
+    # Losing a cluster of carriers costs power as well as whatever that
+    # cluster contributed, and the two have different meanings. Dropping the
+    # same number of strains at random, with the same number of carriers among
+    # them, separates them: if random drops of that size hurt just as much,
+    # the fragility is sample size rather than the cluster.
+    matched = []
+    for s in survivors:
+        k = systems.index(s)
+        v = real[:, k]
+        block = np.hstack([v[:, None], coord_blocks[k], clonal_blocks[k]])
+        part = stab[stab["system"] == s]
+        worst_row = part.loc[part["p_protective"].idxmax()]
+        in_cluster = labels_clonal == int(worst_row.dropped_cluster)
+        n_carr = int((in_cluster & (v == 1)).sum())
+        n_non = int((in_cluster & (v == 0)).sum())
+        carr_idx = np.flatnonzero(v == 1)
+        non_idx = np.flatnonzero(v == 0)
+        draws = []
+        for _ in range(N_MATCHED_DROPS):
+            drop = np.concatenate([
+                rng.choice(carr_idx, size=n_carr, replace=False),
+                rng.choice(non_idx, size=n_non, replace=False)])
+            keep_strain = np.ones(len(strains), dtype=bool)
+            keep_strain[drop] = False
+            z4 = np.full((block.shape[1], len(usable)), np.nan)
+            for m, j in enumerate(usable):
+                ob = np.isfinite(y_mat[:, j]) & keep_strain
+                yv = y_mat[ob, j]
+                if yv.sum() < 5 or yv.sum() > ob.sum() - 5:
+                    continue
+                z4[:, m] = score_z(yv, cov[ob], block[ob])
+            got = int(count_clusters_hit(
+                (np.where(np.isfinite(z4[0]), z4[0], 0.0)
+                 < -Z_THRESHOLD)[None, :], labels)[0])
+            ps = {}
+            for name, lo in (("coordinate", 1), ("clonal", 1 + N_NULL_TRAITS)):
+                arr = z4[lo:lo + N_NULL_TRAITS]
+                nl = count_clusters_hit(
+                    np.where(np.isfinite(arr), arr, 0.0) < -Z_THRESHOLD, labels)
+                ps[name] = float((1 + (nl >= got).sum()) / (1 + N_NULL_TRAITS))
+            draws.append(dict(n_groups=got, p=max(ps.values())))
+        dd = pd.DataFrame(draws)
+        matched.append(dict(
+            system=s, dropped_cluster=int(worst_row.dropped_cluster),
+            carriers_dropped=n_carr, strains_dropped=n_carr + n_non,
+            p_dropping_cluster=float(worst_row.p_protective),
+            median_p_random_drop=float(dd["p"].median()),
+            frac_random_as_bad=float((dd["p"] >= worst_row.p_protective).mean()),
+            median_groups_random_drop=float(dd["n_groups"].median())))
+    match = pd.DataFrame(matched)
+    match.to_csv(paths.TABLES / "table56_matched_drop.csv", index=False)
+
     # How much of the apparent breadth survives collapsing at other
     # thresholds? The headline count should not rest on one cut.
     sweep = []
@@ -629,6 +723,49 @@ def main() -> int:
                 "neighbours in the model. That does not prove the attribution, "
                 "since an island member not catalogued here could carry it, "
                 "but the effect is not explained by the neighbours that are.")
+    if not stab.empty:
+        add("")
+        add("  DOES IT REST ON ONE GROUP OF RELATIVES?")
+        for s in sorted(set(stab["system"])):
+            part = stab[stab["system"] == s]
+            add(f"    {s}: dropping each of the {len(part)} clonal clusters "
+                f"holding a carrier in turn leaves "
+                f"{int(part['n_groups_protective'].min())} to "
+                f"{int(part['n_groups_protective'].max())} phage groups "
+                f"(worst p {part['p_protective'].max():.4f} across the "
+                f"{len(part)} refits).")
+            worst = part.loc[part["p_protective"].idxmax()]
+            if part["p_protective"].max() <= config.FDR_ALPHA:
+                add("    No single cluster of relatives carries the result: it "
+                    "holds with any one of them removed.")
+            else:
+                add(f"    Dropping cluster {int(worst.dropped_cluster)}, which "
+                    f"holds {int(worst.carriers_dropped)} of the carriers, "
+                    f"takes it to p {worst.p_protective:.4f}.")
+                mr = match[match["system"] == s]
+                if not mr.empty:
+                    r0 = mr.iloc[0]
+                    add(f"    Losing that many strains costs power whatever "
+                        f"they are, so the same drop was repeated "
+                        f"{N_MATCHED_DROPS} times with strains chosen at "
+                        f"random, keeping the number of carriers removed the "
+                        f"same. Those random drops give a median p of "
+                        f"{r0.median_p_random_drop:.4f}, and "
+                        f"{100 * r0.frac_random_as_bad:.0f} percent of them "
+                        f"are at least as bad as dropping the cluster.")
+                    if r0.frac_random_as_bad >= 0.2:
+                        add("    So the fragility is mostly sample size "
+                            "rather than that cluster: removing a comparable "
+                            "number of carriers hurts about as much wherever "
+                            "they are taken from. The result is thin, which "
+                            "is a statement about 20 carriers, not evidence "
+                            "that one group of relatives produced it.")
+                    else:
+                        add("    Random drops of the same size do not hurt "
+                            "nearly as much, so this cluster is carrying the "
+                            "result rather than merely contributing to it. "
+                            "The finding should be read as resting on that "
+                            "group of relatives.")
     add("")
     add("  Collapsing threshold sensitivity, smallest p over systems:")
     for th in PHAGE_CLUSTER_SWEEP:
