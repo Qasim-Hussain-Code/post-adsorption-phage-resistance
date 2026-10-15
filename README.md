@@ -261,7 +261,7 @@ Requires Python 3.13 and the pinned versions in `requirements.txt`.
 
 ```bash
 pip install -r requirements.txt
-python scripts/run_all.py              # everything, about 35 minutes
+python scripts/run_all.py              # everything, 12 to 25 minutes
 python scripts/run_all.py --core-only  # steps 01 to 06 only, about 2 minutes
 ```
 
@@ -272,8 +272,9 @@ Steps 01 to 06 are the core analysis and take about two minutes, most of it in
 the regression fitting of step 4. Steps 07 to 16 additionally download the 96
 phage genomes (6.9 MB) and the DefenseFinder model release (49 MB, from which
 only the anti-defense profiles are kept and the archive is then deleted). They
-take roughly half an hour, dominated by the permutation tests in step 9, the
-sixteen nested fits in step 11 and the 135 pair fits in step 14. Peak memory
+take 12 to 25 minutes depending on machine load, dominated by the permutation
+tests in step 9, the sixteen nested fits in step 11 and the 135 pair fits in
+step 14. Peak memory
 stays below 1 GB. The repository plus all downloaded data occupies about 56 MB.
 
 ## Layout
