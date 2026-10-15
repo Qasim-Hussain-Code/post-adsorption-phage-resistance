@@ -1,4 +1,4 @@
-﻿"""The summary figure for the extended analysis.
+"""The summary figure for the extended analysis.
 
 Three things the earlier figures do not show: the corrected partition of
 explained variation, what shrinkage does to 79 system estimates at once, and
