@@ -418,27 +418,39 @@ Requires Python 3.13 and the pinned versions in `requirements.txt`.
 ```bash
 pip install -r requirements.txt
 python scripts/run_all.py                 # everything
-python scripts/run_all.py --skip-genomes  # omit the NCBI downloads (steps 18 to 20)
-python scripts/run_all.py --core-only  # steps 01 to 06 only, about 2 minutes
+python scripts/run_all.py --skip-genomes  # omit the steps needing host genomes
+python scripts/run_all.py --core-only     # steps 01 to 06 only
 ```
+
+`--skip-genomes` omits steps 18 to 20, which download several hundred bacterial
+genomes from NCBI, together with steps 25 to 27, which need those genomes. The
+phage-resolved analysis of steps 28 and 29 does not, so it still runs.
 
 Individual stages can be run in order instead; each writes its own report to
 `results/` and its tables to `results/tables/`.
 
-Steps 01 to 06 are the core analysis and take about two minutes, most of it in
-the regression fitting of step 4. Steps 07 to 17 additionally download the 96
-phage genomes (6.9 MB) and the DefenseFinder model release (49 MB, from which
-only the anti-defense profiles are kept and the archive is then deleted). They
-take 12 to 25 minutes depending on machine load, dominated by the permutation
-tests in step 9, the sixteen nested fits in step 11 and the 135 pair fits in
-step 14. Peak memory
-stays below 1 GB.
+The timings below are measured, from one `--skip-fetch --skip-genomes` run on
+the 16 GB machine this was developed on, which completed every step in
+**6906 s**. Steps 02 to 06, the core analysis, take **7 minutes**, almost all of
+it the cluster-robust regression fitting of step 04 (337 s). Steps 07 to 17 add
+the 96 phage genomes (6.9 MB) and the DefenseFinder model release (49 MB, from
+which only the anti-defense profiles are kept before the archive is deleted),
+and take **61 minutes**, dominated by the permutation tests of step 09 (1577 s)
+and the sixteen nested fits of step 11 (1013 s). Steps 21 to 24 add **47
+minutes**, almost entirely the four-threshold ordinal fits of step 23 (2782 s).
+Step 28 postdates that run and was timed separately at roughly 20 minutes, for
+its 66,000 scored traits and the refits behind the stability checks. Peak
+memory stays below 1 GB.
 
-The repository plus all downloaded data occupies about 630 MB: 414 MB of
+The repository plus all downloaded data occupies about 640 MB: 414 MB of
 bacterial genomes, 101 MB of derived k-mer sketches (regenerable and
 untracked), 66 MB of git history and the rest the public input tables. Run with
 `--skip-genomes` it stays near 110 MB, and the genomes can be deleted after
 step 20 without affecting any other result.
+
+Every output is deterministic. Rerunning the whole pipeline reproduces all
+tables, reports and figures byte for byte, which is checked by regenerating
+them and comparing checksums rather than assumed.
 
 ## Layout
 
