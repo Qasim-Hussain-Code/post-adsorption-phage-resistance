@@ -137,8 +137,10 @@ re-running retries only what failed.
 | `data/raw/host_genomes/<strain>.fna.gz` | NCBI Assembly, per strain | about 237 MB for 166 genomes |
 | `data/raw/lifestyle_profiles/*.hmm` | Pfam via InterPro, 7 lysogeny families | small |
 
-With these, the repository and all downloaded data occupy roughly 300 MB
-against the 3.5 GB budget.
+With these, the repository and all downloaded data occupy roughly 400 MB
+against the 3.5 GB budget: 237 MB of bacterial genomes, 65 MB of git history
+and 58 MB of k-mer sketches, which are regenerable from the genomes and are
+therefore not tracked.
 
 ## Integrity checking
 
