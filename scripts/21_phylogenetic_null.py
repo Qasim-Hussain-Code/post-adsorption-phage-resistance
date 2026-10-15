@@ -39,42 +39,10 @@ import pandas as pd
 from scipy import stats
 
 from papr import config, paths
+from papr.phylonull import phylogenetic_r2, simulate_traits
 from papr.stats import benjamini_hochberg
 
 N_SIMULATIONS = 10_000
-
-
-def phylogenetic_r2(carrier: np.ndarray, axes: np.ndarray) -> float:
-    """Share of carriage variance explained by core-genome position."""
-    x = np.hstack([np.ones((axes.shape[0], 1)), axes])
-    beta, *_ = np.linalg.lstsq(x, carrier.astype(float), rcond=None)
-    fitted = x @ beta
-    ss_res = float(np.sum((carrier - fitted) ** 2))
-    ss_tot = float(np.sum((carrier - carrier.mean()) ** 2))
-    return 0.0 if ss_tot <= 0 else max(0.0, min(1.0, 1.0 - ss_res / ss_tot))
-
-
-def simulate_traits(axes: np.ndarray, n_carriers: int, r2: float,
-                    n_sim: int, rng: np.random.Generator) -> np.ndarray:
-    """Null carriage vectors with matched prevalence and phylogenetic signal.
-
-    A random direction through the principal coordinates supplies the
-    structured part, white noise the rest, mixed so that the structured part
-    accounts for the requested share of variance. Thresholding at the observed
-    number of carriers fixes prevalence exactly.
-    """
-    n = axes.shape[0]
-    b = rng.standard_normal((axes.shape[1], n_sim))
-    signal = axes @ b
-    signal -= signal.mean(axis=0, keepdims=True)
-    sd = signal.std(axis=0, keepdims=True)
-    sd[sd == 0] = 1.0
-    signal /= sd
-    noise = rng.standard_normal((n, n_sim))
-    z = np.sqrt(r2) * signal + np.sqrt(max(0.0, 1.0 - r2)) * noise
-    # Top n_carriers entries of each column become carriers.
-    cut = np.partition(z, n - n_carriers, axis=0)[n - n_carriers]
-    return (z >= cut).astype(np.int8)
 
 
 def statistic(traits: np.ndarray, lysis: np.ndarray) -> np.ndarray:
