@@ -1,0 +1,10 @@
+threshold,n_clusters,n_significant,n_protective,n_increased_lysis,protective_systems,increased_lysis_systems
+1e-05,386,2,2,0,"RM_Type_IIG,Zorya_TypeII",
+5e-05,331,2,2,0,"RM_Type_IIG,Zorya_TypeII",
+0.0001,301,2,2,0,"RM_Type_IIG,Zorya_TypeII",
+0.00025,260,2,2,0,"RM_Type_IIG,Zorya_TypeII",
+0.0005,224,2,2,0,"RM_Type_IIG,Zorya_TypeII",
+0.001,170,2,2,0,"RM_Type_IIG,Zorya_TypeII",
+0.0025,120,3,3,0,"RM_Type_IIG,Shango,Zorya_TypeII",
+0.005,102,3,3,0,"RM_Type_IIG,Shango,Zorya_TypeII",
+0.01,43,6,3,3,"RM_Type_IIG,RM_Type_III,Zorya_TypeII","CAS_Class1-Subtype-I-F,MazEF,SanaTA"

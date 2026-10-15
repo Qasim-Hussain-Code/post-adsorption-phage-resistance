@@ -168,10 +168,81 @@ carriage varies within each phage, so the interaction is identified while phage
 host range is fully controlled. Host surface type, phylogroup and principal
 coordinates are included, and standard errors are clustered on clonal cluster.
 
+## Direct annotation of the phage genomes
+
+The 96 phage genomes were annotated for anti-defense content rather than having
+it imputed from genus. Protein coding genes were predicted with pyrodigal, a
+binding of the Prodigal algorithm, run in metagenomic mode because phage genomes
+are short and compositionally unlike their hosts. The predicted proteins were
+searched with pyhmmer, a binding of HMMER3, against the 178 curated anti-defense
+profiles distributed in defense-finder-models 3.1.0.
+
+Hits were accepted at each profile's own gathering cutoff, the curated
+per-profile bit score threshold AntiDefenseFinder relies on, so no E-value was
+chosen by hand. System calls then applied each model's rules as given in its XML
+definition: the number of mandatory genes required and the minimum number of
+genes required. Of the 156 anti-defense definitions, 150 require a single gene,
+so for almost all families a hit above the gathering cutoff is the system call.
+For the six requiring two or more genes, the model's inter_gene_max_space
+constraint was applied over Prodigal gene order, as MacSyFinder does.
+
+The annotation was validated against the published RefSeq survey by comparing
+per-genus prevalence computed from these 96 genomes with prevalence among
+sequenced relatives of the same genera.
+
+The rescue test was then repeated with the measured calls in place of the genus
+prior, using an identical estimator, so the two are directly comparable.
+
+## Robustness analyses
+
+Four designs that do not depend on the covariate adjustment were used to stress
+the surviving associations.
+
+**Within clonal cluster.** For each system, the data were restricted to clusters
+containing the system both present and absent, since no other cluster carries
+information about it, and a binomial regression was fitted with phage and
+cluster fixed effects and standard errors clustered on cluster. The cluster
+fixed effect absorbs everything the shared genomic background contributes. A
+Mantel-Haenszel estimate over the same strata is reported beside it for
+comparison; it treats pairs as independent and is miscalibrated, which the
+internal check below makes visible.
+
+**Permutation inside a lineage.** Carrier labels were shuffled among strains of
+the same phylogroup, and separately of the same Sequence Type, holding the
+number of carriers fixed, with 10,000 permutations. The statistic is the
+difference in mean per-strain lysis rate between carriers and non-carriers;
+every strain was challenged with the same 96 phages, so per-strain rates are
+directly comparable. Because shuffling happens inside the lineage, a system that
+merely marks a lineage cannot produce a low p-value.
+
+**Minimum detectable effect.** For each system, the protective odds ratio its
+own fitted standard error would have detected at 80 percent power and a
+two-sided alpha of 0.05, computed as exp(-(1.96 + 0.84) times the standard
+error). This uses the standard error the design actually produced, including the
+loss from clustering, rather than an idealised calculation.
+
+**Sensitivity and unmeasured confounding.** The headline count was re-derived at
+nine clonal distance thresholds. E-values of VanderWeele and Ding were computed
+for each estimate, converting the odds ratio to an approximate risk ratio first
+because the outcome is common at about 21 percent. Effect heterogeneity across
+phage genera was summarised with Cochran's Q and I squared over inverse-variance
+weighted per-genus log odds ratios.
+
+**Internal calibration check.** Throughout the analysis, the number of systems
+significantly associated with *increased* lysis is used as a calibration
+statistic. No defense mechanism can make a host easier to lyse, so any such
+result is confounding or miscalibration. The lineage-adjusted regression returns
+none; the within-cluster regression returns none; the Mantel-Haenszel version of
+the within-cluster design returns nine, which is why its p-values are reported
+but not interpreted.
+
 ## Software
 
 Python 3.13.11 with numpy 2.3.5, pandas 2.3.3, scipy 1.16.3, statsmodels 0.14.6,
-matplotlib 3.10.8, seaborn 0.13.2 and biopython 1.86. No predictive model is
-fitted anywhere in the pipeline. Every estimate comes from a closed-form
-contingency table test, a rank test, a generalized linear model fitted by
-maximum likelihood, or an eigendecomposition of a precomputed distance matrix.
+matplotlib 3.10.8, seaborn 0.13.2 and biopython 1.86, plus pyrodigal 3.7.1 and
+pyhmmer 0.12.3 for the genome annotation. No predictive model is fitted anywhere
+in the pipeline. Every estimate comes from a closed-form contingency table test,
+a rank test, a generalized linear model fitted by maximum likelihood, a
+permutation null, or an eigendecomposition of a precomputed distance matrix.
+Gene prediction and profile hidden Markov model search are deterministic
+algorithms with fixed published parameters, not fitted models.

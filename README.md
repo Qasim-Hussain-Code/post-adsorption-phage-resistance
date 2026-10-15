@@ -10,6 +10,12 @@ The short answer is two, out of thirty-three systems with enough carriers to
 test. Most of what looks like defense-mediated resistance in this dataset is a
 property of the bacterial lineage rather than of the defense system.
 
+Stress-testing those two against designs that do not rely on covariate
+adjustment qualifies even that. Neither survives every test, and a third system
+that the main analysis discarded holds up better in the strictest ones. The
+defensible output of this work is a short candidate list for experiment, not a
+demonstration that any system confers resistance.
+
 ## The question and why it needs care
 
 Roughly four fifths of strain-phage pairs in a species-wide screen fail to
@@ -124,17 +130,46 @@ and 19.9 percent across burden quartiles; strain-level Spearman rho +0.053,
 p = 0.29). The pair-level correlation is nominally significant only because 402
 strains contribute 38,435 correlated observations.
 
-**Counter-defense: one suggestive signal, not a result.** Anti-defense content
-was imputed at the level of the phage genus from the published survey of RefSeq
-phage genomes, so these are statements about lineages, not about which genes a
-phage carries. Of 13 systems with a published anti-defense counterpart and a
-usable split, one interaction is significant: RM_Type_IV protects less well
-against lineages whose relatives commonly carry anti-RM genes (interaction odds
-ratio 1.63, q = 0.015). Four of the five RM subtypes point the same way, which
-is the pairing where a lineage-level prior should carry the most information,
-but this rests on one significant test out of thirteen. Anti-CRISPR proteins are
-absent from every adequately surveyed genus here, so CRISPR-Cas systems could
-not be tested for rescue at all.
+**Counter-defense: one suggestive signal, not a result.** The 96 phage genomes
+were annotated directly (genes called with Prodigal, searched against the 178
+curated anti-defense profiles at their own gathering cutoffs). 73 of 96 carry at
+least one anti-defense system and 48 carry Anti_RM. Of 12 systems with a
+published counterpart, one interaction is significant: RM_Type_IV protects less
+well against phages carrying anti-RM genes (interaction odds ratio 1.54, 95
+percent CI 1.17 to 2.02, q = 0.026), and all five RM subtypes point that way.
+This rests on one significant test out of twelve. Anti-CRISPR, Anti-BREX,
+Anti-Gabija and Anti-Hachiman are absent from all 96 genomes, so the systems
+they counteract cannot be tested for rescue here at all.
+
+Earlier versions of this analysis imputed anti-defense content from the phage's
+genus, which attenuates toward the null and was the main reason to doubt the
+negative result. Direct annotation gives the same answer (one significant
+interaction either way, direction agreeing for 11 of 12 systems, estimates
+correlating at Spearman +0.993), so the conclusion does not rest on imputation.
+
+**The two survivors do not survive everything.** Four designs that make no use
+of covariate adjustment give a more complicated picture:
+
+| System | Adjusted OR | Within-cluster OR | Informative clusters | Perm q (phylogroup) | Genera with OR below 1 | E-value | Strict tests passed |
+|---|---|---|---|---|---|---|---|
+| RM_Type_IIG | 0.549 | 0.968 | 7 | 0.0033 | 15 of 15 | 2.69 | 2 of 4 |
+| RM_Type_III | 0.626 | 0.328 | 12 | 0.30 | n/a | 2.31 | 2 of 4 |
+| Zorya_TypeII | 0.444 | 0.344 | 2 | 0.30 | 11 of 13 | 3.40 | 1 of 4 |
+
+RM_Type_IIG loses its effect among near-identical genomes, where the test had
+reasonable power, which is evidence against rather than absence of evidence.
+Zorya_TypeII keeps its point estimate there but only two clusters are
+informative, so the test is uninformative. RM_Type_III, which the main analysis
+discarded, is significant and protective in two of the stricter designs and is
+arguably the best-supported candidate in the whole study. The count of two is
+nonetheless stable across all nine clonal distance thresholds tried, and both
+survivors are protective in direction across nearly every phage genus.
+
+**Most nulls are uninformative rather than negative.** Across the 31 systems
+reported as null, the protective odds ratio detectable at 80 percent power
+ranges only from 0.43 to 0.70. For most of them the analysis had no power to
+see a moderate effect, and they should not be read as evidence that the system
+does nothing.
 
 **Most resistance in this collection remains unexplained.** Among pairs passing
 the surface gate whose host carries neither lineage-validated system, 75.8
@@ -152,6 +187,8 @@ group in this collection.
 | `figures/fig2_global_vs_conditioned_forest` | Paired forest plot of log2 odds ratios, unstratified against receptor-conditioned |
 | `figures/fig3_lineage_controlled_survival` | Effect sizes before and after clonal control, and the attenuation toward the null |
 | `figures/fig4_quantitative_titer_shifts` | Plaque score distributions by defense burden and phage morphotype, and per-system score shifts |
+| `figures/fig5_direct_antidefense_annotation` | Anti-defense families found in the 96 genomes, validation against the RefSeq survey, and rescue interactions measured against imputed |
+| `figures/fig6_robustness_of_surviving_effects` | Each estimate beside what it could have detected, threshold sensitivity, and per-genus consistency |
 
 Each is written as 300 dpi PNG and vector PDF. Every figure is drawn from the
 tables in `results/tables`, so a figure cannot disagree with a reported number.
@@ -160,27 +197,35 @@ tables in `results/tables`, so a figure cannot disagree with a reported number.
 
 Requires Python 3.13 and the pinned versions in `requirements.txt`.
 
-```
+```bash
 pip install -r requirements.txt
-python scripts/run_all.py
+python scripts/run_all.py              # everything, about 10 minutes
+python scripts/run_all.py --core-only  # steps 01 to 06 only, about 2 minutes
 ```
 
 Individual stages can be run in order instead; each writes its own report to
-`results/` and its tables to `results/tables/`. The full pipeline takes a few
-minutes, most of it in the regression fitting of step 4. Peak memory stays below
-1 GB and the repository plus downloaded data stays near 25 MB.
+`results/` and its tables to `results/tables/`.
+
+Steps 01 to 06 are the core analysis and take about two minutes, most of it in
+the regression fitting of step 4. Steps 07 to 10 additionally download the 96
+phage genomes (6.9 MB) and the DefenseFinder model release (49 MB, from which
+only the anti-defense profiles are kept and the archive is then deleted), and
+take about eight minutes more. Peak memory stays below 1 GB. The repository plus
+all downloaded data occupies about 51 MB.
 
 ## Layout
 
-```
-scripts/     numbered pipeline stages, run in order
-src/papr/    shared estimators, paths, configuration, figure style
-data/raw/    downloaded inputs, not tracked; verified against data/raw_manifest.sha256
-data/processed/  derived tables
-results/     per-stage reports in plain text
-results/tables/  every number behind the figures, as CSV
-figures/     manuscript figures, PNG and PDF
-docs/        methods, results, limitations, data provenance
+```text
+scripts/01 .. 06   core pipeline: fetch, stratify, audit, lineage control, figures
+scripts/07 .. 10   direct phage annotation, counter-defense, robustness, figures
+scripts/run_all.py runs them in order, --core-only stops after 06
+src/papr/          shared estimators, paths, configuration, figure style
+data/raw/          downloaded inputs, not tracked; verified against data/raw_manifest.sha256
+data/processed/    derived tables
+results/           per-stage reports in plain text
+results/tables/    every number behind the figures, as CSV
+figures/           manuscript figures, PNG and PDF
+docs/              methods, results, limitations, data provenance
 ```
 
 ## Limitations
@@ -188,15 +233,24 @@ docs/        methods, results, limitations, data provenance
 The main ones, stated in full in `docs/limitations.md`:
 
 - Receptor compatibility is inferred, not measured, and the inference is weak.
-- Anti-defense content is imputed per genus from sequenced relatives, which
-  attenuates any real interaction toward the null.
+- Neither surviving association passes all four stricter designs, and most of
+  the 31 nulls are uninformative rather than negative.
 - Resident prophages were not annotated, so superinfection exclusion remains an
-  untested explanation for part of the residual resistance.
+  untested explanation for part of the residual resistance. This is now the
+  largest open gap.
+- Anti_CRISPR, Anti_BREX, Anti_Gabija and Anti_Hachiman are absent from all 96
+  phages, so CRISPR-Cas, BREX, Gabija and Hachiman cannot be tested for rescue
+  in this collection.
 - Mantel-Haenszel intervals in step 3 treat correlated pairs as independent and
-  are too narrow; the clustered estimates in step 4 are the inferential ones.
+  are too narrow; the clustered estimates in steps 4 and 9 are the inferential
+  ones.
 - This is an observational analysis of one collection. Nothing here establishes
-  that Zorya_TypeII or RM_Type_IIG cause resistance, only that their association
-  with it is not explained by the covariates available.
+  that any system causes resistance, only that some associations are not
+  explained by the covariates available.
+
+The anti-defense imputation that earlier versions relied on is no longer a
+limitation: the genomes are now annotated directly and the conclusion is
+unchanged.
 
 ## License
 

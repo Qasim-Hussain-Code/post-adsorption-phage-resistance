@@ -191,6 +191,109 @@ present in 338 of them, so there is no defense-free comparison group and a
 question of the form "how often does infection fail in a host with no defenses"
 cannot be answered in this collection.
 
+## 10. Annotating the phages directly
+
+The counter-defense analysis above imputed anti-defense content from a phage's
+genus. The 96 genomes were subsequently annotated themselves: genes called with
+Prodigal, then searched against the 178 curated anti-defense profiles at their
+own gathering cutoffs, with each model's gene requirements applied.
+
+From 10,159 predicted proteins came 191 profile hits above threshold and 149
+system calls. **73 of 96 phages (76.0 percent) carry at least one anti-defense
+system.** Anti_RM is in 48 of 96, Anti_TA in 18, NADP in 17, Anti_CBASS in 14.
+Seven families are absent entirely, among them Anti_CRISPR, Anti_BREX,
+Anti_Gabija and Anti_Hachiman.
+
+The annotation agrees with the published RefSeq survey at the genus level
+(Spearman +0.856 across 19 genera, mean absolute difference 6.0 percentage
+points), which is the expected check. More usefully, four genera turn out not to
+be uniform in anti-defense carriage, so the genus prior had been treating
+genuinely different phages as identical.
+
+**Re-running the rescue test on the measured calls does not change its answer.**
+With a balanced 48 against 48 split for Anti_RM, one interaction of twelve is
+significant: RM_Type_IV again protects less well against phages carrying anti-RM
+genes (interaction odds ratio 1.538, 95 percent CI 1.168 to 2.024, q = 0.026).
+Now **all five** RM subtypes have an interaction above 1, up from four of five.
+Direction agrees with the imputed analysis for 11 of 12 systems and the two sets
+of estimates correlate at Spearman +0.993.
+
+This closes the largest acknowledged weakness in the earlier analysis. The
+negative counter-defense result was suspected of being an artefact of
+imputation, since imputation attenuates toward the null. It is not: measuring
+the annotation directly yields the same number of significant interactions.
+
+## 11. Stressing the two surviving associations
+
+Script 04 removed clonal confounding by adjustment, which only works if the
+covariates capture the structure that matters. Four designs that do not rely on
+that assumption give a more complicated answer than the headline.
+
+**Within clonal cluster.** Restricting to clusters containing a system both
+present and absent, with a cluster fixed effect and errors clustered on the same
+variable, 3 of 33 systems are significant and protective: RM_Type_III (0.328),
+Retron_I_C (0.249) and RosmerTA (0.532). This design passes the internal check
+with 0 biologically impossible significant results. A Mantel-Haenszel version of
+the same stratification returns 9 such impossible results and its intervals are
+not usable, which is why only the clustered regression is interpreted.
+
+Within this design the two headline survivors diverge. **RM_Type_IIG loses its
+effect entirely (odds ratio 0.968, 95 percent CI 0.487 to 1.923) across 7
+discordant clusters spanning 36 strains**, which is moderate power, so this is
+evidence against rather than absence of evidence. **Zorya_TypeII keeps its
+effect size (0.344 against 0.444 adjusted) but only 2 clusters spanning 11
+strains are informative**, so the interval runs to 1.978 and the test is
+uninformative rather than negative.
+
+**Permutation inside a lineage.** Shuffling carrier labels among strains of the
+same phylogroup, RM_Type_IIG is the only system to reach significance
+(q = 0.0033). Shuffling within Sequence Type, it does not (q = 0.38), while
+RM_Type_III (q = 0.0066) and SanaTA (q = 0.040) do. Zorya_TypeII reaches
+significance under neither (q = 0.30 and q = 0.38), with only 3 usable Sequence
+Type groups.
+
+**What the nulls exclude.** Across the 31 systems reported as null, the
+protective odds ratio detectable at 80 percent power ranges from 0.43 to 0.70.
+Systems at the upper end can only exclude very large effects, so most of the
+nulls in this analysis are uninformative about moderate protection rather than
+evidence of its absence.
+
+**Threshold sensitivity.** The headline count is stable: RM_Type_IIG and
+Zorya_TypeII are significant at all nine clonal distance thresholds tried, from
+386 clusters down to 43. Coarser thresholds add Shango and then RM_Type_III, so
+the chosen threshold is the conservative end of the range rather than a lucky
+one.
+
+**Unmeasured confounding.** An unmeasured confounder would need a risk ratio of
+at least 3.40 with both carriage and lysis to explain Zorya_TypeII away (2.01 to
+reach the confidence bound), and 2.69 for RM_Type_IIG (1.82 to the bound).
+Phylogroup and core-genome position are already adjusted for, so such a
+confounder would have to act beyond the lineage structure they capture.
+
+**Consistency across phage genera.** RM_Type_IIG has an odds ratio below 1 in
+**15 of 15** estimable genera (pooled 0.422, I squared 86 percent). Zorya_TypeII
+is below 1 in 11 of 13 (pooled 0.516, I squared 81 percent). Both are
+heterogeneous in magnitude but consistent in direction, which is hard to produce
+by chance.
+
+**Synthesis.** No system passes all four stricter tests.
+
+| System | Adjusted OR | Within-cluster OR | Clusters | Perm q (phylogroup) | Perm q (ST) | Genera below 1 | E-value | Tests passed |
+|---|---|---|---|---|---|---|---|---|
+| RM_Type_IIG | 0.549 | 0.968 | 7 | 0.0033 | 0.38 | 15/15 | 2.69 | 2 of 4 |
+| RM_Type_III | 0.626 | 0.328 | 12 | 0.30 | 0.0066 | n/a | 2.31 | 2 of 4 |
+| Zorya_TypeII | 0.444 | 0.344 | 2 | 0.30 | 0.38 | 11/13 | 3.40 | 1 of 4 |
+| Retron_I_C | 0.722 | 0.249 | 4 | 0.30 | 0.78 | n/a | 1.94 | 1 of 4 |
+| RosmerTA | 1.171 | 0.532 | 11 | 0.76 | 0.90 | n/a | 1.52 | 1 of 4 |
+
+Each design discards most of the data to remove a different source of
+confounding, so none retains much power, and disagreement between them is
+expected rather than alarming. Still, the pattern matters: **RM_Type_III, which
+did not survive the lineage-adjusted regression, is significant and protective
+in two of the stricter designs**, and is arguably the best-supported candidate
+in the whole analysis. It is not a claim, but it is where a targeted experiment
+would start.
+
 ## Summary
 
 Surface receptor variation is real but does not dominate: it explains about a
@@ -202,3 +305,14 @@ thirty-three survive control for clonal background, and the biologically
 impossible associations disappear entirely, which is the strongest evidence that
 the control is doing its job. Three quarters of interactions still fail after
 accounting for everything measured here.
+
+Stress-testing qualifies the headline rather than overturning it. The count of
+two is stable across every clonal threshold, and both systems are protective in
+direction across nearly every phage genus, but neither survives all four
+stricter designs: RM_Type_IIG loses its effect among near-identical genomes
+where the test had reasonable power, and Zorya_TypeII is simply untestable
+there. Annotating the phage genomes directly, which was the largest outstanding
+methodological gap, left every counter-defense conclusion intact. The honest
+position is that this dataset supports a short list of candidates worth testing
+experimentally, not a demonstration that any particular system confers
+resistance.

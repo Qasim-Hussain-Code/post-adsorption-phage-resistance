@@ -46,7 +46,30 @@ repository.
 | `antidefense/adf_hits_refseq_phage.tsv` | AntiDefenseFinder hits, with ICTV genus |
 | `antidefense/phage_taxonomy_refseq.tsv` | taxonomy of every surveyed genome |
 
-Total download is approximately 21 MB.
+Total download for the core pipeline is approximately 21 MB.
+
+## Additional inputs for the direct phage annotation
+
+Steps 07 to 10 fetch two further sets of inputs, handled by script 07 rather
+than script 01 so that the core pipeline stays light.
+
+| Local path | Source | Size |
+|---|---|---|
+| `data/raw/phage_genomes/*.fna` | the 96 phage genome FASTA files from the same primary repository | 6.9 MB |
+| `data/raw/adf_models/profiles/*.hmm` | 178 anti-defense profile hidden Markov models | about 14 MB |
+| `data/raw/adf_models/definitions/**/*.xml` | 156 anti-defense system definitions | small |
+
+The profiles and definitions come from release 3.1.0 of
+`mdmparis/defense-finder-models`. That release is distributed as a single 49 MB
+archive containing mostly bacterial defense profiles the analysis does not need.
+Script 07 streams through the archive twice, writing out only the anti-defense
+parts, and deletes the archive immediately afterwards, so the project grows by
+about 14 MB rather than 49 MB. The archive is streamed rather than accessed
+member by member because random access into a gzip stream forces a fresh
+decompression each time.
+
+With these added, the repository and all downloaded data occupy about 51 MB,
+against the 3.5 GB budget this analysis was held to.
 
 ## Discrepancies between the release and the nominal description
 

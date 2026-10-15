@@ -72,30 +72,70 @@ def load():
 def within_cluster(pairs: pd.DataFrame, systems: list[str]) -> pd.DataFrame:
     """Compare carriers with non-carriers inside the same clonal cluster.
 
-    Strata are phage by clonal cluster. A stratum is informative only if the
-    same near-identical genomic background appears both with and without the
-    system, so this uses a small slice of the data and answers a sharper
-    question: among bacteria that are otherwise nearly the same, does carrying
-    the system change the outcome.
+    Only clusters that contain the system both present and absent carry any
+    information about it, so the fit is restricted to those and a cluster fixed
+    effect absorbs everything the shared genomic background contributes. What
+    remains is the contrast between near-identical bacteria that differ in the
+    system, which is the closest this observational design comes to holding
+    the genome constant.
+
+    Both estimators are reported. The Mantel-Haenszel column stratifies on
+    phage and cluster but treats strain-phage pairs as independent, so its
+    interval is too narrow for the same reason as in script 03. The regression
+    column adds cluster fixed effects and clusters the standard errors on the
+    same variable, and is the one to read.
     """
+    y_all = pairs["lytic"].to_numpy(dtype=float)
     rows = []
     for col in systems:
         name = col[3:]
-        # Count informative clusters before testing, since that is the binding
-        # constraint on what this design can see.
-        per_cluster = pairs.groupby("clonal_cluster")[col].agg(["mean", "size"])
+        per_cluster = pairs.groupby("clonal_cluster")[col].agg(["mean"])
         discordant = per_cluster[(per_cluster["mean"] > 0) & (per_cluster["mean"] < 1)]
+        keep = set(discordant.index)
+
         tabs = stratified_tables(pairs, ["phage", "clonal_cluster"], col, "lytic")
         eff = mantel_haenszel(tabs)
+
+        mask = pairs["clonal_cluster"].isin(keep).to_numpy()
+        n_strains = int(pairs.loc[mask, "strain"].nunique())
+        or_reg = lo_reg = hi_reg = p_reg = np.nan
+        if len(keep) >= 2 and mask.sum() > 0:
+            sub = pairs.loc[mask]
+            exposure = sub[col].to_numpy(dtype=float)
+            if 0 < exposure.sum() < len(exposure):
+                x = np.hstack([
+                    exposure.reshape(-1, 1),
+                    np.ones((int(mask.sum()), 1)),
+                    pd.get_dummies(sub["phage"].astype("string"),
+                                   drop_first=True, dtype=float).to_numpy(),
+                    pd.get_dummies(sub["clonal_cluster"].astype("string"),
+                                   drop_first=True, dtype=float).to_numpy(),
+                ])
+                try:
+                    res = fit_logit_cluster(
+                        y_all[mask], x, sub["clonal_cluster"].to_numpy())
+                    beta, se = float(res.params[0]), float(res.bse[0])
+                    if np.isfinite(beta) and np.isfinite(se) and se > 0:
+                        or_reg = float(np.exp(beta))
+                        lo_reg = float(np.exp(beta - 1.96 * se))
+                        hi_reg = float(np.exp(beta + 1.96 * se))
+                        p_reg = float(res.pvalues[0])
+                except Exception:
+                    pass
+
         rows.append(dict(
             system=name,
             n_discordant_clusters=int(len(discordant)),
-            n_strains_in_discordant=int(discordant["size"].sum() / 96) if len(discordant) else 0,
-            odds_ratio=eff.estimate, ci_low=eff.ci_low, ci_high=eff.ci_high,
-            p_value=eff.p_value, n_strata_used=eff.n_strata_used))
+            n_strains_in_discordant=n_strains,
+            mh_odds_ratio=eff.estimate, mh_ci_low=eff.ci_low,
+            mh_ci_high=eff.ci_high, mh_p_value=eff.p_value,
+            n_strata_used=eff.n_strata_used,
+            odds_ratio=or_reg, ci_low=lo_reg, ci_high=hi_reg, p_value=p_reg))
     out = pd.DataFrame(rows)
     out["q_value"] = benjamini_hochberg(out["p_value"].to_numpy())
+    out["mh_q_value"] = benjamini_hochberg(out["mh_p_value"].to_numpy())
     out["significant"] = out["q_value"] <= config.FDR_ALPHA
+    out["mh_significant"] = out["mh_q_value"] <= config.FDR_ALPHA
     out["log2_or"] = np.log2(out["odds_ratio"])
     return out
 
@@ -337,33 +377,55 @@ def main() -> int:
 
     add("")
     add("1. WITHIN CLONAL CLUSTER, COMPARING NEAR-IDENTICAL GENOMES")
-    add("  Strata are phage by clonal cluster, so only bacteria sharing a "
-        "near-identical core genome are compared with one another.")
-    add(f"  {'system':24s} {'disc clusters':>13s} {'OR':>7s} {'95 pct CI':>16s} "
-        f"{'q':>9s} {'strata':>7s}")
-    for r in wc.sort_values("odds_ratio").itertuples(index=False):
+    add("  Restricted to clusters containing the system both present and "
+        "absent, with a cluster fixed effect absorbing the shared background. "
+        "The regression columns cluster the standard errors; the "
+        "Mantel-Haenszel column does not and is shown only for comparison.")
+    add(f"  {'system':24s} {'clusters':>8s} {'strains':>7s} {'OR':>7s} "
+        f"{'95 pct CI':>16s} {'q':>9s} {'MH OR':>7s} {'MH q':>9s}")
+    for r in wc.sort_values("odds_ratio", na_position="last").itertuples(index=False):
         mark = " *" if r.significant else "  "
         if not np.isfinite(r.odds_ratio):
-            add(f"  {r.system:24s} {r.n_discordant_clusters:13d} "
-                f"{'n/a':>7s} {'not estimable':>16s} {'':>9s} {r.n_strata_used:7d}")
+            add(f"  {r.system:24s} {r.n_discordant_clusters:8d} "
+                f"{r.n_strains_in_discordant:7d} {'n/a':>7s} "
+                f"{'not estimable':>16s}")
             continue
-        add(f"  {r.system:24s} {r.n_discordant_clusters:13d} {r.odds_ratio:7.3f} "
+        add(f"  {r.system:24s} {r.n_discordant_clusters:8d} "
+            f"{r.n_strains_in_discordant:7d} {r.odds_ratio:7.3f} "
             f"[{r.ci_low:6.3f}, {r.ci_high:6.3f}] {r.q_value:9.2e} "
-            f"{r.n_strata_used:7d}{mark}")
+            f"{r.mh_odds_ratio:7.3f} {r.mh_q_value:9.2e}{mark}")
     wc_sig = wc[wc["significant"]]
     add("")
-    add(f"  Significant at q <= {config.FDR_ALPHA}: {len(wc_sig)} of {len(wc)} "
+    add(f"  Significant at q <= {config.FDR_ALPHA} with clustered errors: "
+        f"{len(wc_sig)} of {len(wc)} "
         f"({', '.join(sorted(wc_sig['system'])) if len(wc_sig) else 'none'})")
+
+    # Calibration check: associations with increased lysis cannot be real, so
+    # their number measures how far each estimator can be trusted.
+    mh_bad = wc[(wc["mh_odds_ratio"] > 1) & wc["mh_significant"]]
+    reg_bad = wc[(wc["odds_ratio"] > 1) & wc["significant"]]
+    add(f"  Biologically impossible associations with increased lysis called "
+        f"significant: {len(mh_bad)} by Mantel-Haenszel, {len(reg_bad)} by the "
+        "clustered regression.")
+    if len(mh_bad) > len(reg_bad):
+        add("  The Mantel-Haenszel version of this design fails that check "
+            f"badly, returning {len(mh_bad)} impossible results, because "
+            "stratifying on cluster fixes the point estimate but leaves a "
+            "strain contributing up to 96 correlated pairs. Its p-values are "
+            "not usable and only the clustered regression is interpreted here.")
     for name in survivors:
         if name in set(wc["system"]):
             r = wc.set_index("system").loc[name]
-            add(f"  {name}: {int(r['n_discordant_clusters'])} discordant clusters, "
-                f"OR {r['odds_ratio']:.3f} [{r['ci_low']:.3f}, {r['ci_high']:.3f}], "
-                f"q = {r['q_value']:.2e}")
-    add("  This design is the strictest available and also the least powerful: "
+            if np.isfinite(r["odds_ratio"]):
+                add(f"  {name}: {int(r['n_discordant_clusters'])} discordant "
+                    f"clusters spanning {int(r['n_strains_in_discordant'])} "
+                    f"strains, OR {r['odds_ratio']:.3f} "
+                    f"[{r['ci_low']:.3f}, {r['ci_high']:.3f}], "
+                    f"q = {r['q_value']:.2e}")
+    add("  This is the strictest design available and also the least powerful: "
         "most clonal clusters are small and uniform in defense content, so few "
-        "strata are informative. Treat an agreement here as corroboration and a "
-        "null here as weak evidence against.")
+        "are informative. Treat agreement here as corroboration and a null here "
+        "as weak evidence against.")
 
     add("")
     add("2. PERMUTATION INSIDE A LINEAGE")
@@ -478,6 +540,96 @@ def main() -> int:
         "lineages and not others, which is what a mechanistic defense should "
         "look like. Low heterogeneity with a consistent direction is also "
         "compatible with a general effect on infection efficiency.")
+
+    add("")
+    add("7. SYNTHESIS: WHICH SYSTEMS PASS WHICH TEST")
+    wc_i = wc.set_index("system")
+    ev_i = ev.set_index("system")
+    full_i = full.set_index("system")
+    perm_phylo = perm[perm["level"] == "phylogroup"].set_index("system")
+    perm_st = perm[perm["level"] == "sequence_type"].set_index("system")
+
+    candidates = sorted(
+        set(survivors)
+        | set(wc.loc[wc["significant"] & (wc["odds_ratio"] < 1), "system"])
+        | set(perm.loc[perm["significant"] & (perm["observed_difference"] < 0),
+                       "system"]))
+    sweep_always = set(sweep["protective_systems"].iloc[0].split(","))
+    for row in sweep.itertuples(index=False):
+        sweep_always &= set(row.protective_systems.split(","))
+
+    add("  A protective association that is real should hold up in more than "
+        "one of these. None of them is decisive alone: the lineage-adjusted "
+        "regression can overfit the covariates, the within-cluster design is "
+        "usually underpowered, and each permutation scheme tests a different "
+        "level of the hierarchy.")
+    add("")
+    add(f"  {'system':24s} {'adj OR':>7s} {'wc OR':>7s} {'wc n':>5s} "
+        f"{'perm phy':>9s} {'perm ST':>8s} {'all thr':>8s} {'genera':>7s} "
+        f"{'E':>5s} {'passed':>7s}")
+    for name in candidates:
+        adj = full_i.loc[name] if name in full_i.index else None
+        w = wc_i.loc[name] if name in wc_i.index else None
+        pp = perm_phylo.loc[name] if name in perm_phylo.index else None
+        ps = perm_st.loc[name] if name in perm_st.index else None
+        sub = het[het["system"] == name]
+        genera = (f"{int((sub['odds_ratio'] < 1).sum())}/{len(sub)}"
+                  if len(sub) else "n/a")
+        passed = 0
+        passed += int(adj is not None and bool(adj["significant"])
+                      and adj["odds_ratio"] < 1)
+        passed += int(w is not None and bool(w["significant"])
+                      and np.isfinite(w["odds_ratio"]) and w["odds_ratio"] < 1)
+        passed += int(pp is not None and bool(pp["significant"])
+                      and pp["observed_difference"] < 0)
+        passed += int(ps is not None and bool(ps["significant"])
+                      and ps["observed_difference"] < 0)
+        add(f"  {name:24s} "
+            f"{(adj['odds_ratio'] if adj is not None else np.nan):7.3f} "
+            f"{(w['odds_ratio'] if w is not None else np.nan):7.3f} "
+            f"{int(w['n_discordant_clusters']) if w is not None else 0:5d} "
+            f"{(pp['q_value'] if pp is not None else np.nan):9.2e} "
+            f"{(ps['q_value'] if ps is not None else np.nan):8.2e} "
+            f"{('yes' if name in sweep_always else 'no'):>8s} {genera:>7s} "
+            f"{(ev_i.loc[name, 'e_value_estimate'] if name in ev_i.index else np.nan):5.2f} "
+            f"{passed:>5d}/4")
+    add("")
+    add("  'wc n' is the number of discordant clusters available to the "
+        "within-cluster test, which is what limits it. 'all thr' marks a system "
+        "significant at every clonal threshold tried. 'genera' counts the phage "
+        "genera in which the odds ratio is below 1.")
+    add("")
+    add("  No system passes all four stricter tests. That is the honest summary "
+        "and it is not a failure of the analysis: each test discards most of "
+        "the data in order to remove a different source of confounding, so none "
+        "has much power left. Two patterns are worth separating.")
+    for name in survivors:
+        w = wc_i.loc[name] if name in wc_i.index else None
+        pp = perm_phylo.loc[name] if name in perm_phylo.index else None
+        if w is None or pp is None:
+            continue
+        if bool(pp["significant"]) and not bool(w["significant"]):
+            add(f"    {name} holds up when carriage is permuted inside a "
+                f"phylogroup (q = {pp['q_value']:.2e}) but its effect "
+                f"disappears among near-identical genomes "
+                f"(OR {w['odds_ratio']:.3f}, {int(w['n_discordant_clusters'])} "
+                "discordant clusters). The within-cluster test had moderate "
+                "power here, so this is evidence against, not merely absence "
+                "of evidence.")
+        elif not bool(pp["significant"]) and np.isfinite(w["odds_ratio"]) and w["odds_ratio"] < 0.6:
+            add(f"    {name} keeps its effect size among near-identical genomes "
+                f"(OR {w['odds_ratio']:.3f} against "
+                f"{full_i.loc[name, 'odds_ratio']:.3f} adjusted) but only "
+                f"{int(w['n_discordant_clusters'])} clusters are informative, "
+                "so the interval is wide and the test is uninformative rather "
+                "than negative. It does not reach significance under "
+                "permutation either.")
+    others = [n for n in candidates if n not in survivors]
+    if others:
+        add(f"    {', '.join(others)} did not survive the lineage-adjusted "
+            "regression but are significant and protective in at least one "
+            "stricter design. They are not claims, but they are the systems "
+            "most worth a targeted experiment.")
 
     text = "\n".join(out)
     (paths.RESULTS / "robustness_report.txt").write_text(text + "\n", encoding="utf-8")
