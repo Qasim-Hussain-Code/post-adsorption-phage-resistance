@@ -587,10 +587,17 @@ The replacement is an empirical null: within each prevalence and phylogenetic
 signal bin, the spread of statistics among loci that cannot nearly all be
 causal is itself the null, estimated by median and scaled median absolute
 deviation. It calibrates correctly and slightly conservatively (median p 0.500,
-1.2 and 3.9 percent below 0.05 for the two outcomes).
+1.1 and 3.9 percent below 0.05 for the two outcomes).
 
-**The result is a clean negative.** **No locus in the accessory genome of these
-254 strains is associated with resistance.** Two are associated with the
+That correctness comes at a cost which has to be stated plainly. The empirical
+null is only defined for **3,144 of the 10,351 loci**. A locus whose prevalence
+and phylogenetic signal place it in a bin holding too few other loci, or in one
+where near-identical clade markers collapse the spread to nothing, has no
+usable null. The remaining 7,207 loci were not tested, rather than tested and
+found null, and no statement below covers them.
+
+**Within that testable set the result is a clean negative.** **No locus among
+the 3,144 is associated with resistance.** Two are associated with the
 opposite, being lysed more often, each present in 10 strains and neither
 lineage-confined.
 
@@ -609,7 +616,8 @@ finding in section 18 that recombinase content and defense content covary.
 
 **What the scan cannot see** is as important as what it found. It cannot see a
 locus confined to one lineage, because the null removes exactly that signal and
-no observational design can separate a lineage-confined cause from the lineage.
+no observational design can separate a lineage-confined cause from the lineage;
+this is also why only 3,144 of the 10,351 loci could be given a null at all.
 It cannot see point mutations, since this is a presence test. It covers 254 of
 402 strains, so an effect confined to a handful is invisible. And the outcome
 is a strain's average across 96 phages, which dilutes anything acting on a
@@ -650,8 +658,8 @@ at all. The second is an internal check that passed: the phages found integrated
 in host chromosomes are exactly the two independently classified temperate from
 their own proteomes.
 
-An unbiased scan of the accessory genome found nothing associated with
-resistance either, which bounds the search beyond the catalogue: whatever
+An unbiased scan of the testable part of the accessory genome found nothing
+associated with resistance either, which bounds the search beyond the catalogue: whatever
 accounts for the unexplained failures, it is not a single widely distributed
 accessory locus that this design could see.
 

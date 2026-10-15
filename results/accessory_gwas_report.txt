@@ -9,11 +9,13 @@ SCOPE
   Collapsing identical presence patterns is what makes this tractable and is also the right treatment of linkage: k-mers from one locus occur in exactly the same strains and are one test, not thousands.
 
 CALIBRATION
-  outcome            null         median p  frac p<=0.05  frac p<=0.01  significant
-  lysis_rate         simulated       0.276        0.2371        0.1305         1061
-  lysis_rate         empirical       0.500        0.0115        0.0019            0
-  surface_adjusted   simulated       0.256        0.2205        0.0863          336
-  surface_adjusted   empirical       0.500        0.0388        0.0111            2
+  outcome            null           loci  median p  frac p<=0.05  frac p<=0.01  significant
+  lysis_rate         simulated     10351     0.276        0.2371        0.1305         1061
+  lysis_rate         empirical      3144     0.500        0.0115        0.0019            0
+  surface_adjusted   simulated     10351     0.256        0.2205        0.0863          336
+  surface_adjusted   empirical      3144     0.500        0.0388        0.0111            2
+
+  The empirical null is only defined for 3144 of the 10351 loci. A locus whose prevalence and phylogenetic signal place it in a bin holding too few others, or in one where near-identical clade markers collapse the spread to nothing, has no usable null and is left untested. The 7207 loci in that position are not null results: they were not tested.
 
   Under a correctly calibrated null the median p-value is 0.5 and the fraction below 0.05 is 0.05.
   The simulated null fails that test badly: median p 0.276 and 23.7 percent of patterns below 0.05, roughly five times the expected rate. The reason is specific and worth stating. Simulated traits are built from eight principal coordinates, and a real accessory locus confined to one clade has phylogenetic structure far sharper than eight axes can describe. The share of carriage those axes explain therefore understates how lineage-confined a k-mer really is, and the matched null is too weak. That same null was adequate in script 21, where it was applied to 33 defense systems whose distributions are much less clade-restricted than a typical accessory k-mer.

@@ -246,7 +246,8 @@ confirms that **no system of 33** shows heterogeneity across thresholds.
 **The whole accessory genome, searched without a catalogue.** With 254
 validated genomes, script 25 tests every variable k-mer rather than a
 pre-defined feature list: 616,300 variable k-mers collapsing into **10,351
-loci**. **No locus is associated with resistance.** Two are associated with
+loci**, of which **3,144** sit in bins where a null can be estimated at all.
+**No locus among those is associated with resistance.** Two are associated with
 being lysed more often, and the carriers of one share **SanaTA and Septu**,
 two systems that have shown that same impossible direction throughout. A scan
 using no catalogue landed on the same strains the catalogued analysis kept

@@ -369,12 +369,20 @@ def main() -> int:
 
     add("")
     add("CALIBRATION")
-    add(f"  {'outcome':18s} {'null':11s} {'median p':>9s} {'frac p<=0.05':>13s} "
-        f"{'frac p<=0.01':>13s} {'significant':>12s}")
+    add(f"  {'outcome':18s} {'null':11s} {'loci':>7s} {'median p':>9s} "
+        f"{'frac p<=0.05':>13s} {'frac p<=0.01':>13s} {'significant':>12s}")
     for r in calibration.itertuples(index=False):
-        add(f"  {r.outcome:18s} {r.null:11s} {r.median_p:9.3f} "
-            f"{r.frac_below_05:13.4f} {r.frac_below_01:13.4f} "
-            f"{r.n_significant:12d}")
+        add(f"  {r.outcome:18s} {r.null:11s} {r.n_patterns:7d} "
+            f"{r.median_p:9.3f} {r.frac_below_05:13.4f} "
+            f"{r.frac_below_01:13.4f} {r.n_significant:12d}")
+    n_emp = int(calibration[calibration["null"] == "empirical"]["n_patterns"].iloc[0])
+    add("")
+    add(f"  The empirical null is only defined for {n_emp} of the {n_pat} loci. "
+        "A locus whose prevalence and phylogenetic signal place it in a bin "
+        "holding too few others, or in one where near-identical clade markers "
+        "collapse the spread to nothing, has no usable null and is left "
+        f"untested. The {n_pat - n_emp} loci in that position are not null "
+        "results: they were not tested.")
     add("")
     add("  Under a correctly calibrated null the median p-value is 0.5 and the "
         "fraction below 0.05 is 0.05.")
