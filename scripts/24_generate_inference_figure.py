@@ -125,7 +125,8 @@ def main() -> int:
                  x=0.035, y=0.983, ha="left", fontsize=13, fontweight="semibold")
     fig.text(0.035, 0.962,
              "Panel a shows that a system confined to one lineage widens the null for any test that ignores ancestry, "
-             "by up to a factor of 2.3 for CRISPR-Cas subtype I-E.\n"
+             f"by up to a factor of {phylo['inflation_factor'].max():.1f} for "
+             f"{phylo.loc[phylo['inflation_factor'].idxmax(), 'system']}.\n"
              f"Panel b compares a null matched on ancestry ({n_struct} systems significant) with the same null after "
              f"host surface type is removed from the outcome ({n_surf} significant); the associations with more lysis, "
              "which no defense can cause, are the ones that move. Panel c collects every candidate; the best passes "

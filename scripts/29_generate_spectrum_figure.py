@@ -244,6 +244,7 @@ def main() -> int:
         st = pd.read_csv(stab_path)
         order = (st.groupby(["system", "direction"])["p_value"].max()
                  .sort_values().reset_index())
+        order = order.rename(columns={"p_value": "p_value"})
         for i, row in enumerate(order.itertuples(index=False)):
             part = st[(st.system == row.system)
                       & (st.direction == row.direction)]
@@ -263,7 +264,9 @@ def main() -> int:
         ax.set_ylim(-0.6, len(order) - 0.4)
         ax.set_xscale("log")
         ax.set_xlabel("p after dropping one clonal cluster of carriers")
-        ax.set_title("f  Only the protective candidate breaks", loc="left")
+        broke = int((order["p_value"] > config.FDR_ALPHA).sum())
+        ax.set_title(f"f  {broke} of {len(order)} rest on one group of "
+                     "relatives", loc="left")
         ax.annotate("diamonds mark the worst case.\nEverything right of the "
                     "line\nfails when one group of\nrelatives is removed.",
                     xy=(0.97, 0.06), xycoords="axes fraction", fontsize=8.4,

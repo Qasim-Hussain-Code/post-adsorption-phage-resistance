@@ -47,6 +47,7 @@ import numpy as np
 import pandas as pd
 
 from papr import config, paths
+from papr.phylonull import simulate_traits
 from papr.sketch import K, read_raw_sequences, sketch_file
 from scipy import stats as sps
 
@@ -306,16 +307,13 @@ def null_grid(axes: np.ndarray, lysis: np.ndarray, prevalences: np.ndarray,
     grid = {}
     for k in prevalences:
         for r2 in signals:
-            b = rng.standard_normal((axes.shape[1], N_NULL_SIMULATIONS))
-            sig = axes @ b
-            sig -= sig.mean(axis=0, keepdims=True)
-            sd = sig.std(axis=0, keepdims=True)
-            sd[sd == 0] = 1.0
-            sig /= sd
-            z = (np.sqrt(r2) * sig
-                 + np.sqrt(max(0.0, 1.0 - r2)) * rng.standard_normal((n, N_NULL_SIMULATIONS)))
-            cut = np.partition(z, n - int(k), axis=0)[n - int(k)]
-            traits = (z >= cut)
+            # The shared generator is used so that the correction for
+            # thresholding loss applies here too: mixing to a share r2 on the
+            # latent scale yields a binary trait carrying considerably less
+            # than r2, which would make this null weaker than the loci it is
+            # compared against.
+            traits = simulate_traits(axes, int(k), float(r2),
+                                     N_NULL_SIMULATIONS, rng).astype(bool)
             kk = traits.sum(axis=0).astype(float)
             tot = lysis.sum()
             cs = lysis @ traits

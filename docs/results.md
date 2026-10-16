@@ -522,11 +522,25 @@ is explained by core-genome position, then simulates null traits with exactly
 that phylogenetic confinement and exactly that prevalence.
 
 **The size of the population structure problem, measured.** Median inflation of
-the null standard deviation is 1.09, but it reaches **2.31 for
+the null standard deviation is 1.13, but it reaches **4.17 for
 CAS_Class1-Subtype-I-E**, whose carriage is 59 percent explained by core-genome
-position. That system goes from p = 0.001 against an unstructured null to
-p = 0.079 against a matched one: a textbook lineage artifact, and the same
+position. That system goes from p = 0.0005 against an unstructured null to
+p = 0.50 against a matched one: a textbook lineage artifact, and the same
 system script 04 lost on adjustment.
+
+Those inflation figures are larger than an earlier version of this analysis
+reported, and the reason is a defect that an audit of the code found rather
+than a change of method. Mixing structured signal and white noise so that the
+structured part holds a share of the variance, and then thresholding to a
+binary trait, does not produce a trait with that much phylogenetic signal:
+thresholding discards structure, and the loss grows with the target. Taken at
+face value the mixture reached a median of 0.79 of its target across the 33
+systems and about **half** for the most lineage-confined ones, so the null was
+less confined than the traits it was matched against, which is the direction
+that makes it too easy to beat. The generator now bisects on the realised
+value, which brings the median ratio to 1.01 and the worst case from 0.39 to
+0.82 of target. **No survivor of this test changed when that was fixed**; what
+changed is that the structure problem is now measured as larger than before.
 
 **The matched null alone is not enough.** Five systems survive it, and four
 point the biologically impossible direction. Conditioning on ancestry does not
@@ -583,11 +597,15 @@ turn a locus into one test did almost nothing. At one in twenty the median
 pattern is backed by seven k-mers and the tests are loci rather than noise.
 
 The second was the null. The phylogenetically matched null of script 21 fails
-badly here: median p of 0.276 and 23.7 percent of loci below 0.05, about five
-times the expected rate. The reason is specific. Simulated traits are built
+badly here: median p of 0.358 and 14.2 percent of loci below 0.05, about
+2.8 times the expected rate. That is already after correcting the
+generator so that its simulated traits carry the phylogenetic signal they are
+meant to carry, which on its own cut the false positives in this scan from
+1,061 to 178. What remains is the deeper limit. Simulated traits are built
 from eight principal coordinates, and a real accessory locus confined to one
 clade has sharper phylogenetic structure than eight axes can describe, so the
-matched null is too weak. That null was adequate for 33 defense systems, whose
+matched null is still too weak however carefully it is calibrated against
+those axes. That null was adequate for 33 defense systems, whose
 distributions are far less clade-restricted than a typical accessory k-mer.
 
 The replacement is an empirical null: within each prevalence and phylogenetic
@@ -720,8 +738,8 @@ p = 0.386, because its carriage is perfectly determined by clonal cluster
 matters.**
 
 **Retron_I_C** acts on 12 phages spanning 11 distinct phage groups, where both
-nulls reach a median of zero (p = 0.001, q = 0.033). The size of what averaging
-cost is the point:
+nulls reach a median of zero (p = 0.0004, q = 0.015). The size of what
+averaging cost is the point:
 
 | comparison | carriers | non-carriers | difference |
 | --- | --- | --- | --- |
@@ -739,17 +757,17 @@ size (p = 0.023, q = 0.040) while spanning 11 groups, which is the signature a
 genuine narrow spectrum should leave and not what panel redundancy produces.
 Conditioning on the four systems most enriched among its carriers (SanaTA,
 Lamassu-Mrr, PsyrTA, AbiE) reduces it from 11 groups to 6 without removing it
-(p = 0.003). And retrons are an abortive-infection mechanism, which acts after
+(p = 0.002). And retrons are an abortive-infection mechanism, which acts after
 adsorption, so a retron is the kind of system this project set out to find.
 
 **Then the check that decides it.** Dropping each of the 12 clonal clusters
 holding a carrier in turn, and refitting, leaves anywhere from 1 to 12 phage
 groups. Dropping one of them, a cluster holding 6 of the 20 carriers, takes the
-result to **p = 0.133**.
+result to **p = 0.160**.
 
 Losing six carriers costs power whatever they are, so that drop was repeated 40
 times with strains chosen at random and the same number of carriers removed.
-Those random drops leave a median p of **0.0060**, and only **8 percent** of
+Those random drops leave a median p of **0.009**, and only **8 percent** of
 them are as bad as dropping the cluster. The fragility is therefore not sample
 size. **Six near-identical strains are carrying the result.**
 
@@ -761,60 +779,44 @@ and nothing in an observational design can say whether the retron is why. The
 alternative, that the lineage is resistant for some other reason it also
 happens to carry, remains open and is not excluded by any test here.
 
-**So for protection, the answer to the question this section asked is no, on
-this evidence.** Averaging over the panel was not hiding a robust protective
-effect. It was hiding one candidate whose support concentrates in a single
-clonal group, which is the same obstacle that limits every other result in this
-study. Retron_I_C is worth a knockout against the 12 phages named in table 49,
-and it is not a finding.
+**So averaging over the panel was hiding something, and what it was hiding is a
+candidate rather than a finding.** Retron_I_C is worth a knockout against the
+12 phages named in table 49. It is not evidence that the retron confers
+resistance.
 
-For the opposite direction the answer is different, and that comes next.
-
-### The direction that should not exist is the better-supported one
+### The direction that should not exist comes close, and does not arrive
 
 The same machinery was applied to the opposite tail, because a system
 associated with *more* lysis cannot be acting as a defense and that pattern has
-recurred throughout this study. It produces the most uncomfortable result in
-this work.
+recurred throughout this study.
 
-| system | carriers | phages | groups | p | q |
-| --- | --- | --- | --- | --- | --- |
-| BREX_I | 31 | 16 | 11 | 0.002 | 0.044 |
-| CAS_Class1-Subtype-I-F | 66 | 13 | 9 | 0.003 | 0.044 |
-| MazEF | 338 | 9 | 8 | 0.004 | 0.044 |
-| SanaTA | 64 | 22 | 14 | 0.012 | 0.086 |
-| Gao_Qat | 23 | 13 | 11 | 0.013 | 0.086 |
+| system | carriers | groups | p | q |
+| --- | --- | --- | --- | --- |
+| BREX_I | 31 | 11 | 0.0016 | 0.053 |
+| CAS_Class1-Subtype-I-F | 66 | 9 | 0.0036 | 0.059 |
+| MazEF | 338 | 8 | 0.0054 | 0.059 |
+| Gao_Qat | 23 | 11 | 0.0089 | 0.073 |
+| SanaTA | 64 | 14 | 0.0131 | 0.086 |
 
-**Three systems clear both nulls in the increased-lysis direction, against one
-in the protective direction, and unlike that one they survive everything
-else.** Conditioning on the four systems most enriched among their carriers
-leaves BREX_I at 9 groups (p = 0.011), CAS_Class1-Subtype-I-F at 8
-(p = 0.003) and MazEF at 8 (p = 0.001). Dropping each clonal cluster holding a
-carrier in turn, across 19, 31 and 185 refits respectively, the worst case is
-p = 0.038, 0.013 and 0.015: none of them rests on one group of relatives, which
-is exactly the check Retron_I_C failed.
+**No system in that direction clears the correction**, and the nearest, BREX_I,
+misses narrowly enough to be worth settling rather than rounding. Re-tested on
+its own against 50,000 null traits of each kind it gives p = 0.0018 against the
+0.0015 a correction over 33 systems demands at rank one, on 91 and 76 null
+draws reaching its count, so the estimate is precise enough for the verdict to
+be the data's rather than the generator's.
 
-The clonal null is what makes this hard to dismiss. The standing explanation
-for these associations, used earlier in this study, is that such systems mark
-lineages that are easy to lyse for reasons unrelated to defense. A null that
-preserves the clonal distribution of carriage while moving it to other lineages
-is a direct test of that explanation, and these three survive it. So the
-lineage account does not cover them, and no defense mechanism covers them
-either.
+That result is worth recording because an earlier version of this analysis
+reported the opposite. With 1000 null traits per system the three leading
+systems in this direction appeared to clear while Retron_I_C appeared to fail,
+and both halves of that were resolution artifacts: MazEF's p-value moved from
+0.002 to 0.0054 once it rested on 107 null draws instead of one. The pattern of
+five systems clustered just above the line is real and unexplained by any
+defense mechanism. It is not significant here.
 
-Two readings remain open, and this design cannot separate them. The systems may
-travel on mobile elements that also carry something increasing susceptibility,
-which would make the association real and the attribution wrong. Or carriage
-may record a history of phage exposure, where strains that are easy to lyse
-accumulate both infections and the systems that respond to them, which reverses
-the direction of causation rather than the association. Either way, the honest
-summary of this section is that **the association which makes biological sense
-is the weaker of the two in this collection**, and that fact belongs in the
-foreground rather than in a footnote.
-
-Figure 10 shows the cost of averaging across all 33 systems, the surviving
-system across the whole panel, the structure mismatch that forced the second
-null, and what each null admits.
+Figure 10 shows the cost of averaging across all 33 systems, the one candidate
+across the whole panel with the clonal cluster that carries it, the structure
+mismatch that forced the second null, what each null admits, the two directions
+side by side, and the leave-one-cluster-out check that separates them.
 
 ## Summary
 
@@ -856,20 +858,15 @@ resistance either, which bounds the search beyond the catalogue: whatever
 accounts for the unexplained failures, it is not a single widely distributed
 accessory locus that this design could see.
 
-Resolving the panel into its individual phages does not overturn that, though
-it produced the study's best single candidate. Retron_I_C reduces lysis by
-0.222 on the 12 phages it acts on against 0.016 across the panel, and clears
-both a coordinate-matched and a clonally-matched null. It then fails a leave-
-one-cluster-out check that random drops of the same size pass, which places 6
-of its 20 carriers at the centre of the result. The negative results stand for
-all 33 systems, and they now stand against a stricter null than before.
-
-The same analysis applied to the opposite tail is harder to put aside. Three
-systems, BREX_I, CAS_Class1-Subtype-I-F and MazEF, are associated with more
-lysis on 8 to 11 phage groups, clear both nulls, keep their signal when their
-island neighbours are conditioned on, and survive dropping any single clonal
-cluster of their carriers. The direction that no defense mechanism explains is
-better supported in this collection than the direction that one would.
+Resolving the panel into its individual phages recovers one thing the averages
+had buried. Retron_I_C reduces lysis by 0.222 on the 12 phages it acts on
+against 0.016 across the panel, and clears both a coordinate-matched and a
+clonally-matched null at q = 0.015. It then fails a leave-one-cluster-out check
+that random drops of the same size pass, which places 6 of its 20 carriers at
+the centre of the result, so it joins the candidate list rather than the
+findings. In the opposite direction, where no defense mechanism could explain
+an association, five systems cluster just above the line and none clears the
+correction.
 
 The defensible output is a ranked candidate list. Eleven systems are nominated
 somewhere in the study; the best, RM_Type_IIG, passes five of seven independent

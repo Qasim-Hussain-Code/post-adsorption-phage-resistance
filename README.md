@@ -18,11 +18,12 @@ demonstration that any system confers resistance.
 
 That answer is an average over 96 phages, which is a choice and not a neutral
 one. Resolving the panel into its individual phages, against two nulls that
-each destroy a different kind of confounding, yields one protective candidate
-whose support turns out to rest on six near-identical strains, and three
-systems associated with *more* lysis that survive every check applied to them.
-The direction that no defense mechanism explains is the better-supported one in
-this collection.
+each destroy a different kind of confounding, recovers one candidate the
+averages had buried: a retron whose effect on the twelve phages it acts on is
+fourteen times its effect on the panel. It too fails a stability check, resting
+on six near-identical strains. In the opposite direction, where no defense
+mechanism could explain an association, five systems cluster just above the
+line and none reaches significance.
 
 ## The question and why it needs care
 
@@ -236,9 +237,9 @@ their own proteomes.
 
 **A phylogenetically matched null, and what it exposes.** Simulating null traits
 with each system's own phylogenetic confinement measures the population
-structure problem directly: median inflation 1.09, but **2.31 for
+structure problem directly: median inflation 1.13, but **4.17 for
 CAS_Class1-Subtype-I-E**, whose carriage is 59 percent explained by core-genome
-position and which drops from p = 0.001 to p = 0.079. Conditioning on ancestry
+position and which drops from p = 0.0005 to p = 0.50. Conditioning on ancestry
 alone is not enough, though. Host surface type confounds separately, and
 RM_Type_IIG turns out to be strongly depleted in permissive outer cores
 (OR 0.33, p = 0.0004): its carriers are drawn from strains that are harder to
@@ -263,7 +264,8 @@ flagging, so the anomaly is not an artifact of annotation.
 
 Getting there required fixing three failures, all documented: sampling k-mers
 at one in fifty left 83 percent of patterns backed by a single k-mer; the
-phylogenetically matched null was five times too liberal here because eight
+phylogenetically matched null is still 2.8 times too liberal here, even
+after correcting its generator, because eight
 principal coordinates cannot describe a clade-confined accessory locus; and the
 binned empirical null that replaced it was well calibrated but defined for only
 3,144 loci. Matching each locus to its nearest neighbours and reading it
@@ -286,30 +288,28 @@ same-cluster strain pairs 0.911 of the time against 0.810 for that null, with
 clonal clusters of the same size and reproduces 0.911 exactly. Reporting the
 worse of the two p-values is the difference between six findings and one.
 
-**The direction that should not exist is the better-supported one.** Applying
-the same two nulls to the opposite tail, **three systems are associated with
-more lysis** and clear everything: BREX_I (11 phage groups),
-CAS_Class1-Subtype-I-F (9) and MazEF (8), all at q = 0.044, all keeping their
-signal when their island neighbours are conditioned on, and none resting on any
-single clonal cluster of carriers across 19, 31 and 185 refits. The clonal null
-is what makes this awkward, since it directly tests the standing explanation
-that such systems merely mark easy-to-lyse lineages, and they survive it.
-Either they travel with something that increases susceptibility, or carriage
-records a history of phage exposure and the causation runs the other way.
-**The association that makes biological sense is the weaker of the two here.**
+**The direction that should not exist comes close, and does not arrive.**
+Applying the same two nulls to the opposite tail, five systems cluster just
+above the line and **none clears the correction**: BREX_I (q = 0.053),
+CAS_Class1-Subtype-I-F and MazEF (0.059), Gao_Qat (0.073), SanaTA (0.086). The
+nearest was re-tested on its own against 50,000 null traits of each kind and
+gives p = 0.0018 against the 0.0015 required, so the verdict is the data's and
+not the generator's. An earlier version of this analysis reported three of them
+as clearing while Retron_I_C failed; both halves were artifacts of running the
+null at a thousand draws, where the smallest attainable p sits almost exactly
+on the correction threshold.
 
-**One system clears both nulls in the protective direction, then fails a
-stability check.** Retron_I_C
+**One system clears both nulls, and then fails a stability check.** Retron_I_C
 reduces lysis by **0.222** on the 12 phages it acts on against **0.016** across
 the whole panel, a fourteen-fold gap that explains why every other test here
 missed it, and retrons act by abortive infection, which is post-adsorption and
-exactly what this project set out to find. But dropping each clonal cluster of
-carriers in turn and refitting, one cluster holding 6 of its 20 carriers takes
-the result to **p = 0.133**, while 40 random drops of the same size leave a
-median p of **0.0060** and only 8 percent do as much damage. Six near-identical
-strains are carrying it. **That makes it the study's best candidate and not a
-finding**, and it leaves the answer negative for the direction that matters:
-averaging was not hiding a robust protective effect.
+exactly what this project set out to find. It clears at q = 0.015 and keeps its
+signal when its island neighbours are conditioned on. But dropping each clonal
+cluster of carriers in turn, one cluster holding 6 of its 20 carriers takes the
+result to **p = 0.160**, while 40 random drops of the same size leave a median
+p of **0.009** and only 8 percent do as much damage. Six near-identical strains
+are carrying it. **That makes it the study's best candidate and not a
+finding.**
 
 ### The candidate list
 
@@ -394,6 +394,13 @@ the pooled mean, and the consolidated candidate list](figures/fig7_consolidated_
 matched null before and after removing host surface type, and the final
 verdict](figures/fig8_inference_and_verdict.png)
 
+### Figure 9. Why the accessory genome scan needed its null rebuilt twice
+
+![Four nulls against the uniform diagonal, their behaviour in the tail that
+FDR control depends on, the heavier tails among loci the fixed bins dropped,
+and the collapsed neighbourhood that disqualifies every locus the full scan
+flags](figures/fig9_association_calibration.png)
+
 ### Figure 10. What averaging over a panel of 96 phages costs, and which direction survives
 
 ![The panel-average effect against the effect on the phages each system acts
@@ -403,13 +410,6 @@ what each null admits, the three systems clearing both nulls in the
 increased-lysis direction against the one in the protective direction, and the
 leave-one-cluster-out check that separates
 them](figures/fig10_phage_resolved_spectrum.png)
-
-### Figure 9. Why the accessory genome scan needed its null rebuilt twice
-
-![Four nulls against the uniform diagonal, their behaviour in the tail that
-FDR control depends on, the heavier tails among loci the fixed bins dropped,
-and the collapsed neighbourhood that disqualifies every locus the full scan
-flags](figures/fig9_association_calibration.png)
 
 ## Reproducing
 
@@ -442,9 +442,9 @@ Step 28 postdates that run and was timed separately at roughly 20 minutes, for
 its 66,000 scored traits and the refits behind the stability checks. Peak
 memory stays below 1 GB.
 
-The repository plus all downloaded data occupies about 640 MB: 414 MB of
-bacterial genomes, 101 MB of derived k-mer sketches (regenerable and
-untracked), 66 MB of git history and the rest the public input tables. Run with
+The repository plus all downloaded data occupies about 642 MB: 414 MB of
+bacterial genomes, 100 MB of derived k-mer sketches (regenerable and
+untracked), 72 MB of git history and the rest the public input tables. Run with
 `--skip-genomes` it stays near 110 MB, and the genomes can be deleted after
 step 20 without affecting any other result.
 
@@ -461,7 +461,10 @@ scripts/11 .. 17   variance partition, receptor gate, shrinkage, combinations,
                    consolidated candidates, summary figure, phage lifestyle
 scripts/18 .. 20   host genome retrieval, identity validation, prophages
 scripts/21 .. 24   phylogenetic null, Bayesian pooling, ordinal score, figure
-scripts/run_all.py runs them in order, --core-only stops after 06
+scripts/25 .. 27   accessory genome scan, locus identification, calibration figure
+scripts/28 .. 29   phage-resolved defense effects, spectrum figure
+scripts/run_all.py runs them in order; --core-only stops after 06 and
+                   --skip-genomes omits 18 to 20 and 25 to 27
 src/papr/          shared estimators, paths, configuration, figure style
 data/raw/          downloaded inputs, not tracked; verified against data/raw_manifest.sha256
 data/processed/    derived tables

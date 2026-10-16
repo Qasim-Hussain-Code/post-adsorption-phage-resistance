@@ -407,7 +407,7 @@ of the neighbourhood lying within a tenth of the global spread of the local
 centre. A locus flagged in a neighbourhood that is collapsed and clumped on
 those measures is reported with its diagnostics and not interpreted, since such
 a neighbourhood estimates a null from one set of near-identical clade markers. The simulated null of script 21 is computed alongside and reported, not
-interpreted: it is about five times too liberal here, because traits built from
+interpreted: it is about 2.8 times too liberal here, because traits built from
 eight principal coordinates are less clade-confined than real accessory loci.
 
 Flagged patterns are then relocated in a carrier genome by rescanning it for the
@@ -424,15 +424,25 @@ model is fitted once per phage and every candidate trait is then scored against
 it in closed form, which is what makes a simulation-based null affordable
 across thousands of traits.
 
+The score form is also the only one of the three classical tests that stays
+defined here. In 317 of the 3,102 system-by-phage tests, a tenth of them and
+touching 27 of the 33 systems, every carrier shares the same outcome. A
+logistic fit then has no finite maximum likelihood estimate, so Wald and
+likelihood-ratio statistics are unusable, while the score statistic is
+evaluated under the null where the coefficient is zero and remains well
+behaved.
+
 Phages are collapsed into groups by single linkage on patristic distance from
 the VIRIDIC tree at a threshold of 0.1, and the unit counted is the group
 rather than the phage, because near-identical phages are not independent tests.
 The headline count is reported at 0.05, 0.1 and 0.2 so that it does not rest on
 one cut.
 
-Two nulls are generated per system, each with 1000 traits. The first matches
-prevalence and the share of carriage variance explained by the principal
-coordinates. The second permutes the number of carriers in each clonal cluster
+Two nulls are generated per system, each with 1000 traits. The first matches prevalence and the share of carriage variance
+explained by the principal coordinates, bisecting on the share the simulated
+binary traits actually realise rather than on the latent mixture behind them,
+because thresholding a latent mixture loses enough structure to miss the
+target by half for the most lineage-confined systems. The second permutes the number of carriers in each clonal cluster
 among clusters of the same size, which preserves prevalence and the whole
 within-cluster carriage pattern while randomising which lineages carry the
 trait. The second exists because the first does not reproduce the clonal

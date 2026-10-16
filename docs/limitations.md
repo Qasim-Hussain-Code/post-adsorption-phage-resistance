@@ -18,6 +18,49 @@ to show the nested fits, with a note directing the reader to script 11.
 The lesson generalises beyond this one number: any comparison between blocks of
 unequal size, entered in a chosen order, can be made to favour either block.
 
+## A null in an earlier version of this analysis was too weak
+
+The phylogenetically matched null builds a trait by mixing structured signal
+with white noise so that the structured part holds a chosen share of the
+variance, then thresholds the result to give a carrier set of the right size.
+Thresholding discards structure, so the binary trait carries less phylogenetic
+signal than the mixture it came from, and the shortfall grows with the target.
+Measured against its own target across the 33 systems, the generator reached a
+median of 0.79 of the signal it was asked for and about **half** for the most
+lineage-confined systems, the ones where the matching matters most. A null less
+confined than the trait it is matched against is too easy to beat, so every
+p-value taken against it was optimistic.
+
+It now bisects on the share the binary traits actually realise, which brings
+the median to 1.01 and the worst case from 0.39 to 0.82 of target. The
+correction made the measured population structure problem larger, not smaller:
+median inflation of the null spread went from 1.09 to 1.13 and the worst case
+from 2.31 to 4.17. No system changed its verdict in the phylogenetic null
+tests, and in the accessory genome scan the correction cut the simulated null's
+false positives from 1,061 to 178, though that null remains too liberal there
+for the separate reason already discussed.
+
+This was found by testing the generator against its own stated contract rather
+than by inspecting its output, which is the only way a defect of this kind
+surfaces: the traits it produced always looked like plausible null traits.
+
+## A permutation p-value cannot be finer than the number of permutations
+
+The phage-resolved tests judge a system against simulated null traits, so the
+smallest p-value attainable is one over the number of traits plus one. With the
+1000 traits used for screening that floor is 0.001, while a Benjamini-Hochberg
+correction over 33 systems demands 0.0015 at rank one. The floor therefore sat
+almost exactly on the threshold, which meant a borderline system's verdict
+turned on a couple of null draws rather than on the data: the best protective
+candidate moved between clearing and not clearing depending on which draws the
+generator happened to produce.
+
+Screening at 1000 traits and re-testing anything at or under 0.02 against
+20,000 traits of each kind removes that. It is worth stating as a limitation
+rather than only as a fix, because the same arithmetic applies to any
+permutation test reported here: a p-value at the floor is a statement about the
+number of permutations as much as about the evidence.
+
 ## Receptor compatibility is inferred and the inference is weak
 
 The central methodological problem is that this dataset contains no statement of
@@ -230,16 +273,16 @@ The two loci it did flag are associated with increased lysis, rest on ten
 carrier strains each, and carry no recognised domain. They are observations for
 follow-up, not mechanisms.
 
-## The one phage-resolved finding is narrow in every sense
+## The one phage-resolved candidate is narrow in every sense
 
 Retron_I_C clears both nulls on 12 phages of 94, and then does not survive
 removing one clonal cluster of its carriers. Dropping the cluster that holds 6
-of its 20 carriers takes it from p = 0.001 to p = 0.133, where 40 random drops
-removing the same number of carriers leave a median p of 0.0065 and only 2
+of its 20 carriers takes it from p = 0.0004 to p = 0.160, where 40 random drops
+removing the same number of carriers leave a median p of 0.009 and only 8
 percent do as much damage. The result therefore rests on six near-identical
 strains, and the explanation that this lineage is hard to lyse for some reason
 other than the retron is not excluded by anything in this study. Conditioning
-on the four catalogued systems most enriched among its carriers halves the
+on the four catalogued systems most enriched among its carriers reduces the
 signal without removing it, which bounds but does not eliminate the possibility
 that the responsible gene is an uncatalogued neighbour on the same island. The
 test asks whether carriage predicts less lysis beyond core-genome position,
@@ -252,18 +295,18 @@ systems; the clonal null carries about half their broad-scale phylogenetic
 signal. Reporting the worse p-value of the two is conservative but it is not a
 proof that no structure remains unmodelled.
 
-## The increased-lysis systems are an association without a mechanism
+## The increased-lysis pattern is unexplained and not significant
 
-Three systems clear every check in this study for an association with more
-lysis, which is a direction no defense mechanism explains. They are reported
-because suppressing them would misrepresent the evidence, not because they are
-understood. Nothing here identifies what produces the association: the two
-readings offered, a mobile element carrying a susceptibility factor and
-carriage recording a history of phage exposure, are both consistent with the
-data and neither is tested. A reader should treat these as a question raised by
-the dataset rather than as a claim about what these systems do, and should note
-that MazEF in particular is carried by 338 of 402 strains, so its non-carrier
-group is small.
+Five systems are associated with more lysis on 8 to 14 phage groups, a
+direction no defense mechanism explains, and none of them clears a correction
+over the 33 systems tested. The pattern is consistent enough to be worth
+recording and too weak to support a claim. An earlier version of this analysis
+reported three of them as significant; that was an artifact of judging them
+against a thousand null traits, where the smallest attainable p-value sits on
+the correction threshold, and it disappeared when the leading systems were
+re-tested against twenty thousand. Nothing here identifies what produces the
+association, and MazEF in particular is carried by 338 of 402 strains, so its
+non-carrier group is small.
 
 ## Scope
 

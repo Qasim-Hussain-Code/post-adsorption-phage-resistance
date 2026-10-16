@@ -68,6 +68,12 @@ from papr.stats import benjamini_hochberg
 # verdict resting on where a tie happened to fall.
 N_NULL_TRAITS = 1000
 
+# A system whose screening p falls at or under this is re-tested with far more
+# null traits, because the screen cannot resolve p-values fine enough for a
+# correction over 33 systems to mean anything near its own floor.
+REFINE_SCREEN = 0.02
+N_REFINE = 20000
+
 # Near-identical phages are not independent tests. The panel contains pairs at
 # zero distance, and at this threshold its 96 members collapse to 56 groups,
 # the largest holding 9. A system associated with one member of such a group
@@ -404,6 +410,52 @@ def main() -> int:
         rec["p_best"] = max(rec["p_best_coordinate"], rec["p_best_clonal"])
         spectrum.append(rec)
     spec = pd.DataFrame(spectrum)
+
+    # Second stage, at much finer resolution, for anything near the line.
+    # With 1000 null traits the smallest attainable p is 0.001, and a
+    # Benjamini-Hochberg correction over 33 systems needs 0.0015 at rank one.
+    # The floor therefore sits almost exactly on the threshold, so a system's
+    # verdict would turn on a couple of null draws rather than on the data.
+    # Screening wide and then re-testing only the candidates keeps that cheap.
+    refine = spec[(spec["p_protective"] <= REFINE_SCREEN)
+                  | (spec["p_increased"] <= REFINE_SCREEN)]["system"].tolist()
+    print(f"re-testing {len(refine)} systems at {N_REFINE} null traits: "
+          f"{', '.join(refine)}")
+    for s in refine:
+        k = systems.index(s)
+        v = real[:, k]
+        fine = np.hstack([
+            v[:, None],
+            simulate_traits(axes, int(v.sum()), float(r2[k]), N_REFINE,
+                            rng).astype(float),
+            cluster_block_traits(v, labels_clonal, N_REFINE, rng).astype(float)])
+        zf = np.full((fine.shape[1], len(usable)), np.nan)
+        for m, j in enumerate(usable):
+            ob = np.isfinite(y_mat[:, j])
+            zf[:, m] = score_z(y_mat[ob, j], cov[ob], fine[ob])
+        row = spec.index[spec["system"] == s][0]
+        for direction, sign in (("protective", -1.0), ("increased", 1.0)):
+            got = int(count_clusters_hit(
+                ((sign * zf[0]) > Z_THRESHOLD)[None, :], labels)[0])
+            for name, lo in (("coordinate", 1), ("clonal", 1 + N_REFINE)):
+                arr = zf[lo:lo + N_REFINE]
+                nl = count_clusters_hit((sign * arr) > Z_THRESHOLD, labels)
+                spec.loc[row, f"p_{direction}_{name}"] = float(
+                    (1 + (nl >= got).sum()) / (1 + N_REFINE))
+            spec.loc[row, f"p_{direction}"] = max(
+                spec.loc[row, f"p_{direction}_coordinate"],
+                spec.loc[row, f"p_{direction}_clonal"])
+        best = zf[0].min()
+        for name, lo in (("coordinate", 1), ("clonal", 1 + N_REFINE)):
+            arr = zf[lo:lo + N_REFINE]
+            spec.loc[row, f"p_best_{name}"] = float(
+                (1 + (arr.min(axis=1) <= best).sum()) / (1 + N_REFINE))
+        spec.loc[row, "p_best"] = max(spec.loc[row, "p_best_coordinate"],
+                                      spec.loc[row, "p_best_clonal"])
+        del fine, zf
+    spec["null_traits_used"] = np.where(spec["system"].isin(refine),
+                                        N_REFINE, N_NULL_TRAITS)
+
     for col in ("p_protective", "p_increased", "p_best"):
         spec[f"q_{col[2:]}"] = benjamini_hochberg(spec[col].to_numpy())
     spec = spec.sort_values("p_protective")
@@ -424,10 +476,18 @@ def main() -> int:
         """Boolean hit mask in the requested direction."""
         return (sign * np.where(np.isfinite(zrow), zrow, 0.0)) > Z_THRESHOLD
 
-    survivors_by_direction = {
-        d: spec[spec[f"q_{d}"] <= config.FDR_ALPHA]["system"].tolist()
-        for d, _ in DIRECTIONS}
-    survivors = survivors_by_direction["protective"]
+    # Systems clearing the correction get the follow-up checks, and so does
+    # the strongest near-miss in each direction. A near-miss is not a finding,
+    # but whether it would have held up is worth knowing rather than leaving
+    # to the reader's imagination, and it is the natural question about the
+    # best candidate a direction produced.
+    survivors_by_direction, near_miss = {}, {}
+    for d, _ in DIRECTIONS:
+        passed = spec[spec[f"q_{d}"] <= config.FDR_ALPHA]["system"].tolist()
+        rest = spec[~spec["system"].isin(passed)].nsmallest(1, f"p_{d}")
+        follow = passed + [s for s in rest["system"]]
+        survivors_by_direction[d] = follow
+        near_miss[d] = set(follow) - set(passed)
 
     adjusted = []
     for direction, sign in DIRECTIONS:
@@ -621,7 +681,15 @@ def main() -> int:
     add(f"  phages with a usable per-phage model : {len(phage_names)} of {len(phages)}")
     add(f"  systems tested                       : {len(systems)}")
     add(f"  tests                                : {len(systems) * len(phage_names)}")
-    add(f"  matched null traits per system       : {N_NULL_TRAITS}")
+    add(f"  matched null traits per system       : {N_NULL_TRAITS} screening, "
+        f"{N_REFINE} for the {len(refine)} near the line")
+    add("  Two stages are needed because the screen cannot resolve a p-value "
+        "finely enough to survive a correction over 33 systems: its floor is "
+        f"{1 / (N_NULL_TRAITS + 1):.4f} and the correction demands "
+        f"{config.FDR_ALPHA / len(systems):.4f} at rank one, so a borderline "
+        "system would be decided by a couple of null draws. Anything "
+        f"screening at or under {REFINE_SCREEN} is re-tested against "
+        f"{N_REFINE} null traits of each kind.")
     add("")
     add("TWO NULLS, BECAUSE ONE IS NOT ENOUGH")
     add("  A null that matches prevalence and the share of carriage explained "
@@ -756,10 +824,16 @@ def main() -> int:
         add("")
         add("  DOES THE SURVIVOR KEEP ITS SIGNAL AWAY FROM ITS ISLAND?")
         for r in adj.itertuples(index=False):
-            add(f"    {r.system} ({r.direction}): {r.n_groups_unadjusted} "
-                f"phage groups unadjusted, {r.n_groups_adjusted} after "
-                f"conditioning on {r.partners} (p {r.p_adjusted:.4f}).")
-        kept = adj[adj["p_adjusted"] <= config.FDR_ALPHA]
+            tag = (" [near miss, does not clear the correction]"
+                   if r.system in near_miss.get(r.direction, set()) else "")
+            add(f"    {r.system} ({r.direction}){tag}: "
+                f"{r.n_groups_unadjusted} phage groups unadjusted, "
+                f"{r.n_groups_adjusted} after conditioning on {r.partners} "
+                f"(p {r.p_adjusted:.4f}).")
+        adj_passed = adj[~adj.apply(
+            lambda r: r["system"] in near_miss.get(r["direction"], set()),
+            axis=1)]
+        kept = adj_passed[adj_passed["p_adjusted"] <= config.FDR_ALPHA]
         if kept.empty:
             add("    No survivor keeps its signal once the systems most "
                 "enriched among its carriers are conditioned on, so the "
@@ -776,8 +850,10 @@ def main() -> int:
         for s, direction in sorted(set(zip(stab["system"], stab["direction"]))):
             part = stab[(stab["system"] == s)
                         & (stab["direction"] == direction)]
-            add(f"    {s} ({direction}): dropping each of the {len(part)} "
-                f"clonal clusters "
+            tag = (" [near miss, does not clear the correction]"
+                   if s in near_miss.get(direction, set()) else "")
+            add(f"    {s} ({direction}){tag}: dropping each of the "
+                f"{len(part)} clonal clusters "
                 f"holding a carrier in turn leaves "
                 f"{int(part['n_groups'].min())} to "
                 f"{int(part['n_groups'].max())} phage groups "

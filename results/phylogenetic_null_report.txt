@@ -12,43 +12,43 @@ HOW LINEAGE-CONFINED ARE THESE SYSTEMS
   range : 0.011 to 0.591
 
   system                   carriers  phylo R2  inflation
-  CAS_Class1-Subtype-I-E        215     0.591       2.31
-  CAS_Class1-Subtype-I-F         66     0.374       1.52
-  MazEF                         338     0.234       1.35
-  Zorya_TypeII                   20     0.183       1.14
-  PsyrTA                        110     0.172       1.36
-  Druantia_III                   66     0.160       1.26
-  Lamassu-Mrr                    31     0.106       1.10
-  RM_Type_I                     327     0.099       1.17
-  Septu                          73     0.097       1.16
-  RM_Type_IIG                    52     0.090       1.16
+  CAS_Class1-Subtype-I-E        215     0.591       4.17
+  CAS_Class1-Subtype-I-F         66     0.374       2.13
+  MazEF                         338     0.234       1.70
+  Zorya_TypeII                   20     0.183       1.21
+  PsyrTA                        110     0.172       1.79
+  Druantia_III                   66     0.160       1.52
+  Lamassu-Mrr                    31     0.106       1.18
+  RM_Type_I                     327     0.099       1.27
+  Septu                          73     0.097       1.31
+  RM_Type_IIG                    52     0.090       1.20
   'inflation' is how much wider the null distribution of the test statistic becomes once the simulated traits are given the system's own phylogenetic structure. It is the factor by which a test that ignores population structure overstates its evidence.
-  Median inflation across systems: 1.09. A test treating carriage as randomly distributed across strains would therefore understate its standard error by roughly that factor.
+  Median inflation across systems: 1.13. A test treating carriage as randomly distributed across strains would therefore understate its standard error by roughly that factor.
 
 ASSOCIATION AGAINST A PHYLOGENETICALLY MATCHED NULL
   significant against the matched null    : 5 of 33
-  significant against an unstructured null: 7 of 33
+  significant against an unstructured null: 8 of 33
 
   system                   carriers  phylo R2  obs diff  p struct  q struct    p flat
-  RM_Type_IIG                    52     0.090   -0.1105  1.00e-04  3.30e-03  5.00e-04 *
-  SanaTA                         64     0.067   +0.0871  3.00e-04  4.40e-03  5.00e-04 *
-  PsyrTA                        110     0.172   +0.0823  4.00e-04  4.40e-03  5.00e-04 *
-  Gao_Qat                        23     0.041   +0.1152  1.50e-03  1.24e-02  1.50e-03 *
-  Septu                          73     0.097   +0.0738  2.50e-03  1.65e-02  1.50e-03 *
-  Mokosh_TypeII                  92     0.088   +0.0584  1.04e-02  5.72e-02  3.50e-03  
-  Zorya_TypeII                   20     0.183   -0.0964  3.22e-02  1.52e-01  1.45e-02  
-  CBASS_I                        43     0.040   +0.0574  3.95e-02  1.63e-01  2.80e-02  
-  Shango                         37     0.012   -0.0541  5.46e-02  1.80e-01  6.20e-02  
-  Hachiman                       31     0.088   -0.0651  5.55e-02  1.80e-01  3.10e-02  
-  Kiwa                           35     0.027   -0.0557  6.43e-02  1.80e-01  5.00e-02  
-  Lamassu-Mrr                    31     0.106   +0.0642  6.55e-02  1.80e-01  2.90e-02  
-  CAS_Class1-Subtype-I-E        215     0.591   -0.0641  7.86e-02  2.00e-01  1.00e-03  
-  RM_Type_IV                    268     0.058   +0.0283  1.50e-01  3.38e-01  1.07e-01  
+  RM_Type_IIG                    52     0.090   -0.1105  3.00e-04  9.90e-03  5.00e-04 *
+  SanaTA                         64     0.067   +0.0871  1.00e-03  1.65e-02  5.00e-04 *
+  Gao_Qat                        23     0.041   +0.1152  1.80e-03  1.98e-02  1.50e-03 *
+  PsyrTA                        110     0.172   +0.0823  5.70e-03  4.62e-02  5.00e-04 *
+  Septu                          73     0.097   +0.0738  7.00e-03  4.62e-02  1.50e-03 *
+  Mokosh_TypeII                  92     0.088   +0.0584  2.03e-02  1.12e-01  3.50e-03  
+  CBASS_I                        43     0.040   +0.0574  3.59e-02  1.69e-01  2.80e-02  
+  Zorya_TypeII                   20     0.183   -0.0964  4.98e-02  1.95e-01  9.00e-03  
+  Shango                         37     0.012   -0.0541  5.32e-02  1.95e-01  6.70e-02  
+  Kiwa                           35     0.027   -0.0557  6.34e-02  2.09e-01  5.60e-02  
+  Hachiman                       31     0.088   -0.0651  7.00e-02  2.10e-01  3.50e-02  
+  Lamassu-Mrr                    31     0.106   +0.0642  8.47e-02  2.33e-01  3.05e-02  
+  PD-T4-3                        65     0.022   +0.0316  1.61e-01  4.09e-01  1.46e-01  
+  RM_Type_IV                    268     0.058   +0.0283  1.75e-01  4.12e-01  9.30e-02  
 
 INTERPRETATION
-  Accounting for phylogenetic structure removes 2 of the 7 associations that an unstructured null would call significant. That gap is the size of the population structure problem in this dataset, measured directly rather than assumed.
-  Systems surviving the matched null: RM_Type_IIG, SanaTA, PsyrTA, Gao_Qat, Septu.
-  Of those, 1 are associated with less lysis (RM_Type_IIG) and 4 with more (SanaTA, PsyrTA, Gao_Qat, Septu).
+  Accounting for phylogenetic structure removes 3 of the 8 associations that an unstructured null would call significant. That gap is the size of the population structure problem in this dataset, measured directly rather than assumed.
+  Systems surviving the matched null: RM_Type_IIG, SanaTA, Gao_Qat, PsyrTA, Septu.
+  Of those, 1 are associated with less lysis (RM_Type_IIG) and 4 with more (SanaTA, Gao_Qat, PsyrTA, Septu).
 
 CONDITIONING ON PHYLOGENY ALONE IS NOT ENOUGH
   A defense system cannot make its host easier to lyse, so any association with increased lysis is confounding, and the count of such results measures how far a test can be trusted.
@@ -73,24 +73,24 @@ THE SAME NULL, WITH SURFACE TYPE REMOVED FROM THE OUTCOME
   of which point the impossible way : 2
 
   system                    raw diff  adj diff     q raw     q adj
-  RM_Type_IIG                -0.1105   -0.0759  3.30e-03  8.80e-03
-  SanaTA                     +0.0871   +0.0857  4.40e-03  3.30e-03
-  PsyrTA                     +0.0823   +0.0733  4.40e-03  8.25e-03
-  Gao_Qat                    +0.1152   +0.0772  1.24e-02  6.24e-02
-  Septu                      +0.0738   +0.0547  1.65e-02  6.24e-02
-  Mokosh_TypeII              +0.0584   +0.0468  5.72e-02  6.24e-02
-  Zorya_TypeII               -0.0964   -0.1024  1.52e-01  4.54e-02
-  CBASS_I                    +0.0574   +0.0444  1.63e-01  1.54e-01
-  Shango                     -0.0541   -0.0540  1.80e-01  8.91e-02
-  Hachiman                   -0.0651   -0.0603  1.80e-01  8.91e-02
-  Kiwa                       -0.0557   -0.0633  1.80e-01  6.24e-02
-  Lamassu-Mrr                +0.0642   +0.0713  1.80e-01  6.24e-02
+  RM_Type_IIG                -0.1105   -0.0759  9.90e-03  3.96e-02
+  SanaTA                     +0.0871   +0.0857  1.65e-02  1.32e-02
+  Gao_Qat                    +0.1152   +0.0772  1.98e-02  8.62e-02
+  PsyrTA                     +0.0823   +0.0733  4.62e-02  4.45e-02
+  Septu                      +0.0738   +0.0547  4.62e-02  8.62e-02
+  Mokosh_TypeII              +0.0584   +0.0468  1.12e-01  1.06e-01
+  CBASS_I                    +0.0574   +0.0444  1.69e-01  1.71e-01
+  Zorya_TypeII               -0.0964   -0.1024  1.95e-01  4.45e-02
+  Shango                     -0.0541   -0.0540  1.95e-01  1.10e-01
+  Kiwa                       -0.0557   -0.0633  2.09e-01  8.62e-02
+  Hachiman                   -0.0651   -0.0603  2.10e-01  1.17e-01
+  Lamassu-Mrr                +0.0642   +0.0713  2.33e-01  8.62e-02
 
 INTERPRETATION, REVISED
   Removing surface type from the outcome drops the impossible associations from 4 to 2. Most of what survived conditioning on ancestry alone was host surface composition, which is what the variance partition in script 11 would predict.
 
-  RM_Type_IIG deserves separate comment. It passes the matched null on raw lysis (q = 3.30e-03) and its carriage is barely lineage-confined (phylogenetic R2 0.090), which is why it survives tests that condition on ancestry. But it is strongly depleted in strains with a permissive outer core (odds ratio 0.33, p = 4.0e-04): its carriers are 37 percent permissive against 60 percent of strains overall, so they are drawn from strains that are intrinsically harder to lyse whatever they carry.
-  Removing surface type from the outcome attenuates the difference by 31 percent but it remains significant (q = 8.80e-03). So part of its apparent protection is the surface composition of its carriers and part is not. This is the one piece of evidence for RM_Type_IIG that survives conditioning on both ancestry and surface type without relying on a covariate-adjusted regression.
+  RM_Type_IIG deserves separate comment. It passes the matched null on raw lysis (q = 9.90e-03) and its carriage is barely lineage-confined (phylogenetic R2 0.090), which is why it survives tests that condition on ancestry. But it is strongly depleted in strains with a permissive outer core (odds ratio 0.33, p = 4.0e-04): its carriers are 37 percent permissive against 60 percent of strains overall, so they are drawn from strains that are intrinsically harder to lyse whatever they carry.
+  Removing surface type from the outcome attenuates the difference by 31 percent but it remains significant (q = 3.96e-02). So part of its apparent protection is the surface composition of its carriers and part is not. This is the one piece of evidence for RM_Type_IIG that survives conditioning on both ancestry and surface type without relying on a covariate-adjusted regression.
   It still fails the within-cluster test, which holds the entire genomic background fixed and had moderate power for this system. The two designs disagree, and neither is decisive: the within-cluster test uses 36 strains in 7 clusters, while this one uses all 402 but cannot rule out a confounder it has not been given.
 
   Adjusting for surface type also brings Zorya_TypeII across the threshold. Surface composition was masking these rather than creating them: their carriers sit disproportionately on outer cores that are hard to lyse anyway, so the raw comparison understated them.
