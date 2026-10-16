@@ -42,13 +42,6 @@ annotations from <https://github.com/mdmparis/antidefensefinder_2024>. Nothing
 is redistributed here. `scripts/01_fetch_and_validate_data.py` downloads the
 inputs (about 21 MB) and verifies them against `data/raw_manifest.sha256`.
 
-The summary matrix was checked against the 318,816 replicate-level spot tests
-that accompany it. Treating a dilution step as positive when plaques appeared in
-at least two readable replicates reproduces the **binary lytic call for 99.69
-percent** of comparable cells, with every released zero recovered as a zero, and
-correlates with the ordinal score at Spearman 0.991. The phenotype used
-throughout is therefore well supported by the underlying measurements.
-
 ## What the analysis does
 
 **Receptor gating, and why it is only a secondary analysis.** Each phage has a
