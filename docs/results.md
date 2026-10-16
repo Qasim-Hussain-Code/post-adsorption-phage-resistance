@@ -273,8 +273,8 @@ Phylogroup and core-genome position are already adjusted for, so such a
 confounder would have to act beyond the lineage structure they capture.
 
 **Consistency across phage genera.** RM_Type_IIG has an odds ratio below 1 in
-**15 of 15** estimable genera (pooled 0.422, I squared 86 percent). Zorya_TypeII
-is below 1 in 11 of 13 (pooled 0.516, I squared 81 percent). Both are
+**15 of 15** estimable genera (pooled 0.422, I squared 81 percent). Zorya_TypeII
+is below 1 in 11 of 13 (pooled 0.516, I squared 74 percent). Both are
 heterogeneous in magnitude but consistent in direction, which is hard to produce
 by chance.
 
@@ -787,10 +787,30 @@ and nothing in an observational design can say whether the retron is why. The
 alternative, that the lineage is resistant for some other reason it also
 happens to carry, remains open and is not excluded by any test here.
 
+**And the check that decides it twice over.** The per-phage model conditions
+on core-genome position but not on host surface type, which section 12 found
+explains about three times the variation defense systems do. A retron acts
+after adsorption and cannot work through the surface, so surface is a
+confounder here rather than a step on the causal path, and conditioning on it
+is the fair question.
+
+It does not survive that question. Adding the collection's own surface typing
+to the model takes Retron_I_C from 11 phage groups to **4**, and its p-value
+from 0.0004 to **0.016**, which no longer clears a correction over 33 systems.
+The reason is visible in its carriage: **55 percent of its carriers sit on a
+K12 outer core against 8 percent of other strains**, and K12 strains are lysed
+0.138 of the time against 0.262 for the common R1 core. Its carriers are drawn
+from a surface type that is intrinsically hard to lyse, which is the same
+confounding that section 19 found behind RM_Type_IIG and behind the
+increased-lysis associations.
+
 **So averaging over the panel was hiding something, and what it was hiding is a
-candidate rather than a finding.** Retron_I_C is worth a knockout against the
-12 phages named in table 49. It is not evidence that the retron confers
-resistance.
+candidate rather than a finding.** Retron_I_C clears both nulls, keeps its
+signal away from its defense island, and acts on a set of phages more closely
+related than chance. It then fails on two independent grounds: six of its
+twenty carriers carry the result, and conditioning on host surface type
+removes most of it. It is worth a knockout against the 12 phages named in
+table 49, and it is not evidence that the retron confers resistance.
 
 ### The direction that should not exist comes close, and does not arrive
 

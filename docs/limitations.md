@@ -44,6 +44,37 @@ This was found by testing the generator against its own stated contract rather
 than by inspecting its output, which is the only way a defect of this kind
 surfaces: the traits it produced always looked like plausible null traits.
 
+## A variance formula in this library was wrong
+
+The Mantel-Haenszel pooled odds ratios in this analysis carry a Robins,
+Breslow and Greenland standard error. The published form of that variance is
+
+    sum(P R) / (2 R^2) + sum(P S + Q R) / (2 R S) + sum(Q S) / (2 S^2)
+
+and the middle sum had been accumulated with a factor of one half of its own,
+so it was divided by four times R S rather than twice. The result was a
+standard error about 0.886 of the correct one, and Mantel-Haenszel intervals
+roughly a tenth too narrow everywhere they appear.
+
+Two things limit what that affected. Significance was never decided by those
+intervals: it comes from the Cochran-Mantel-Haenszel chi-squared, which was
+correct, so no system changed status. And no confidence interval quoted in
+these documents came from the Mantel-Haenszel estimator; the intervals in the
+text are from cluster-robust regressions, Wilson intervals for proportions, or
+the pooled random-effects model. What did change is the heterogeneity across
+phage genera, because that analysis recovers each genus's standard error from
+the width of its interval and weights by its inverse square. Understated
+errors made the weights too large and Cochran's Q with them, so I squared was
+overstated: correcting the variance moved it from 86 to 81 percent for
+RM_Type_IIG and from 81 to 74 percent for Zorya_TypeII. Both remain
+heterogeneous in magnitude and consistent in direction, which is what the text
+claimed, but by a smaller margin than first reported. Of the 121 outputs this
+pipeline produces, 11 changed and 110 did not.
+
+The defect was found by testing the function against an independent
+implementation, not by reading its output, which was entirely plausible and
+agreed with every number reported from it.
+
 ## A permutation p-value cannot be finer than the number of permutations
 
 The phage-resolved tests judge a system against simulated null traits, so the
@@ -288,6 +319,15 @@ that the responsible gene is an uncatalogued neighbour on the same island. The
 test asks whether carriage predicts less lysis beyond core-genome position,
 which is an association and not a demonstration of mechanism: no phage was
 challenged against an isogenic knockout anywhere in this work.
+
+It also does not survive conditioning on host surface type, which the
+per-phage model does not carry: 11 phage groups becomes 4 and the p-value
+0.016. Its carriers are drawn disproportionately from the K12 outer core, 55
+percent against 8 percent of other strains, and that core is lysed 0.138 of the
+time against 0.262 for the commonest one. Since a retron acts after adsorption
+it cannot be working through the surface, so this is confounding rather than
+mediation, and it is the same confounding that accounts for associations
+elsewhere in this study.
 
 The two nulls are also imperfect in opposite directions, which is why both are
 used. The coordinate null does not reproduce the clonal coherence of real

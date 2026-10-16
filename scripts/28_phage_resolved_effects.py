@@ -39,6 +39,7 @@ Outputs:
     results/tables/table54_trait_structure.csv
     results/tables/table55_leave_cluster_out.csv
     results/tables/table56_matched_drop.csv
+    results/tables/table57_surface_adjusted.csv
     results/phage_resolved_report.txt
 """
 
@@ -98,6 +99,10 @@ N_COHERENCE_DRAWS = 20000
 # Co-occurring systems conditioned on when checking whether a surviving system
 # is carrying the credit for a neighbour on the same defense island.
 N_ISLAND_PARTNERS = 4
+
+# Host surface features conditioned on in the follow-up. These are the
+# collection's own typing of the cell surface.
+SURFACE_COLUMNS = ("lps_core", "o_status", "capsule_any")
 
 # Random strain drops used to separate the cost of losing a cluster of
 # relatives from the cost of losing that many strains at all.
@@ -524,6 +529,63 @@ def main() -> int:
     adj = pd.DataFrame(adjusted)
     adj.to_csv(paths.TABLES / "table53_island_adjusted.csv", index=False)
 
+    # Host surface type is the other confounder this project identified, and
+    # the per-phage model does not carry it. A system acting after adsorption
+    # cannot be acting through the surface, so surface is a confounder here
+    # rather than something on the causal path, and conditioning on it is the
+    # fair question rather than an over-adjustment.
+    surface_blocks = []
+    for col in SURFACE_COLUMNS:
+        if col in feats.columns:
+            d = pd.get_dummies(feats.loc[strains, col].astype("string"),
+                               drop_first=True, dtype=float)
+            if d.shape[1]:
+                surface_blocks.append(d.to_numpy())
+    surface = (np.hstack(surface_blocks) if surface_blocks
+               else np.zeros((len(strains), 0)))
+    cov_surface = np.hstack([cov, surface])
+    print(f"surface block for the follow-up: {surface.shape[1]} terms")
+
+    surf_rows = []
+    for direction, sign in DIRECTIONS:
+        for sname in survivors_by_direction[direction]:
+            k = systems.index(sname)
+            v = real[:, k]
+            block = np.hstack([v[:, None], coord_blocks[k], clonal_blocks[k]])
+            zs = np.full((block.shape[1], len(usable)), np.nan)
+            for m, j in enumerate(usable):
+                ob = np.isfinite(y_mat[:, j])
+                zs[:, m] = score_z(y_mat[ob, j], cov_surface[ob], block[ob])
+            got = int(count_clusters_hit(hits(zs[0], sign)[None, :], labels)[0])
+            ps = {}
+            for name, lo in (("coordinate", 1), ("clonal", 1 + N_NULL_TRAITS)):
+                arr = zs[lo:lo + N_NULL_TRAITS]
+                nl = count_clusters_hit(
+                    (sign * np.where(np.isfinite(arr), arr, 0.0)) > Z_THRESHOLD,
+                    labels)
+                ps[name] = float((1 + (nl >= got).sum()) / (1 + N_NULL_TRAITS))
+            # How skewed is this system's carriage across outer core types?
+            core = feats.loc[strains, "lps_core"].astype("string")
+            carr_mix = core[v == 1].value_counts(normalize=True)
+            rest_mix = core[v == 0].value_counts(normalize=True)
+            top = carr_mix.idxmax() if len(carr_mix) else ""
+            surf_rows.append(dict(
+                system=sname, direction=direction,
+                near_miss=sname in near_miss.get(direction, set()),
+                n_groups_unadjusted=int(spec.loc[spec.system == sname,
+                                                 f"n_groups_{direction}"].iloc[0]),
+                n_groups_surface_adjusted=got,
+                p_coordinate=ps["coordinate"], p_clonal=ps["clonal"],
+                p_surface_adjusted=max(ps.values()),
+                commonest_core=str(top),
+                pct_carriers_on_that_core=float(
+                    100 * carr_mix.max()) if len(carr_mix) else np.nan,
+                pct_others_on_that_core=float(
+                    100 * rest_mix.get(top, 0.0)) if len(rest_mix) else np.nan))
+            del zs, block
+    surf = pd.DataFrame(surf_rows)
+    surf.to_csv(paths.TABLES / "table57_surface_adjusted.csv", index=False)
+
     # A survivor resting on 20 carriers could be resting on one group of
     # relatives among them. Dropping each clonal cluster that holds a carrier
     # in turn answers that directly: a result that depends on one cluster
@@ -844,6 +906,37 @@ def main() -> int:
                 "neighbours in the model. That does not prove the attribution, "
                 "since an island member not catalogued here could carry it, "
                 "but the effect is not explained by the neighbours that are.")
+    if not surf.empty:
+        add("")
+        add("  DOES IT SURVIVE CONDITIONING ON HOST SURFACE TYPE?")
+        add("  Surface type explains about three times the variation that "
+            "defense systems do in this collection, and the per-phage model "
+            "above does not carry it. A system acting after adsorption cannot "
+            "work through the surface, so this is a confounder rather than a "
+            "step on the causal path.")
+        for r in surf.itertuples(index=False):
+            tag = " [near miss]" if r.near_miss else ""
+            add(f"    {r.system} ({r.direction}){tag}: "
+                f"{r.n_groups_unadjusted} phage groups becomes "
+                f"{r.n_groups_surface_adjusted} with surface in the model "
+                f"(p {r.p_surface_adjusted:.4f}).")
+            add(f"      {r.pct_carriers_on_that_core:.0f} percent of its "
+                f"carriers sit on the {r.commonest_core} outer core, against "
+                f"{r.pct_others_on_that_core:.0f} percent of other strains.")
+        kept_s = surf[(~surf["near_miss"])
+                      & (surf["p_surface_adjusted"] <= config.FDR_ALPHA
+                         / max(len(systems), 1))]
+        if kept_s.empty:
+            add("    No system that cleared the correction keeps a comparable "
+                "p-value once surface type is in the model. The candidates "
+                "this analysis produces are therefore confounded with the "
+                "surface composition of the strains that carry them, which is "
+                "the same obstacle every other association in this project "
+                "ran into.")
+        else:
+            add(f"    {', '.join(kept_s['system'])} keeps its signal with "
+                "surface type in the model.")
+
     if not stab.empty:
         add("")
         add("  DOES IT REST ON ONE GROUP OF RELATIVES?")

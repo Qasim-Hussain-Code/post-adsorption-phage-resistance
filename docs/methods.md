@@ -457,6 +457,13 @@ increased lysis cannot be a defense mechanism and that pattern recurs in this
 collection. Everything below is applied to whichever direction a system
 survives in.
 
+A system that survives is also re-tested with the collection's typing of the
+host surface added to the covariates, since the per-phage model carries only
+core-genome position and surface explains about three times the variation
+defense systems do. For a system acting after adsorption the surface is a
+confounder rather than a mediator, so conditioning on it is the appropriate
+question rather than an over-adjustment.
+
 A system that survives is re-tested with the four systems most enriched among
 its carriers added to the covariates, since defense systems travel together on
 islands and a survivor may be carrying the credit for a neighbour. It is then
@@ -474,6 +481,25 @@ that the trait's prevalence forces on its own.
 
 Permutation blocks draw from separate generators seeded from the project seed,
 so that adding an analysis does not shift the p-values of the ones beside it.
+
+The procedure was measured against known answers rather than assumed correct.
+Applying it to traits built to have exactly the clonal structure of a real
+defense system but no relation to lysis, and judging each against fresh
+independent draws, it rejects at 1.5 percent where 5 percent is nominal, and at
+7.0 and 16.0 percent where 10 and 20 are nominal: it is conservative
+throughout. Its median p-value is 1, which is a property of the statistic
+rather than a fault, since a count of phage groups is zero for most null traits
+and a p-value built from a count is 1 whenever the count cannot be exceeded.
+
+Power was measured the same way, by suppressing lysis among carriers for twelve
+phages drawn from distinct groups with lysis rates between 0.41 and 0.65. A
+suppression producing a difference of 0.267 on those phages is detected in 77
+percent of replicates, one producing 0.355 in all of them, and one producing
+0.470 in all of them. The one candidate this analysis reports sits at 0.222,
+just below the point where power is 77 percent, so the test is working in a
+range where it can see effects of the size claimed; effects much smaller than
+that on a subset of phages would not be reliably detected, which is the honest
+bound on the negative results beside it.
 
 ## Software
 

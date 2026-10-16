@@ -26,39 +26,39 @@ HOW EFFECT SIZES MOVE ALONG THE CONDITIONING LADDER
 
 RECEPTOR-CONDITIONED ASSOCIATIONS (L3), ORDERED BY ODDS RATIO
   system                     carriers     OR        95 pct CI         p         q strata
-  Zorya_TypeII                     20  0.348 [ 0.301,  0.403]  7.32e-34  4.02e-33    498 *
-  RM_Type_IIG                      52  0.432 [ 0.393,  0.475]  8.81e-52  7.27e-51    498 *
-  CAS_Class1-Subtype-I-E          215  0.543 [ 0.515,  0.572]  3.73e-94  1.23e-92    498 *
-  Hachiman                         31  0.571 [ 0.514,  0.634]  1.68e-19  3.97e-19    498 *
-  Kiwa                             35  0.582 [ 0.527,  0.642]  3.61e-21  9.17e-21    498 *
-  Shango                           37  0.612 [ 0.556,  0.674]  1.56e-17  3.43e-17    423 *
-  Mokosh_Type_I_A                  21  0.656 [ 0.581,  0.740]  5.71e-09  1.05e-08    498 *
-  PD-Lambda-4                      24  0.729 [ 0.655,  0.812]  1.40e-06  2.31e-06    254 *
-  Mok_Hok_Sok                     193  0.786 [ 0.747,  0.826]  3.12e-16  6.44e-16    498 *
-  Gao_Tmn                          27  0.786 [ 0.712,  0.869]  7.87e-05  1.24e-04    423 *
-  RM_Type_III                      54  0.861 [ 0.800,  0.925]  3.33e-04  4.77e-04    498 *
-  dCTPdeaminase                    21  0.939 [ 0.839,  1.051]  3.81e-01  4.65e-01    410  
-  PD-Lambda-1                      45  0.967 [ 0.890,  1.050]  5.08e-01  5.78e-01    498  
-  Druantia_III                     66  0.979 [ 0.913,  1.050]  6.18e-01  6.79e-01    498  
-  AbiE                             29  1.000 [ 0.895,  1.118]  9.78e-01  9.78e-01    332  
-  Gabija                           22  1.010 [ 0.907,  1.125]  8.93e-01  9.21e-01    410  
-  BREX_I                           31  1.015 [ 0.930,  1.107]  7.78e-01  8.29e-01    498  
-  Retron_I_C                       20  1.056 [ 0.935,  1.193]  4.57e-01  5.38e-01    255  
-  MazEF                           338  1.090 [ 1.014,  1.172]  4.69e-02  5.95e-02    410  
-  RloC                             27  1.149 [ 1.039,  1.270]  3.05e-02  4.03e-02    498 *
-  RosmerTA                         47  1.156 [ 1.070,  1.249]  1.11e-03  1.53e-03    498 *
-  PD-T4-3                          65  1.157 [ 1.083,  1.236]  1.76e-04  2.63e-04    498 *
-  RM_Type_II                      155  1.160 [ 1.102,  1.221]  5.99e-07  1.04e-06    498 *
-  RM_Type_IV                      268  1.384 [ 1.309,  1.463]  1.88e-23  6.20e-23    498 *
-  CBASS_I                          43  1.414 [ 1.310,  1.527]  6.26e-15  1.21e-14    498 *
-  Mokosh_TypeII                    92  1.439 [ 1.359,  1.525]  2.72e-27  9.98e-27    498 *
-  RM_Type_I                       327  1.476 [ 1.381,  1.578]  5.00e-23  1.50e-22    498 *
-  Septu                            73  1.539 [ 1.446,  1.637]  1.83e-33  8.61e-33    498 *
-  CAS_Class1-Subtype-I-F           66  1.626 [ 1.521,  1.738]  3.21e-36  2.12e-35    330 *
-  Gao_Qat                          23  1.726 [ 1.566,  1.902]  4.05e-22  1.11e-21    264 *
-  Lamassu-Mrr                      31  1.751 [ 1.601,  1.914]  4.96e-28  2.05e-27    410 *
-  PsyrTA                          110  1.771 [ 1.676,  1.870]  3.42e-73  3.76e-72    498 *
-  SanaTA                           64  1.973 [ 1.848,  2.107]  2.49e-75  4.11e-74    423 *
+  Zorya_TypeII                     20  0.348 [ 0.294,  0.412]  7.32e-34  4.02e-33    498 *
+  RM_Type_IIG                      52  0.432 [ 0.387,  0.482]  8.81e-52  7.27e-51    498 *
+  CAS_Class1-Subtype-I-E          215  0.543 [ 0.512,  0.577]  3.73e-94  1.23e-92    498 *
+  Hachiman                         31  0.571 [ 0.506,  0.645]  1.68e-19  3.97e-19    498 *
+  Kiwa                             35  0.582 [ 0.519,  0.651]  3.61e-21  9.17e-21    498 *
+  Shango                           37  0.612 [ 0.548,  0.684]  1.56e-17  3.43e-17    423 *
+  Mokosh_Type_I_A                  21  0.656 [ 0.571,  0.754]  5.71e-09  1.05e-08    498 *
+  PD-Lambda-4                      24  0.729 [ 0.644,  0.826]  1.40e-06  2.31e-06    254 *
+  Mok_Hok_Sok                     193  0.786 [ 0.741,  0.833]  3.12e-16  6.44e-16    498 *
+  Gao_Tmn                          27  0.786 [ 0.700,  0.883]  7.87e-05  1.24e-04    423 *
+  RM_Type_III                      54  0.861 [ 0.792,  0.935]  3.33e-04  4.77e-04    498 *
+  dCTPdeaminase                    21  0.939 [ 0.824,  1.071]  3.81e-01  4.65e-01    410  
+  PD-Lambda-1                      45  0.967 [ 0.879,  1.063]  5.08e-01  5.78e-01    498  
+  Druantia_III                     66  0.979 [ 0.903,  1.061]  6.18e-01  6.79e-01    498  
+  AbiE                             29  1.000 [ 0.882,  1.135]  9.78e-01  9.78e-01    332  
+  Gabija                           22  1.010 [ 0.893,  1.144]  8.93e-01  9.21e-01    410  
+  BREX_I                           31  1.015 [ 0.920,  1.119]  7.78e-01  8.29e-01    498  
+  Retron_I_C                       20  1.056 [ 0.919,  1.214]  4.57e-01  5.38e-01    255  
+  MazEF                           338  1.090 [ 1.003,  1.185]  4.69e-02  5.95e-02    410  
+  RloC                             27  1.149 [ 1.021,  1.292]  3.05e-02  4.03e-02    498 *
+  RosmerTA                         47  1.156 [ 1.058,  1.262]  1.11e-03  1.53e-03    498 *
+  PD-T4-3                          65  1.157 [ 1.072,  1.248]  1.76e-04  2.63e-04    498 *
+  RM_Type_II                      155  1.160 [ 1.094,  1.230]  5.99e-07  1.04e-06    498 *
+  RM_Type_IV                      268  1.384 [ 1.299,  1.475]  1.88e-23  6.20e-23    498 *
+  CBASS_I                          43  1.414 [ 1.296,  1.544]  6.26e-15  1.21e-14    498 *
+  Mokosh_TypeII                    92  1.439 [ 1.347,  1.538]  2.72e-27  9.98e-27    498 *
+  RM_Type_I                       327  1.476 [ 1.367,  1.594]  5.00e-23  1.50e-22    498 *
+  Septu                            73  1.539 [ 1.433,  1.652]  1.83e-33  8.61e-33    498 *
+  CAS_Class1-Subtype-I-F           66  1.626 [ 1.506,  1.755]  3.21e-36  2.12e-35    330 *
+  Gao_Qat                          23  1.726 [ 1.543,  1.929]  4.05e-22  1.11e-21    264 *
+  Lamassu-Mrr                      31  1.751 [ 1.581,  1.939]  4.96e-28  2.05e-27    410 *
+  PsyrTA                          110  1.771 [ 1.663,  1.885]  3.42e-73  3.76e-72    498 *
+  SanaTA                           64  1.973 [ 1.831,  2.126]  2.49e-75  4.11e-74    423 *
   Rows marked with an asterisk pass Benjamini-Hochberg at q <= 0.05. An odds ratio below 1 means carriers of the system are less often lysed, which is the direction expected of a functioning defense. An odds ratio above 1 means carriers are more often lysed, which no defense mechanism predicts and which points to confounding by clonal background; script 04 tests exactly that.
 
   Systems associated with reduced lysis at q <= 0.05: 11 (Zorya_TypeII, RM_Type_IIG, CAS_Class1-Subtype-I-E, Hachiman, Kiwa, Shango, Mokosh_Type_I_A, PD-Lambda-4, Mok_Hok_Sok, Gao_Tmn, RM_Type_III)

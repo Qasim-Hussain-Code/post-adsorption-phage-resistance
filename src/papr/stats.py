@@ -101,9 +101,16 @@ def mantel_haenszel(tables: list[tuple[int, int, int, int]],
         used += 1
         R += a * d / n
         S += b * c / n
+        # Robins, Breslow and Greenland write the variance of the pooled log
+        # odds ratio as
+        #     sum(P R) / (2 R^2) + sum(P S + Q R) / (2 R S) + sum(Q S) / (2 S^2)
+        # with P = (a+d)/n and Q = (b+c)/n. The three sums are accumulated
+        # here and divided below. The middle sum carries no factor of one half
+        # of its own: writing one here would understate the standard error by
+        # about a tenth and give intervals that are correspondingly too narrow.
         vr += (a + d) * a * d / n**2
         vs += (b + c) * b * c / n**2
-        vrs += ((a + d) * b * c + (b + c) * a * d) / (2 * n**2)
+        vrs += ((a + d) * b * c + (b + c) * a * d) / n**2
         num += a - (a + b) * (a + c) / n
         den += (a + b) * (c + d) * (a + c) * (b + d) / (n**2 * (n - 1)) if n > 1 else 0.0
 

@@ -54,6 +54,16 @@ DOES ANY SYSTEM ACT ON MORE PHAGE GROUPS THAN A MATCHED TRAIT?
     BREX_I (increased) [near miss, does not clear the correction]: 11 phage groups unadjusted, 9 after conditioning on CAS_Class1-Subtype-I-E,PD-Lambda-4,RosmerTA,Mok_Hok_Sok (p 0.0050).
     Retron_I_C keeps its signal with those neighbours in the model. That does not prove the attribution, since an island member not catalogued here could carry it, but the effect is not explained by the neighbours that are.
 
+  DOES IT SURVIVE CONDITIONING ON HOST SURFACE TYPE?
+  Surface type explains about three times the variation that defense systems do in this collection, and the per-phage model above does not carry it. A system acting after adsorption cannot work through the surface, so this is a confounder rather than a step on the causal path.
+    Retron_I_C (protective): 11 phage groups becomes 4 with surface in the model (p 0.0160).
+      55 percent of its carriers sit on the K12 outer core, against 8 percent of other strains.
+    Shango (protective) [near miss]: 3 phage groups becomes 2 with surface in the model (p 0.1109).
+      38 percent of its carriers sit on the R1 outer core, against 53 percent of other strains.
+    BREX_I (increased) [near miss]: 11 phage groups becomes 8 with surface in the model (p 0.0060).
+      65 percent of its carriers sit on the R1 outer core, against 50 percent of other strains.
+    No system that cleared the correction keeps a comparable p-value once surface type is in the model. The candidates this analysis produces are therefore confounded with the surface composition of the strains that carry them, which is the same obstacle every other association in this project ran into.
+
   DOES IT REST ON ONE GROUP OF RELATIVES?
     BREX_I (increased) [near miss, does not clear the correction]: dropping each of the 19 clonal clusters holding a carrier in turn leaves 6 to 13 phage groups (worst p 0.0260 across the 19 refits).
     No single cluster of relatives carries the result: it holds with any one of them removed.

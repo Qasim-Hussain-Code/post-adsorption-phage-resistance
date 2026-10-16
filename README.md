@@ -1,5 +1,9 @@
 # Post-adsorption phage resistance in Escherichia
 
+![Workflow of the analysis: the public inputs, six analysis phases from
+validation through to resolving the phage panel, and the tables, reports,
+figures and ranked candidate list they produce](figures/fig11_workflow.png)
+
 A re-analysis of the Picard and Guelin phage-host interaction collection asking
 a narrow question: once you account for which phage is being tested, for the
 host surface it has to bind, and for the clonal lineage the host belongs to,
@@ -308,7 +312,11 @@ signal when its island neighbours are conditioned on. But dropping each clonal
 cluster of carriers in turn, one cluster holding 6 of its 20 carriers takes the
 result to **p = 0.160**, while 40 random drops of the same size leave a median
 p of **0.009** and only 8 percent do as much damage. Six near-identical strains
-are carrying it. **That makes it the study's best candidate and not a
+are carrying it. And conditioning on host surface type, which the per-phage
+model does not carry, takes it from 11 phage groups to **4** and its p-value to
+**0.016**: 55 percent of its carriers sit on a K12 outer core against 8 percent
+of other strains, and K12 strains are lysed 0.138 of the time against 0.262 for
+the common R1 core. **That makes it the study's best candidate and not a
 finding.**
 
 ### The candidate list
@@ -429,6 +437,19 @@ phage-resolved analysis of steps 28 and 29 does not, so it still runs.
 Individual stages can be run in order instead; each writes its own report to
 `results/` and its tables to `results/tables/`.
 
+```bash
+python tests/test_statistics.py   # the estimators, against independent versions
+```
+
+That compares every estimator in `src/papr` against statsmodels, scipy or a
+brute-force calculation and exits non-zero if any disagrees. It is worth
+running before trusting anything else here: a defect in one of those functions
+would be invisible to a check that compares the written results against the
+computed ones, since the documentation would faithfully report the wrong
+number. That is how the one defect found this way came to light, a factor of
+one half in the Mantel-Haenszel variance that made its intervals about a tenth
+too narrow.
+
 The timings below are measured, from one `--skip-fetch --skip-genomes` run on
 the 16 GB machine this was developed on, which completed every step in
 **6906 s**. Steps 02 to 06, the core analysis, take **7 minutes**, almost all of
@@ -472,6 +493,7 @@ scripts/28 .. 29   phage-resolved defense effects, spectrum figure
 scripts/run_all.py runs them in order; --core-only stops after 06 and
                    --skip-genomes omits 18 to 20 and 25 to 27
 src/papr/          shared estimators, paths, configuration, figure style
+tests/             the statistical core checked against statsmodels and scipy
 data/raw/          downloaded inputs, not tracked; verified against data/raw_manifest.sha256
 data/processed/    derived tables
 results/           per-stage reports in plain text
