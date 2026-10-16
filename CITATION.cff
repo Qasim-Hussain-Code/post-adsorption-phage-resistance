@@ -1,0 +1,56 @@
+cff-version: 1.2.0
+title: >-
+  Post-adsorption phage resistance in Escherichia: a re-analysis of the
+  Picard and Guelin phage-host interaction collection
+message: >-
+  If you use this analysis or its code, please cite it, and cite the
+  upstream data separately using the references listed below.
+type: software
+authors:
+  - family-names: Hussain
+    given-names: Qasim
+    email: qasimhussain6798@gmail.com
+abstract: >-
+  A re-analysis of a species-wide Escherichia phage-host interaction screen
+  asking how many intracellular defense systems remain associated with
+  resisting infection once the phage tested, the host surface it must bind
+  and the clonal lineage of the host are all held fixed. Associations are
+  estimated with cluster-robust and stratified models, stressed against
+  phylogenetically matched and clonally matched null traits, extended to the
+  whole accessory genome without a catalogue, and resolved phage by phage.
+  Negative and null results are reported with the same prominence as positive
+  ones. The output is a ranked list of candidates for knockout experiments
+  rather than a demonstration that any system confers resistance.
+keywords:
+  - bacteriophage
+  - Escherichia coli
+  - anti-phage defense systems
+  - phage-host interaction
+  - population structure
+  - comparative genomics
+  - statistical genetics
+  - reproducible research
+license: MIT
+version: 1.0.0
+date-released: '2026-10-16'
+references:
+  - type: article
+    title: >-
+      Prediction of strain level phage-host interactions across the
+      Escherichia genus using only genomic information
+    authors:
+      - family-names: Gaborieau
+        given-names: Baptiste
+    journal: Nature Microbiology
+    year: 2024
+    notes: >-
+      Source of the interaction matrix, strain and phage metadata, defense
+      system calls, and the core-genome and VIRIDIC trees.
+  - type: software
+    title: AntiDefenseFinder survey of anti-defense systems in RefSeq phages
+    authors:
+      - name: Microbial Evolutionary Genomics unit, Institut Pasteur
+    year: 2024
+    notes: >-
+      Source of the anti-defense profile models and the RefSeq phage survey
+      used for the counter-defense priors.
