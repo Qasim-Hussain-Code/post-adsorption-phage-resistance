@@ -1,9 +1,5 @@
 # Post-adsorption phage resistance in Escherichia
 
-![Workflow of the analysis: the public inputs, six analysis phases from
-validation through to resolving the phage panel, and the tables, reports,
-figures and ranked candidate list they produce](figures/fig11_workflow.png)
-
 A re-analysis of the Picard and Guelin phage-host interaction collection asking
 a narrow question: once you account for which phage is being tested, for the
 host surface it has to bind, and for the clonal lineage the host belongs to,
