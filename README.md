@@ -42,18 +42,6 @@ annotations from <https://github.com/mdmparis/antidefensefinder_2024>. Nothing
 is redistributed here. `scripts/01_fetch_and_validate_data.py` downloads the
 inputs (about 21 MB) and verifies them against `data/raw_manifest.sha256`.
 
-Three details differ from the figures a reader might expect, and the pipeline
-asserts the observed values rather than the nominal ones:
-
-| Expected | Observed in the release |
-|---|---|
-| 403 strains by 96 phages, 38,688 pairs | 402 by 96, **38,592 cells**. One strain (`LF110`) appears in the metadata but has no row in the matrix |
-| every pair measured | **157 cells are blank**, so **38,435 interactions** were actually observed |
-| plaque score on a 0 to 6 scale | the released scale runs **0 to 4** |
-
-Of the 38,435 observed interactions, 7,976 (20.75 percent) produced plaques and
-30,459 (79.25 percent) did not.
-
 The summary matrix was checked against the 318,816 replicate-level spot tests
 that accompany it. Treating a dilution step as positive when plaques appeared in
 at least two readable replicates reproduces the **binary lytic call for 99.69
