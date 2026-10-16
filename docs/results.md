@@ -883,12 +883,12 @@ RM_Type_III passes four with twelve informative clonal clusters to RM_Type_IIG's
 seven. No system passes all seven. That list is a priority order for knockout
 experiments, not a set of findings.
 
-Retron_I_C sits outside that ranking rather than inside it, because the seven
-checks are all built on the panel average and section 22 is the one analysis
-that is not. It is nominated on a different basis, an effect on 12 phages where
-its panel average is nearly zero, and it carries its own defect: six of its
-twenty carriers are a single clonal group without which the result does not
-hold. That makes it a twelfth candidate and not a twelfth finding. A knockout
-programme built from this work should take the top of the ranked list and
+Retron_I_C appears in that ranking at one of seven, which understates it,
+because all seven checks are built on the panel average and section 22 is the
+one analysis that is not. Its case rests on a different basis: an effect on 12
+phages where its panel average is nearly zero. It carries its own defect, since
+six of its twenty carriers are a single clonal group without which the result
+does not hold, so it is a candidate on that basis and not a finding. A knockout
+programme built from this work should take the top of the ranked list, and
 Retron_I_C against the phages named in section 22, which are different
 experiments answering different questions.
