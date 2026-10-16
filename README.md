@@ -448,9 +448,15 @@ untracked), 72 MB of git history and the rest the public input tables. Run with
 `--skip-genomes` it stays near 110 MB, and the genomes can be deleted after
 step 20 without affecting any other result.
 
-Every output is deterministic. Rerunning the whole pipeline reproduces all
+Every output is deterministic. Rerunning the whole pipeline reproduces all 121
 tables, reports and figures byte for byte, which is checked by regenerating
-them and comparing checksums rather than assumed.
+them and comparing checksums rather than assumed. One caveat is worth stating
+precisely: the coefficients that come from iterative model fits are written at
+full float precision, and their last digits depend on the order the linear
+algebra library accumulates its sums. They are stable on one machine, and one
+such coefficient has been seen to differ in the eighth significant figure
+between environments. Nothing rounds differently at any precision the analysis
+reports.
 
 ## Layout
 

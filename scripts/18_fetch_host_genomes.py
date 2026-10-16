@@ -185,7 +185,19 @@ def main() -> int:
 
     previous: dict[str, dict] = {}
     if PROVENANCE.exists():
-        previous = pd.read_csv(PROVENANCE).set_index("strain").to_dict("index")
+        prev_frame = pd.read_csv(PROVENANCE)
+        # A resumed record has to look exactly like a freshly built one.
+        # Reading the file back turns the empty annotation fields into NaN and
+        # the numeric-looking ones into floats, which would both corrupt the
+        # "this field is not empty" tests further down and break the report
+        # formatting, so the script would run once and fail on every rerun.
+        for col in prev_frame.columns:
+            if col in ("contig_n50", "bytes_gz"):
+                continue
+            prev_frame[col] = (
+                prev_frame[col].where(prev_frame[col].notna(), "")
+                .astype(str).str.replace(r"\.0$", "", regex=True).str.strip())
+        previous = prev_frame.set_index("strain").to_dict("index")
 
     meta = strain_feats.set_index("strain")
     rows = []

@@ -468,6 +468,14 @@ as their single nearest k-mer neighbour**, 217 within the top three, and 254
 within the top ten. Those 254 are carried forward, **63 percent of the
 collection**; 33 were dropped.
 
+Two independent checks agree with that identification, and they use information
+the k-mer test never sees. NCBI embeds a Warwick Sequence Type in the strain
+field of 82 of the retrieved records and an O-antigen in 82 of them. Both agree
+with the collection's own metadata for **every one of those strains**. That is
+not a substitute for the distance test, since it covers only the records that
+happen to carry the annotation, but a systematic mix-up in strain naming would
+have to survive two annotations it had no reason to match.
+
 The test is relative to the genomes present, and that matters. ED1a and BL21
 both failed on an earlier, smaller set of 162 and both pass at rank 1 here,
 because their true nearest relatives had not yet been retrieved. A genome is
