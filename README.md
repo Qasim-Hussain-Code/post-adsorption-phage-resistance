@@ -397,16 +397,6 @@ Individual stages can be run in order instead; each writes its own report to
 ```bash
 python tests/test_statistics.py   # the estimators, against independent versions
 ```
-
-That compares every estimator in `src/papr` against statsmodels, scipy or a
-brute-force calculation and exits non-zero if any disagrees. It is worth
-running before trusting anything else here: a defect in one of those functions
-would be invisible to a check that compares the written results against the
-computed ones, since the documentation would faithfully report the wrong
-number. That is how the one defect found this way came to light, a factor of
-one half in the Mantel-Haenszel variance that made its intervals about a tenth
-too narrow.
-
 The timings below are measured, from one `--skip-fetch --skip-genomes` run on
 the 16 GB machine this was developed on, which completed every step in
 **6906 s**. Steps 02 to 06, the core analysis, take **7 minutes**, almost all of
