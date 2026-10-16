@@ -10,21 +10,6 @@ The short answer is two, out of thirty-three systems with enough carriers to
 test. Most of what looks like defense-mediated resistance in this dataset is a
 property of the bacterial lineage rather than of the defense system.
 
-Stress-testing those two against designs that do not rely on covariate
-adjustment qualifies even that. Neither survives every test, and a third system
-that the main analysis discarded holds up better in the strictest ones. The
-defensible output of this work is a short candidate list for experiment, not a
-demonstration that any system confers resistance.
-
-That answer is an average over 96 phages, which is a choice and not a neutral
-one. Resolving the panel into its individual phages, against two nulls that
-each destroy a different kind of confounding, recovers one candidate the
-averages had buried: a retron whose effect on the twelve phages it acts on is
-fourteen times its effect on the panel. It too fails a stability check, resting
-on six near-identical strains. In the opposite direction, where no defense
-mechanism could explain an association, five systems cluster just above the
-line and none reaches significance.
-
 ## The question and why it needs care
 
 Roughly four fifths of strain-phage pairs in a species-wide screen fail to
