@@ -314,11 +314,6 @@ failure rate. A cleaner comparison is impossible: every one of the 402 strains
 carries at least one of the 33 testable systems, so there is no defense-free
 group in this collection.
 
-## Figures
-
-Each is written as 300 dpi PNG and vector PDF. Every figure is drawn from the
-tables in `results/tables`, so a figure cannot disagree with a reported number.
-
 ### Figure 1. Surface exclusion accounts for a minority of failed infections
 
 ![Outcome of all 38,435 strain-phage pairs split into productive lysis, failure
