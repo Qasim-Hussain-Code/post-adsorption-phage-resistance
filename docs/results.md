@@ -34,13 +34,15 @@ percent of the data, and enrichment barely moves (1.39 fold). That is the
 signature of a filter removing signal and noise together rather than sharpening
 a contrast.
 
-Gate performance is heterogeneous across genera. It separates cleanly in
-Felixounavirus (57.77 percent inside against 18.27 outside, 3.16 fold) and
-Phapecoctavirus (1.79 fold), and not at all in the two largest genera,
-Vectrevirus (1.05 fold) and Kayfunavirus (1.20 fold). Two genera show
-enrichment below 1. A gate that works for a minority of genera cannot carry a
-species-wide claim, which is why the primary analysis stratifies on surface
-state rather than filtering on it.
+Gate performance is heterogeneous across genera, and not in a way that tracks
+how much data a genus contributes. It separates cleanly in Felixounavirus
+(57.77 percent inside against 18.27 outside, 3.16 fold), the second largest
+genus by pairs, and in Phapecoctavirus (1.79 fold). It does almost nothing in
+the largest genus, Vectrevirus (1.05 fold), or in the third largest,
+Kayfunavirus (1.20 fold). Three genera enrich below 1 (Wanchaivirus,
+Sashavirus and Lambdavirus), all of them small. A gate that works for some
+genera and not others cannot carry a species-wide claim, which is why the
+primary analysis stratifies on surface state rather than filtering on it.
 
 ## 3. Conditioning on surface state widens defense effects
 
@@ -390,29 +392,34 @@ level. Three-way and higher combinations cannot be estimated in a collection of
 
 ## 16. One consolidated candidate list
 
-Four analyses nominate different systems. Script 15 takes the union in the
-protective direction, applies the same battery to all of them including the rare
-ones that had never been through it, and ranks by how many independent checks
+Six analyses nominate different systems. Script 15 takes the union in the
+protective direction, applies the same battery of seven checks to all of them
+including the rare ones that had never been through it, and ranks by how many
 each passes.
 
 | System | Strains | Adjusted OR | Shrunk OR | Within-cluster OR | Clusters | Genera below 1 | E-value | Checks |
 |---|---|---|---|---|---|---|---|---|
-| RM_Type_IIG | 52 | 0.549 | 0.632 | 0.968 | 7 | 15/15 | 2.69 | 3/5 |
-| RM_Type_III | 54 | 0.626 | 0.718 | 0.328 | 12 | 10/18 | 2.31 | 3/5 |
-| Shango | 37 | 0.583 | 0.705 | 0.492 | 9 | 16/17 | 2.51 | 2/5 |
-| Lamassu-Cap4_nuclease | 18 | 0.451 | 0.629 | 0.417 | 5 | 12/13 | 3.34 | 2/5 |
-| Zorya_TypeII | 20 | 0.444 | 0.607 | 0.344 | 2 | 11/13 | 3.40 | 2/5 |
-| AbiD | 14 | 0.270 | 0.575 | 0.349 | 6 | 11/15 | 5.75 | 2/5 |
-| PD-T7-4 | 7 | 0.382 | 0.571 | not estimable | 1 | 8/10 | 3.99 | 1/5 |
-| Retron_I_C | 20 | 0.722 | 0.822 | 0.249 | 4 | 11/16 | 1.94 | 1/5 |
-| RosmerTA | 47 | 1.171 | 1.085 | 0.532 | 11 | 6/17 | 1.52 | 1/5 |
+| RM_Type_IIG | 52 | 0.549 | 0.632 | 0.968 | 7 | 15/15 | 2.69 | 5/7 |
+| Zorya_TypeII | 20 | 0.444 | 0.607 | 0.344 | 2 | 11/13 | 3.40 | 4/7 |
+| RM_Type_III | 54 | 0.626 | 0.718 | 0.328 | 12 | 10/18 | 2.31 | 4/7 |
+| Shango | 37 | 0.583 | 0.705 | 0.492 | 9 | 16/17 | 2.51 | 3/7 |
+| Lamassu-Cap4_nuclease | 18 | 0.451 | 0.629 | 0.417 | 5 | 12/13 | 3.34 | 3/7 |
+| AbiD | 14 | 0.270 | 0.575 | 0.349 | 6 | 11/15 | 5.75 | 3/7 |
+| PD-T7-4 | 7 | 0.382 | 0.571 | not estimable | 1 | 8/10 | 3.99 | 2/7 |
+| Retron_IV | 8 | 0.559 | 0.709 | not estimable | 1 | 12/13 | 2.64 | 1/7 |
+| NLR_like_bNACHT09 | 10 | 0.577 | 0.719 | 1.828 | 3 | 12/14 | 2.54 | 1/7 |
+| Retron_I_C | 20 | 0.722 | 0.822 | 0.249 | 4 | 11/16 | 1.94 | 1/7 |
+| RosmerTA | 47 | 1.171 | 1.085 | 0.532 | 11 | 6/17 | 1.52 | 1/7 |
 
-Six systems pass at least two independent checks. **None passes all five**, and
-the two headline survivors of script 04 are not clearly the best entries:
-RM_Type_III matches RM_Type_IIG at three of five while having twelve informative
-clonal clusters to RM_Type_IIG's seven, and AbiD has the highest E-value in the
-table at 5.75 despite only fourteen carriers. Zorya_TypeII has two informative
-clusters, so its within-cluster column is uninformative rather than supportive.
+Seven systems pass at least two independent checks. **No system passes all
+seven**, and the best entry stops well short: RM_Type_IIG passes five, failing
+the within-cluster test that holds the entire genomic background fixed. The two
+headline survivors of script 04 are not clearly the best entries either.
+RM_Type_III passes four while having twelve informative clonal clusters to
+RM_Type_IIG's seven, and it passes the within-cluster test that RM_Type_IIG
+fails. AbiD has the highest E-value in the table at 5.75 despite only fourteen
+carriers. Zorya_TypeII has two informative clusters, so its within-cluster
+column is uninformative rather than supportive.
 
 ## 17. Is some of the failure lysogeny rather than resistance
 
